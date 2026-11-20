@@ -1,4 +1,4 @@
-name: Build Play Store Release
+name: Build Play Store Release & APK
 
 on:
   push:
@@ -49,18 +49,19 @@ jobs:
         with:
           gradle-version: '9.3.1'
 
-      - name: Build & Sign Release AAB for Play Store
+      - name: Build & Sign Release AAB and APK
         run: |
-          gradle bundleRelease \
+          gradle bundleRelease assembleRelease \
             -Pandroid.injected.signing.store.file=$(pwd)/release.keystore \
             -Pandroid.injected.signing.store.password=Formulanotes@2026 \
             -Pandroid.injected.signing.key.alias=release_key \
             -Pandroid.injected.signing.key.password=Formulanotes@2026
 
-      - name: Upload Play Store Bundle & Keystore
+      - name: Upload Play Store Bundle, APK & Keystore
         uses: actions/upload-artifact@v4
         with:
           name: PlayStore-Ready-Package
           path: |
             app/build/outputs/bundle/release/app-release.aab
+            app/build/outputs/apk/release/app-release.apk
             release.keystore

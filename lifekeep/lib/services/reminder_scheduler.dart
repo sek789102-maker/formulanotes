@@ -30,13 +30,13 @@ class ReminderPrefs {
   final int minute;
 
   static ReminderPrefs fromSettings(Map<String, String> s) => ReminderPrefs(
-        enabled: s[SettingKeys.notificationsEnabled] != 'false',
-        tasks: s[SettingKeys.notifyTasks] != 'false',
-        events: s[SettingKeys.notifyEvents] != 'false',
-        documents: s[SettingKeys.notifyDocuments] != 'false',
-        hour: int.tryParse(s[SettingKeys.reminderHour] ?? '')?.clamp(0, 23) ?? 9,
-        minute: int.tryParse(s[SettingKeys.reminderMinute] ?? '')?.clamp(0, 59) ?? 0,
-      );
+    enabled: s[SettingKeys.notificationsEnabled] != 'false',
+    tasks: s[SettingKeys.notifyTasks] != 'false',
+    events: s[SettingKeys.notifyEvents] != 'false',
+    documents: s[SettingKeys.notifyDocuments] != 'false',
+    hour: int.tryParse(s[SettingKeys.reminderHour] ?? '')?.clamp(0, 23) ?? 9,
+    minute: int.tryParse(s[SettingKeys.reminderMinute] ?? '')?.clamp(0, 59) ?? 0,
+  );
 }
 
 class PlannedNotification {
@@ -92,30 +92,28 @@ class ReminderScheduler {
     if (!p.enabled || !p.tasks || t.isCompleted || t.dueAt == null || !t.reminder.isEnabled) {
       return const [];
     }
-    final anchor = ReminderCalc.itemAnchor(t.dueAt!,
-        hasTime: t.hasTime, defaultHour: p.hour, defaultMinute: p.minute);
+    final anchor = ReminderCalc.itemAnchor(t.dueAt!, hasTime: t.hasTime, defaultHour: p.hour, defaultMinute: p.minute);
     final due = t.hasTime ? Fmt.dateTime(t.dueAt!) : Fmt.date(t.dueAt!);
     return ReminderCalc.fireTimes(anchor, t.reminder.offsetsMinutes, now)
-        .map((at) => PlannedNotification(
-              at,
-              Lang.t('งานใกล้ถึงกำหนด', 'Task due soon'),
-              '${t.title} — ${Lang.t('กำหนด', 'due')} $due',
-            ))
+        .map(
+          (at) => PlannedNotification(
+            at,
+            Lang.t('งานใกล้ถึงกำหนด', 'Task due soon'),
+            '${t.title} — ${Lang.t('กำหนด', 'due')} $due',
+          ),
+        )
         .toList();
   }
 
   static List<PlannedNotification> planEvent(EventItem e, ReminderPrefs p, DateTime now) {
     if (!p.enabled || !p.events || !e.reminder.isEnabled) return const [];
-    final anchor = ReminderCalc.itemAnchor(e.startAt,
-        hasTime: !e.allDay, defaultHour: p.hour, defaultMinute: p.minute);
+    final anchor = ReminderCalc.itemAnchor(e.startAt, hasTime: !e.allDay, defaultHour: p.hour, defaultMinute: p.minute);
     final when = e.allDay ? Fmt.date(e.startAt) : Fmt.dateTime(e.startAt);
     final loc = e.location.trim().isEmpty ? '' : ' · ${e.location.trim()}';
     return ReminderCalc.fireTimes(anchor, e.reminder.offsetsMinutes, now)
-        .map((at) => PlannedNotification(
-              at,
-              Lang.t('กิจกรรมที่กำลังจะมาถึง', 'Upcoming event'),
-              '${e.title} — $when$loc',
-            ))
+        .map(
+          (at) => PlannedNotification(at, Lang.t('กิจกรรมที่กำลังจะมาถึง', 'Upcoming event'), '${e.title} — $when$loc'),
+        )
         .toList();
   }
 
@@ -136,8 +134,12 @@ class ReminderScheduler {
   /// Returns false if any OS call failed (the item itself is still saved).
   Future<bool> _replace(String type, String entityId, List<PlannedNotification> planned) async {
     var ok = true;
-    final rows = await db.query('scheduled_notifications',
-        columns: ['notif_id'], where: 'entity_type = ? AND entity_id = ?', whereArgs: [type, entityId]);
+    final rows = await db.query(
+      'scheduled_notifications',
+      columns: ['notif_id'],
+      where: 'entity_type = ? AND entity_id = ?',
+      whereArgs: [type, entityId],
+    );
     for (final r in rows) {
       try {
         await gateway.cancel((r['notif_id'] as num).toInt());
@@ -146,8 +148,7 @@ class ReminderScheduler {
         if (kDebugMode) debugPrint('cancel failed: $e');
       }
     }
-    await db.delete('scheduled_notifications',
-        where: 'entity_type = ? AND entity_id = ?', whereArgs: [type, entityId]);
+    await db.delete('scheduled_notifications', where: 'entity_type = ? AND entity_id = ?', whereArgs: [type, entityId]);
     for (final p in planned) {
       ok = await _scheduleOne(type, entityId, p) && ok;
     }
@@ -157,13 +158,7 @@ class ReminderScheduler {
   Future<bool> _scheduleOne(String type, String entityId, PlannedNotification p) async {
     final id = await _allocateId('$type:$entityId:${p.at.millisecondsSinceEpoch}');
     try {
-      await gateway.schedule(
-        id: id,
-        title: p.title,
-        body: p.body,
-        at: p.at,
-        payload: '$type:$entityId',
-      );
+      await gateway.schedule(id: id, title: p.title, body: p.body, at: p.at, payload: '$type:$entityId');
       await db.insert('scheduled_notifications', {
         'notif_id': id,
         'entity_type': type,
@@ -181,8 +176,13 @@ class ReminderScheduler {
   Future<int> _allocateId(String key) async {
     var id = stableHash(key);
     for (var i = 0; i < 1000; i++) {
-      final exists = await db.query('scheduled_notifications',
-          columns: ['notif_id'], where: 'notif_id = ?', whereArgs: [id], limit: 1);
+      final exists = await db.query(
+        'scheduled_notifications',
+        columns: ['notif_id'],
+        where: 'notif_id = ?',
+        whereArgs: [id],
+        limit: 1,
+      );
       if (exists.isEmpty) return id;
       id = id >= 0x7FFFFFFF ? minId : id + 1;
     }

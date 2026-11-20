@@ -60,10 +60,15 @@ class _AppLockGateState extends State<AppLockGate> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     final lockEnabled = context.select<AppController, bool>((c) => c.lockEnabled);
     final showLock = _locked && lockEnabled;
-    return Stack(children: [
-      // Keep the app alive (state preserved) but invisible while locked.
-      Offstage(offstage: showLock, child: TickerMode(enabled: !showLock, child: widget.child)),
-      if (showLock) Positioned.fill(child: LockScreen(onUnlocked: () => setState(() => _locked = false))),
-    ]);
+    return Stack(
+      children: [
+        // Keep the app alive (state preserved) but invisible while locked.
+        Offstage(
+          offstage: showLock,
+          child: TickerMode(enabled: !showLock, child: widget.child),
+        ),
+        if (showLock) Positioned.fill(child: LockScreen(onUnlocked: () => setState(() => _locked = false))),
+      ],
+    );
   }
 }

@@ -14,15 +14,9 @@ class ReminderConfig {
   bool get isEnabled => offsetsMinutes.isNotEmpty;
 
   static const presetsDocument = [ReminderCalc.oneDay, ReminderCalc.threeDays, ReminderCalc.sevenDays];
-  static const presetsItem = [
-    ReminderCalc.atTime,
-    ReminderCalc.oneDay,
-    ReminderCalc.threeDays,
-    ReminderCalc.sevenDays,
-  ];
+  static const presetsItem = [ReminderCalc.atTime, ReminderCalc.oneDay, ReminderCalc.threeDays, ReminderCalc.sevenDays];
 
-  List<int> get customOffsets =>
-      offsetsMinutes.where((o) => !presetsItem.contains(o)).toList();
+  List<int> get customOffsets => offsetsMinutes.where((o) => !presetsItem.contains(o)).toList();
 
   ReminderConfig normalized() {
     final s = offsetsMinutes.where((o) => o >= 0 && o <= ReminderCalc.maxOffset).toSet().toList()..sort();
@@ -42,16 +36,14 @@ class ReminderConfig {
     try {
       final m = jsonDecode(raw);
       if (m is Map && m['offsets'] is List) {
-        return ReminderConfig((m['offsets'] as List).whereType<num>().map((e) => e.toInt()).toList())
-            .normalized();
+        return ReminderConfig((m['offsets'] as List).whereType<num>().map((e) => e.toInt()).toList()).normalized();
       }
     } catch (_) {}
     return const ReminderConfig.none();
   }
 
   @override
-  bool operator ==(Object other) =>
-      other is ReminderConfig && other.normalized().encode() == normalized().encode();
+  bool operator ==(Object other) => other is ReminderConfig && other.normalized().encode() == normalized().encode();
 
   @override
   int get hashCode => normalized().encode().hashCode;

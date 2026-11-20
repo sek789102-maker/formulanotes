@@ -5,6 +5,13 @@
 
 | หน้าแรก | เอกสาร | งาน | ปฏิทิน | โหมดมืด |
 |---|---|---|---|---|
+| ![](screenshots/01_home.png) | ![](screenshots/02_documents.png) | ![](screenshots/07_tasks.png) | ![](screenshots/09_calendar.png) | ![](screenshots/13_home_dark.png) |
+
+| ฟอร์มเอกสาร | รายละเอียด | ค้นหา | ตั้งค่า | สำรอง/กู้คืน |
+|---|---|---|---|---|
+| ![](screenshots/05_document_form.png) | ![](screenshots/04_document_detail.png) | ![](screenshots/10_search.png) | ![](screenshots/11_settings.png) | ![](screenshots/12_backup.png) |
+
+---|---|---|---|---|
 | ![](screenshots/01_home.png) | ![](screenshots/02_documents.png) | ![](screenshots/05_tasks.png) | ![](screenshots/06_calendar.png) | ![](screenshots/09_home_dark.png) |
 
 ---
@@ -20,6 +27,15 @@
 - **ล็อกแอป** — PIN 4–6 หลัก (เก็บเป็น PBKDF2-SHA256 + salt ใน Secure Storage), ลายนิ้วมือ/ใบหน้า, ล็อกชั่วคราวเมื่อใส่ผิดหลายครั้ง, ซ่อนเนื้อหาในหน้า Recent Apps (FLAG_SECURE)
 - **สำรอง/กู้คืน** — ZIP (JSON + รูปภาพ + checksum SHA-256), บันทึกไปยังตำแหน่งที่เลือก, สำรองอัตโนมัติรายวัน/รายสัปดาห์, กู้คืนแบบแทนที่หรือรวม (ไม่ซ้ำ), Rollback อัตโนมัติเมื่อผิดพลาด
 - **ตั้งค่า** — ธีม (สว่าง/มืด/ตามระบบ), ภาษา (ไทย/English), การแจ้งเตือน, ล็อกแอป, สำรองข้อมูล, จัดการหมวดหมู่, พื้นที่จัดเก็บ, เกี่ยวกับ, ความเป็นส่วนตัว, ลบข้อมูลทั้งหมด (ยืนยัน 2 ขั้น)
+
+## Design System (UI)
+
+- **ฟอนต์:** IBM Plex Sans Thai (SIL OFL 1.1, ฝังในแอป) · ระยะบรรทัดปรับให้สระ/วรรณยุกต์ไทยไม่ถูกตัด
+- **Tokens** (`lib/core/theme/tokens.dart`): Space 4–32, Radii 6–24, Motion 150/240/360ms, Sizes (ปุ่ม 48, แถว 56)
+- **Theme** (`lib/core/theme/app_theme.dart`): Material 3, สี Navy #233B67 / พื้น #F5F6F8, สีสถานะ success/warning/danger ทั้งโหมดสว่างและมืด
+- **Components** (`lib/ui/design/`): `LkGroup` (กลุ่มรายการแทนการ์ดทีละใบ), `LkRow`/`LkValueRow`/`LkSwitchRow`, `LkPanel`, `LkBanner`, `LkSectionHeader`, `Pill`, `IconBadge`, `CountBadge`, `SearchField`, `PickerField`, `FormBlock`, `SegmentTabs`, `QuickActionButton`, `EmptyState`, `FadeSlideIn`, `Pressable`
+- **รายการข้อมูล** (`lib/ui/widgets/item_tiles.dart`): `DocumentRow`, `DocumentGridCard`, `TaskRow` (ติ๊กเสร็จแบบเคลื่อนไหว, ปัดขวา=เสร็จ/ปัดซ้าย=ลบ+เลิกทำ), `EventRow` (แบบ agenda), `HighlightText`
+- รองรับจอเล็ก 320dp ถึงแท็บเล็ต (จำกัดความกว้างเนื้อหา 720dp) และตัวอักษรระบบขนาดใหญ่ — มีเทสต์ตรวจ overflow อัตโนมัติ
 
 ## ความเป็นส่วนตัว
 

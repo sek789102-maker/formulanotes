@@ -6,12 +6,18 @@ String hex(List<int> b) => b.map((e) => e.toRadixString(16).padLeft(2, '0')).joi
 
 void main() {
   test('PBKDF2-HMAC-SHA256 matches published test vectors', () {
-    expect(hex(SecurityService.pbkdf2('password'.codeUnits, 'salt'.codeUnits, 1, 32)),
-        '120fb6cffcf8b32c43e7225256c4f837a86548c92ccc35480805987cb70be17b');
-    expect(hex(SecurityService.pbkdf2('password'.codeUnits, 'salt'.codeUnits, 2, 32)),
-        'ae4d0c95af6b46d32d0adff928f06dd02a303f8ef3c251dfd6e2d85a95474c43');
-    expect(hex(SecurityService.pbkdf2('password'.codeUnits, 'salt'.codeUnits, 4096, 32)),
-        'c5e478d59288c841aa530db6845c4c8d962893a001ce4e11a4963873aa98134a');
+    expect(
+      hex(SecurityService.pbkdf2('password'.codeUnits, 'salt'.codeUnits, 1, 32)),
+      '120fb6cffcf8b32c43e7225256c4f837a86548c92ccc35480805987cb70be17b',
+    );
+    expect(
+      hex(SecurityService.pbkdf2('password'.codeUnits, 'salt'.codeUnits, 2, 32)),
+      'ae4d0c95af6b46d32d0adff928f06dd02a303f8ef3c251dfd6e2d85a95474c43',
+    );
+    expect(
+      hex(SecurityService.pbkdf2('password'.codeUnits, 'salt'.codeUnits, 4096, 32)),
+      'c5e478d59288c841aa530db6845c4c8d962893a001ce4e11a4963873aa98134a',
+    );
   });
 
   test('PIN is stored only as salted hash and verifies correctly', () async {

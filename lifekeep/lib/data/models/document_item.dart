@@ -42,34 +42,33 @@ class DocumentItem {
     ReminderConfig? reminder,
     List<String>? attachmentPaths,
     bool? isPinned,
-  }) =>
-      DocumentItem(
-        id: id,
-        title: title ?? this.title,
-        categoryId: categoryId ?? this.categoryId,
-        description: description ?? this.description,
-        notes: notes ?? this.notes,
-        createdAt: createdAt,
-        updatedAt: updatedAt ?? this.updatedAt,
-        expiryDate: clearExpiry ? null : (expiryDate ?? this.expiryDate),
-        reminder: reminder ?? this.reminder,
-        attachmentPaths: attachmentPaths ?? this.attachmentPaths,
-        isPinned: isPinned ?? this.isPinned,
-      );
+  }) => DocumentItem(
+    id: id,
+    title: title ?? this.title,
+    categoryId: categoryId ?? this.categoryId,
+    description: description ?? this.description,
+    notes: notes ?? this.notes,
+    createdAt: createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    expiryDate: clearExpiry ? null : (expiryDate ?? this.expiryDate),
+    reminder: reminder ?? this.reminder,
+    attachmentPaths: attachmentPaths ?? this.attachmentPaths,
+    isPinned: isPinned ?? this.isPinned,
+  );
 
   Map<String, Object?> toMap() => {
-        'id': id,
-        'title': title,
-        'category_id': categoryId,
-        'description': description,
-        'notes': notes,
-        'created_at': createdAt.millisecondsSinceEpoch,
-        'updated_at': updatedAt.millisecondsSinceEpoch,
-        'expiry_date': expiryDate?.millisecondsSinceEpoch,
-        'reminder': reminder.encode(),
-        'attachments': jsonEncode(attachmentPaths),
-        'is_pinned': isPinned ? 1 : 0,
-      };
+    'id': id,
+    'title': title,
+    'category_id': categoryId,
+    'description': description,
+    'notes': notes,
+    'created_at': createdAt.millisecondsSinceEpoch,
+    'updated_at': updatedAt.millisecondsSinceEpoch,
+    'expiry_date': expiryDate?.millisecondsSinceEpoch,
+    'reminder': reminder.encode(),
+    'attachments': jsonEncode(attachmentPaths),
+    'is_pinned': isPinned ? 1 : 0,
+  };
 
   factory DocumentItem.fromMap(Map<String, Object?> m) {
     List<String> atts = const [];

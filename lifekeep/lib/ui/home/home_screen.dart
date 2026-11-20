@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/l10n/lang.dart';
-import '../../core/theme/app_theme.dart';
 import '../../core/utils/dates.dart';
 import '../../core/utils/formatters.dart';
 import '../../data/models/document_item.dart';
@@ -10,30 +9,40 @@ import '../../data/models/event_item.dart';
 import '../../data/models/task_item.dart';
 import '../../state/app_controller.dart';
 import '../calendar/event_form_screen.dart';
+import '../design/design.dart';
 import '../documents/document_detail_screen.dart';
 import '../documents/document_form_screen.dart';
 import '../search/search_screen.dart';
 import '../settings/settings_screen.dart';
 import '../shell/main_shell.dart';
 import '../tasks/task_form_screen.dart';
-import '../widgets/common.dart';
 import '../widgets/item_tiles.dart';
 
 class _HomeData {
   _HomeData({
     required this.docCount,
     required this.pendingTasks,
-    required this.dueTasks,
-    required this.expiringDocs,
+    required this.overdueTasks,
+    required this.soonTasks,
+    required this.urgentDocs,
+    required this.laterDocs,
     required this.events,
     required this.totalItems,
   });
   final int docCount;
   final int pendingTasks;
-  final List<TaskItem> dueTasks;
-  final List<DocumentItem> expiringDocs;
+  final List<TaskItem> overdueTasks;
+  final List<TaskItem> soonTasks;
+
+  /// Expired or expiring within 7 days.
+  final List<DocumentItem> urgentDocs;
+
+  /// Expiring in 8–30 days.
+  final List<DocumentItem> laterDocs;
   final List<EventItem> events;
   final int totalItems;
+
+  int get expiringCount => urgentDocs.length + laterDocs.length;
 }
 
 class HomeScreen extends StatelessWidget {
@@ -41,19 +50,29 @@ class HomeScreen extends StatelessWidget {
 
   static Future<_HomeData> _load(AppController c) async {
     final now = DateTime.now();
+    final due = await c.s.tasks.pendingDueBefore(Dates.endOfDay(now.add(const Duration(days: 3))));
+    final overdue = <TaskItem>[];
+    final soon = <TaskItem>[];
+    for (final t in due) {
+      final g = TaskGrouping.classify(completed: false, dueAt: t.dueAt, hasTime: t.hasTime, now: now);
+      (g == TaskGroup.overdue ? overdue : soon).add(t);
+    }
+    final docs = await c.s.documents.expiringBefore(
+      Dates.endOfDay(now.add(const Duration(days: ExpiryCalc.soonThresholdDays))),
+    );
+    final urgent = docs.where((d) => (ExpiryCalc.daysLeft(d.expiryDate, now) ?? 99) <= 7).toList();
+    final later = docs.where((d) => (ExpiryCalc.daysLeft(d.expiryDate, now) ?? 99) > 7).toList();
     final docCount = await c.s.documents.count();
-    final pending = await c.s.tasks.pendingCount();
-    final dueTasks = await c.s.tasks.pendingDueBefore(Dates.endOfDay(now.add(const Duration(days: 3))));
-    final expiring = await c.s.documents.expiringBefore(Dates.endOfDay(now.add(const Duration(days: ExpiryCalc.soonThresholdDays))));
-    final events = await c.s.events.between(Dates.startOfDay(now), Dates.endOfDay(now.add(const Duration(days: 7))));
     final allTasks = (await c.s.tasks.all()).length;
     final allEvents = (await c.s.events.all()).length;
     return _HomeData(
       docCount: docCount,
-      pendingTasks: pending,
-      dueTasks: dueTasks.take(5).toList(),
-      expiringDocs: expiring.take(5).toList(),
-      events: events.take(5).toList(),
+      pendingTasks: await c.s.tasks.pendingCount(),
+      overdueTasks: overdue,
+      soonTasks: soon,
+      urgentDocs: urgent,
+      laterDocs: later,
+      events: await c.s.events.between(Dates.startOfDay(now), Dates.endOfDay(now.add(const Duration(days: 7)))),
       totalItems: docCount + allTasks + allEvents,
     );
   }
@@ -65,246 +84,375 @@ class HomeScreen extends StatelessWidget {
     return context.tr('สวัสดีตอนเย็น', 'Good evening');
   }
 
+  void _open(BuildContext context, Widget page) => Navigator.push(context, MaterialPageRoute(builder: (_) => page));
+
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    final text = Theme.of(context).textTheme;
+    final t = Theme.of(context).textTheme;
     return Scaffold(
       body: SafeArea(
         bottom: false,
         child: DataBuilder<_HomeData>(
           load: _load,
-          builder: (context, d) => CustomScrollView(slivers: [
-            SliverPadding(
-              padding: const EdgeInsets.fromLTRB(20, 16, 12, 0),
-              sliver: SliverToBoxAdapter(
-                child: Row(children: [
-                  Expanded(
-                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      Text(_greeting(context), style: text.headlineSmall),
-                      const SizedBox(height: 4),
-                      Text(Fmt.fullDate(DateTime.now()), style: text.bodyMedium?.copyWith(color: scheme.onSurfaceVariant)),
-                    ]),
-                  ),
-                  IconButton(
-                    tooltip: context.tr('ค้นหา', 'Search'),
-                    icon: const Icon(Icons.search_rounded),
-                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SearchScreen())),
-                  ),
-                  IconButton(
-                    tooltip: context.tr('ตั้งค่า', 'Settings'),
-                    icon: const Icon(Icons.settings_outlined),
-                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SettingsScreen())),
-                  ),
-                ]),
-              ),
-            ),
-            SliverPadding(
-              padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
-              sliver: SliverToBoxAdapter(
-                child: Row(children: [
-                  Expanded(
-                    child: _StatCard(
-                      icon: Icons.folder_rounded,
-                      value: d.docCount,
-                      label: context.tr('เอกสารทั้งหมด', 'Documents'),
-                      highlight: true,
-                      onTap: () => MainShell.goToTab(context, 1),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: _StatCard(
-                      icon: Icons.check_circle_rounded,
-                      value: d.pendingTasks,
-                      label: context.tr('งานที่ยังไม่เสร็จ', 'Pending tasks'),
-                      onTap: () => MainShell.goToTab(context, 2),
-                    ),
-                  ),
-                ]),
-              ),
-            ),
-            const SliverPadding(
-              padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
-              sliver: SliverToBoxAdapter(child: _QuickActions()),
-            ),
-            if (d.totalItems == 0)
-              SliverToBoxAdapter(
-                child: EmptyState(
-                  icon: Icons.inventory_2_outlined,
-                  title: context.tr('เริ่มต้นใช้งาน LIFEKEEP', 'Welcome to LIFEKEEP'),
-                  message: context.tr(
-                    'เก็บเอกสารสำคัญ จัดการงาน และกำหนดการไว้ในเครื่องของคุณ\nข้อมูลทั้งหมดอยู่ในเครื่อง ไม่มีการส่งออกภายนอก',
-                    'Keep documents, tasks and plans on your device.\nAll data stays on this device.',
-                  ),
-                  actionLabel: context.tr('เพิ่มเอกสารแรก', 'Add first document'),
-                  onAction: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const DocumentFormScreen())),
-                ),
-              )
-            else
-              SliverPadding(
-                padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
-                sliver: SliverList.list(children: [
-                  SectionHeader(
-                    title: context.tr('งานที่ใกล้กำหนด', 'Tasks due soon'),
-                    trailing: TextButton(
-                      onPressed: () => MainShell.goToTab(context, 2),
-                      child: Text(context.tr('ดูทั้งหมด', 'See all')),
-                    ),
-                  ),
-                  if (d.dueTasks.isEmpty)
-                    _InlineEmpty(text: context.tr('ไม่มีงานที่ใกล้กำหนดใน 3 วันนี้', 'No tasks due in the next 3 days'))
-                  else
-                    for (final t in d.dueTasks)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 8),
-                        child: TaskTile(
-                          task: t,
-                          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => TaskFormScreen(task: t))),
-                          onToggle: (v) => runAction(context, () => context.read<AppController>().setTaskCompleted(t, v)),
+          builder: (context, d) {
+            final c = context.read<AppController>();
+            Widget taskRow(TaskItem task) => TaskRow(
+              task: task,
+              onTap: () => _open(context, TaskFormScreen(task: task)),
+              onToggle: (v) => runAction(context, () => c.setTaskCompleted(task, v)),
+            );
+            Widget docRow(DocumentItem doc) => DocumentRow(
+              doc: doc,
+              onTap: () => _open(context, DocumentDetailScreen(documentId: doc.id)),
+            );
+
+            final attention = [...d.overdueTasks.take(5).map(taskRow), ...d.urgentDocs.take(5).map(docRow)];
+            var section = 0;
+            Widget animated(Widget w) => FadeSlideIn(index: section++, child: w);
+
+            return ContentWidth(
+              child: ListView(
+                padding: const EdgeInsets.fromLTRB(Space.page, Space.md, Space.page, Space.xxxl),
+                children: [
+                  // Header
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              Fmt.fullDate(DateTime.now()),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: t.bodySmall,
+                            ),
+                            const SizedBox(height: 2),
+                            Text(_greeting(context), style: t.headlineSmall),
+                          ],
                         ),
                       ),
-                  SectionHeader(
-                    title: context.tr('เอกสารใกล้หมดอายุ', 'Expiring documents'),
-                    trailing: TextButton(
-                      onPressed: () => MainShell.goToTab(context, 1),
-                      child: Text(context.tr('ดูทั้งหมด', 'See all')),
+                      _HeaderButton(
+                        icon: Icons.search_rounded,
+                        tooltip: context.tr('ค้นหา', 'Search'),
+                        onTap: () => _open(context, const SearchScreen()),
+                      ),
+                      const SizedBox(width: Space.sm),
+                      _HeaderButton(
+                        icon: Icons.settings_outlined,
+                        tooltip: context.tr('ตั้งค่า', 'Settings'),
+                        onTap: () => _open(context, const SettingsScreen()),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: Space.lg),
+                  animated(_Overview(data: d)),
+                  const SizedBox(height: Space.md),
+                  animated(
+                    Row(
+                      children: [
+                        Expanded(
+                          child: QuickActionButton(
+                            icon: Icons.note_add_outlined,
+                            label: context.tr('เพิ่มเอกสาร', 'Document'),
+                            onTap: () => _open(context, const DocumentFormScreen()),
+                          ),
+                        ),
+                        const SizedBox(width: Space.sm),
+                        Expanded(
+                          child: QuickActionButton(
+                            icon: Icons.add_task_rounded,
+                            label: context.tr('เพิ่มงาน', 'Task'),
+                            onTap: () => _open(context, const TaskFormScreen()),
+                          ),
+                        ),
+                        const SizedBox(width: Space.sm),
+                        Expanded(
+                          child: QuickActionButton(
+                            icon: Icons.event_available_outlined,
+                            label: context.tr('เพิ่มกิจกรรม', 'Event'),
+                            onTap: () => _open(context, const EventFormScreen()),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  if (d.expiringDocs.isEmpty)
-                    _InlineEmpty(text: context.tr('ไม่มีเอกสารที่จะหมดอายุใน 30 วัน', 'Nothing expires in the next 30 days'))
-                  else
-                    for (final doc in d.expiringDocs)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 8),
-                        child: DocumentCard(
-                          doc: doc,
-                          onTap: () => Navigator.push(
-                              context, MaterialPageRoute(builder: (_) => DocumentDetailScreen(documentId: doc.id))),
+                  if (d.totalItems == 0)
+                    animated(const _Welcome())
+                  else ...[
+                    if (attention.isNotEmpty) ...[
+                      LkSectionHeader(title: context.tr('ต้องจัดการ', 'Needs attention'), count: attention.length),
+                      animated(LkGroup(dividerIndent: 60, children: attention)),
+                    ],
+                    if (d.soonTasks.isNotEmpty) ...[
+                      LkSectionHeader(
+                        title: context.tr('งานใน 3 วันนี้', 'Due in 3 days'),
+                        actionLabel: context.tr('ทั้งหมด', 'All'),
+                        onAction: () => MainShell.goToTab(context, 2),
+                      ),
+                      animated(LkGroup(dividerIndent: 52, children: d.soonTasks.take(5).map(taskRow).toList())),
+                    ],
+                    if (d.events.isNotEmpty) ...[
+                      LkSectionHeader(
+                        title: context.tr('กำหนดการ 7 วัน', 'Next 7 days'),
+                        actionLabel: context.tr('ปฏิทิน', 'Calendar'),
+                        onAction: () => MainShell.goToTab(context, 3),
+                      ),
+                      animated(
+                        LkGroup(
+                          dividerIndent: 80,
+                          children: [
+                            for (final e in d.events.take(5))
+                              EventRow(
+                                event: e,
+                                onTap: () => _open(context, EventFormScreen(event: e)),
+                              ),
+                          ],
                         ),
                       ),
-                  SectionHeader(
-                    title: context.tr('กิจกรรมที่กำลังจะมาถึง', 'Upcoming events'),
-                    trailing: TextButton(
-                      onPressed: () => MainShell.goToTab(context, 3),
-                      child: Text(context.tr('ปฏิทิน', 'Calendar')),
-                    ),
-                  ),
-                  if (d.events.isEmpty)
-                    _InlineEmpty(text: context.tr('ไม่มีกิจกรรมใน 7 วันข้างหน้า', 'No events in the next 7 days'))
-                  else
-                    for (final e in d.events)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 8),
-                        child: EventTile(
-                          event: e,
-                          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => EventFormScreen(event: e))),
+                    ],
+                    if (d.laterDocs.isNotEmpty) ...[
+                      LkSectionHeader(
+                        title: context.tr('เอกสารใกล้หมดอายุ', 'Expiring soon'),
+                        actionLabel: context.tr('ทั้งหมด', 'All'),
+                        onAction: () => MainShell.goToTab(context, 1),
+                      ),
+                      animated(LkGroup(dividerIndent: 72, children: d.laterDocs.take(5).map(docRow).toList())),
+                    ],
+                    if (attention.isEmpty && d.soonTasks.isEmpty && d.events.isEmpty && d.laterDocs.isEmpty) ...[
+                      const SizedBox(height: Space.lg),
+                      animated(
+                        LkBanner(
+                          icon: Icons.task_alt_rounded,
+                          title: context.tr('ทุกอย่างเรียบร้อย', 'All clear'),
+                          message: context.tr(
+                            'ไม่มีงานค้าง กิจกรรม หรือเอกสารที่ต้องดูแลในช่วงนี้',
+                            'No tasks, events or documents need attention right now.',
+                          ),
+                          color: context.status.success,
+                          background: context.status.successContainer,
                         ),
                       ),
-                ]),
+                    ],
+                  ],
+                ],
               ),
-          ]),
+            );
+          },
         ),
       ),
     );
   }
 }
 
-class _StatCard extends StatelessWidget {
-  const _StatCard({required this.icon, required this.value, required this.label, required this.onTap, this.highlight = false});
+class _HeaderButton extends StatelessWidget {
+  const _HeaderButton({required this.icon, required this.tooltip, required this.onTap});
   final IconData icon;
-  final int value;
-  final String label;
+  final String tooltip;
   final VoidCallback onTap;
-  final bool highlight;
 
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    final dark = Theme.of(context).brightness == Brightness.dark;
-    final bg = highlight ? (dark ? scheme.primaryContainer : AppColors.primary) : scheme.surface;
-    final fg = highlight ? (dark ? scheme.onPrimaryContainer : Colors.white) : scheme.onSurface;
-    return Card(
-      color: bg,
-      shape: highlight
-          ? RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radius))
-          : null,
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Icon(icon, color: highlight ? fg.withValues(alpha: 0.85) : scheme.primary, size: 22),
-            const SizedBox(height: 14),
+    return Tooltip(
+      message: tooltip,
+      child: Material(
+        color: scheme.surface,
+        shape: const CircleBorder(),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          child: SizedBox(width: 42, height: 42, child: Icon(icon, size: 21, color: scheme.onSurface)),
+        ),
+      ),
+    );
+  }
+}
+
+/// One compact strip with the four key numbers.
+class _Overview extends StatelessWidget {
+  const _Overview({required this.data});
+  final _HomeData data;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final s = context.status;
+    Widget divider() => Container(width: 1, height: 32, color: scheme.outlineVariant);
+    return LkPanel(
+      padding: const EdgeInsets.symmetric(vertical: Space.md, horizontal: Space.xs),
+      child: Row(
+        children: [
+          Expanded(
+            child: _Stat(
+              value: data.docCount,
+              label: context.tr('เอกสาร', 'Documents'),
+              icon: Icons.folder_outlined,
+              color: scheme.primary,
+              onTap: () => MainShell.goToTab(context, 1),
+            ),
+          ),
+          divider(),
+          Expanded(
+            child: _Stat(
+              value: data.pendingTasks,
+              label: context.tr('งานค้าง', 'Open tasks'),
+              icon: Icons.radio_button_unchecked_rounded,
+              color: scheme.primary,
+              onTap: () => MainShell.goToTab(context, 2),
+            ),
+          ),
+          divider(),
+          Expanded(
+            child: _Stat(
+              value: data.overdueTasks.length,
+              label: context.tr('เลยกำหนด', 'Overdue'),
+              icon: Icons.error_outline_rounded,
+              color: data.overdueTasks.isEmpty ? scheme.onSurfaceVariant : s.danger,
+              onTap: () => MainShell.goToTab(context, 2),
+            ),
+          ),
+          divider(),
+          Expanded(
+            child: _Stat(
+              value: data.expiringCount,
+              label: context.tr('ใกล้หมดอายุ', 'Expiring'),
+              icon: Icons.hourglass_bottom_rounded,
+              color: data.expiringCount == 0 ? scheme.onSurfaceVariant : s.warning,
+              onTap: () => MainShell.goToTab(context, 1),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _Stat extends StatelessWidget {
+  const _Stat({required this.value, required this.label, required this.icon, required this.color, required this.onTap});
+  final int value;
+  final String label;
+  final IconData icon;
+  final Color color;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = Theme.of(context).textTheme;
+    return InkWell(
+      onTap: onTap,
+      borderRadius: Radii.brMd,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: Space.xs, vertical: Space.xs),
+        child: Column(
+          children: [
             TweenAnimationBuilder<int>(
               tween: IntTween(begin: 0, end: value),
-              duration: const Duration(milliseconds: 500),
-              curve: Curves.easeOutCubic,
-              builder: (context, v, _) => Text(
-                '$v',
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w700, color: fg),
+              duration: Motion.slow,
+              curve: Motion.curve,
+              builder: (context, v, _) => FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text('$v', style: t.headlineSmall?.copyWith(color: value == 0 ? null : color, height: 1.2)),
               ),
             ),
             const SizedBox(height: 2),
-            Text(label,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(color: fg.withValues(alpha: 0.75))),
-          ]),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(icon, size: 12, color: color),
+                  const SizedBox(width: 3),
+                  Text(label, maxLines: 1, style: t.labelSmall),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
-class _QuickActions extends StatelessWidget {
-  const _QuickActions();
+class _Welcome extends StatelessWidget {
+  const _Welcome();
 
   @override
   Widget build(BuildContext context) {
-    Widget action(IconData icon, String label, Widget page) => Expanded(
-          child: AppCard(
-            padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
-            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => page)),
-            child: Column(children: [
-              IconBadge(icon: icon, color: Theme.of(context).colorScheme.primary, size: 40),
-              const SizedBox(height: 8),
-              Text(label,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w600)),
-            ]),
-          ),
-        );
-    return Row(children: [
-      action(Icons.note_add_outlined, context.tr('เพิ่มเอกสาร', 'Add Document'), const DocumentFormScreen()),
-      const SizedBox(width: 10),
-      action(Icons.add_task_rounded, context.tr('เพิ่มงาน', 'Add Task'), const TaskFormScreen()),
-      const SizedBox(width: 10),
-      action(Icons.event_available_outlined, context.tr('เพิ่มกิจกรรม', 'Add Event'), const EventFormScreen()),
-    ]);
-  }
-}
-
-class _InlineEmpty extends StatelessWidget {
-  const _InlineEmpty({required this.text});
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
+    final t = Theme.of(context).textTheme;
     final scheme = Theme.of(context).colorScheme;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: scheme.outlineVariant),
+    Widget step(int n, IconData icon, String title, String body) => Padding(
+      padding: const EdgeInsets.only(top: Space.md),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          IconBadge(icon: icon, color: scheme.primary, size: 34),
+          const SizedBox(width: Space.md),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: t.titleSmall),
+                Text(body, style: t.bodySmall),
+              ],
+            ),
+          ),
+        ],
       ),
-      child: Row(children: [
-        Icon(Icons.check_rounded, size: 18, color: scheme.onSurfaceVariant),
-        const SizedBox(width: 10),
-        Expanded(child: Text(text, style: TextStyle(color: scheme.onSurfaceVariant))),
-      ]),
+    );
+    return Padding(
+      padding: const EdgeInsets.only(top: Space.xl),
+      child: LkPanel(
+        padding: const EdgeInsets.all(Space.xl),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(context.tr('เริ่มต้นใช้งาน LIFEKEEP', 'Welcome to LIFEKEEP'), style: t.titleLarge),
+            const SizedBox(height: Space.xs),
+            Text(
+              context.tr(
+                'ทุกอย่างเก็บไว้ในเครื่องนี้ ไม่ต้องสมัครบัญชี ไม่ใช้อินเทอร์เน็ต',
+                'Everything stays on this device. No account, no internet.',
+              ),
+              style: t.bodyMedium?.copyWith(color: scheme.onSurfaceVariant),
+            ),
+            step(
+              1,
+              Icons.folder_outlined,
+              context.tr('เก็บเอกสารสำคัญ', 'Store key documents'),
+              context.tr(
+                'ถ่ายรูปบัตร ใบขับขี่ กรมธรรม์ และตั้งวันหมดอายุ',
+                'Snap IDs, licences, policies and set expiry dates',
+              ),
+            ),
+            step(
+              2,
+              Icons.notifications_none_rounded,
+              context.tr('รับการแจ้งเตือนล่วงหน้า', 'Get reminded early'),
+              context.tr(
+                'เตือนก่อนหมดอายุ ก่อนถึงกำหนดงาน และก่อนนัดหมาย',
+                'Before expiry, deadlines and appointments',
+              ),
+            ),
+            step(
+              3,
+              Icons.backup_outlined,
+              context.tr('สำรองข้อมูลไว้ภายนอก', 'Keep a backup'),
+              context.tr('ส่งออกไฟล์สำรองไปเก็บใน USB หรือคอมพิวเตอร์', 'Export a backup file to USB or a computer'),
+            ),
+            const SizedBox(height: Space.xl),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton.icon(
+                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const DocumentFormScreen())),
+                icon: const Icon(Icons.add_rounded),
+                label: Text(context.tr('เพิ่มเอกสารแรก', 'Add first document')),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -63,16 +63,19 @@ class _BootstrapAppState extends State<BootstrapApp> {
               child: snap.hasError
                   ? Padding(
                       padding: const EdgeInsets.all(32),
-                      child: Column(mainAxisSize: MainAxisSize.min, children: [
-                        const Icon(Icons.error_outline_rounded, size: 48, color: AppColors.danger),
-                        const SizedBox(height: 16),
-                        Text(friendlyError(snap.error!), textAlign: TextAlign.center),
-                        const SizedBox(height: 16),
-                        FilledButton(
-                          onPressed: () => setState(() => _future = _init()),
-                          child: Text(Lang.t('ลองใหม่', 'Retry')),
-                        ),
-                      ]),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.error_outline_rounded, size: 48, color: AppColors.danger),
+                          const SizedBox(height: 16),
+                          Text(friendlyError(snap.error!), textAlign: TextAlign.center),
+                          const SizedBox(height: 16),
+                          FilledButton(
+                            onPressed: () => setState(() => _future = _init()),
+                            child: Text(Lang.t('ลองใหม่', 'Retry')),
+                          ),
+                        ],
+                      ),
                     )
                   : const CircularProgressIndicator(),
             ),

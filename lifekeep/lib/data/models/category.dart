@@ -26,34 +26,34 @@ class ItemCategory {
   IconData get icon => CategoryIcons.of(iconKey);
 
   ItemCategory copyWith({String? name, int? colorValue, String? iconKey, int? sortOrder}) => ItemCategory(
-        id: id,
-        name: name ?? this.name,
-        colorValue: colorValue ?? this.colorValue,
-        iconKey: iconKey ?? this.iconKey,
-        isDefault: isDefault,
-        sortOrder: sortOrder ?? this.sortOrder,
-        createdAt: createdAt,
-      );
+    id: id,
+    name: name ?? this.name,
+    colorValue: colorValue ?? this.colorValue,
+    iconKey: iconKey ?? this.iconKey,
+    isDefault: isDefault,
+    sortOrder: sortOrder ?? this.sortOrder,
+    createdAt: createdAt,
+  );
 
   Map<String, Object?> toMap() => {
-        'id': id,
-        'name': name,
-        'color': colorValue,
-        'icon': iconKey,
-        'is_default': isDefault ? 1 : 0,
-        'sort_order': sortOrder,
-        'created_at': createdAt.millisecondsSinceEpoch,
-      };
+    'id': id,
+    'name': name,
+    'color': colorValue,
+    'icon': iconKey,
+    'is_default': isDefault ? 1 : 0,
+    'sort_order': sortOrder,
+    'created_at': createdAt.millisecondsSinceEpoch,
+  };
 
   factory ItemCategory.fromMap(Map<String, Object?> m) => ItemCategory(
-        id: m['id'] as String,
-        name: (m['name'] as String?) ?? '',
-        colorValue: (m['color'] as num?)?.toInt() ?? 0xFF64748B,
-        iconKey: (m['icon'] as String?) ?? 'folder',
-        isDefault: ((m['is_default'] as num?) ?? 0) == 1,
-        sortOrder: (m['sort_order'] as num?)?.toInt() ?? 0,
-        createdAt: DateTime.fromMillisecondsSinceEpoch((m['created_at'] as num?)?.toInt() ?? 0),
-      );
+    id: m['id'] as String,
+    name: (m['name'] as String?) ?? '',
+    colorValue: (m['color'] as num?)?.toInt() ?? 0xFF64748B,
+    iconKey: (m['icon'] as String?) ?? 'folder',
+    isDefault: ((m['is_default'] as num?) ?? 0) == 1,
+    sortOrder: (m['sort_order'] as num?)?.toInt() ?? 0,
+    createdAt: DateTime.fromMillisecondsSinceEpoch((m['created_at'] as num?)?.toInt() ?? 0),
+  );
 }
 
 /// Fixed icon set (const so icon tree-shaking keeps working).
@@ -90,14 +90,14 @@ class DefaultCategories {
   static List<ItemCategory> build(bool english) {
     final now = DateTime.now();
     ItemCategory c(String id, String th, String en, int color, String icon, int order) => ItemCategory(
-          id: id,
-          name: english ? en : th,
-          colorValue: color,
-          iconKey: icon,
-          isDefault: true,
-          sortOrder: order,
-          createdAt: now,
-        );
+      id: id,
+      name: english ? en : th,
+      colorValue: color,
+      iconKey: icon,
+      isDefault: true,
+      sortOrder: order,
+      createdAt: now,
+    );
     return [
       c('cat_personal', 'ส่วนตัว', 'Personal', 0xFF233B67, 'person', 0),
       c('cat_education', 'การศึกษา', 'Education', 0xFF3B6EA8, 'school', 1),

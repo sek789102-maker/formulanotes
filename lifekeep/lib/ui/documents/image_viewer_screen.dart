@@ -44,16 +44,22 @@ class _ImageViewerScreenState extends State<ImageViewerScreen> {
         onPageChanged: (i) => setState(() => _index = i),
         itemBuilder: (context, i) {
           Widget missing() => Center(
-                child: Column(mainAxisSize: MainAxisSize.min, children: [
-                  const Icon(Icons.broken_image_outlined, color: Colors.white70, size: 56),
-                  const SizedBox(height: 12),
-                  Text(
-                    context.tr('ไม่พบไฟล์รูปภาพ ไฟล์อาจถูกย้ายหรือลบ', 'Image file not found. It may have been moved or deleted.'),
-                    style: const TextStyle(color: Colors.white70),
-                    textAlign: TextAlign.center,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.broken_image_outlined, color: Colors.white70, size: 56),
+                const SizedBox(height: 12),
+                Text(
+                  context.tr(
+                    'ไม่พบไฟล์รูปภาพ ไฟล์อาจถูกย้ายหรือลบ',
+                    'Image file not found. It may have been moved or deleted.',
                   ),
-                ]),
-              );
+                  style: const TextStyle(color: Colors.white70),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          );
           try {
             final f = c.s.attachments.fileFor(widget.names[i]);
             return InteractiveViewer(

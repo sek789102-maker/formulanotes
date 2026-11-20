@@ -39,12 +39,7 @@ class BackupFormat {
 enum RestoreMode { replace, merge }
 
 class BackupFileInfo {
-  const BackupFileInfo({
-    required this.path,
-    required this.size,
-    required this.modified,
-    required this.isAuto,
-  });
+  const BackupFileInfo({required this.path, required this.size, required this.modified, required this.isAuto});
   final String path;
   final int size;
   final DateTime modified;
@@ -61,12 +56,12 @@ class BackupCounts {
   final int attachments;
 
   Map<String, int> toJson() => {
-        'documents': documents,
-        'tasks': tasks,
-        'events': events,
-        'categories': categories,
-        'attachments': attachments,
-      };
+    'documents': documents,
+    'tasks': tasks,
+    'events': events,
+    'categories': categories,
+    'attachments': attachments,
+  };
 
   static BackupCounts fromJson(Object? m) {
     if (m is! Map) return const BackupCounts();
@@ -247,7 +242,9 @@ class BackupService {
 
       final enc = ZipFileEncoder();
       enc.create(tmpPath);
-      enc.addArchiveFile(ArchiveFile.string(BackupFormat.manifestName, const JsonEncoder.withIndent('  ').convert(manifest)));
+      enc.addArchiveFile(
+        ArchiveFile.string(BackupFormat.manifestName, const JsonEncoder.withIndent('  ').convert(manifest)),
+      );
       enc.addArchiveFile(ArchiveFile.bytes(BackupFormat.dataName, dataJson));
       for (final e in attachmentFiles.entries) {
         // Streams from disk; images are not loaded fully into memory.
@@ -257,8 +254,11 @@ class BackupService {
 
       final check = await inspect(tmpPath, verifyAttachments: true);
       if (!check.canRestore || check.warnings.isNotEmpty) {
-        throw AppException(ErrorKind.backup,
-            Lang.t('ตรวจสอบไฟล์สำรองข้อมูลไม่ผ่าน', 'Backup verification failed'), check.fatal ?? check.warnings.join('; '));
+        throw AppException(
+          ErrorKind.backup,
+          Lang.t('ตรวจสอบไฟล์สำรองข้อมูลไม่ผ่าน', 'Backup verification failed'),
+          check.fatal ?? check.warnings.join('; '),
+        );
       }
       await File(tmpPath).rename(finalPath);
       final f = File(finalPath);
@@ -288,12 +288,14 @@ class BackupService {
     await for (final e in backupDir.list()) {
       if (e is File && e.path.endsWith('.zip')) {
         final st = await e.stat();
-        list.add(BackupFileInfo(
-          path: e.path,
-          size: st.size,
-          modified: st.modified,
-          isAuto: p.basename(e.path).startsWith(autoPrefix),
-        ));
+        list.add(
+          BackupFileInfo(
+            path: e.path,
+            size: st.size,
+            modified: st.modified,
+            isAuto: p.basename(e.path).startsWith(autoPrefix),
+          ),
+        );
       }
     }
     list.sort((a, b) => b.modified.compareTo(a.modified));
@@ -341,13 +343,20 @@ class BackupService {
         archive = ZipDecoder().decodeStream(input);
       } catch (e) {
         return BackupInspection(
-            path: path, fatal: t('ไฟล์ไม่ใช่ไฟล์สำรองข้อมูล LIFEKEEP หรือไฟล์เสียหาย', 'Not a LIFEKEEP backup or the file is damaged'));
+          path: path,
+          fatal: t(
+            'ไฟล์ไม่ใช่ไฟล์สำรองข้อมูล LIFEKEEP หรือไฟล์เสียหาย',
+            'Not a LIFEKEEP backup or the file is damaged',
+          ),
+        );
       }
       final mf = archive.findFile(BackupFormat.manifestName);
       final df = archive.findFile(BackupFormat.dataName);
       if (mf == null || df == null) {
         return BackupInspection(
-            path: path, fatal: t('ไฟล์ไม่ใช่ไฟล์สำรองข้อมูล LIFEKEEP', 'This is not a LIFEKEEP backup file'));
+          path: path,
+          fatal: t('ไฟล์ไม่ใช่ไฟล์สำรองข้อมูล LIFEKEEP', 'This is not a LIFEKEEP backup file'),
+        );
       }
       final Map<String, dynamic> manifest;
       try {
@@ -356,7 +365,10 @@ class BackupService {
         return BackupInspection(path: path, fatal: t('ข้อมูลกำกับไฟล์เสียหาย', 'Backup manifest is damaged'));
       }
       if (manifest['format'] != BackupFormat.id) {
-        return BackupInspection(path: path, fatal: t('ไฟล์ไม่ใช่ไฟล์สำรองข้อมูล LIFEKEEP', 'This is not a LIFEKEEP backup file'));
+        return BackupInspection(
+          path: path,
+          fatal: t('ไฟล์ไม่ใช่ไฟล์สำรองข้อมูล LIFEKEEP', 'This is not a LIFEKEEP backup file'),
+        );
       }
       final fv = (manifest['formatVersion'] as num?)?.toInt();
       if (fv == null || fv < 1) {
@@ -366,8 +378,10 @@ class BackupService {
         return BackupInspection(
           path: path,
           formatVersion: fv,
-          fatal: t('ไฟล์นี้สร้างจาก LIFEKEEP เวอร์ชันที่ใหม่กว่า กรุณาอัปเดตแอปก่อนกู้คืน',
-              'This backup was made by a newer LIFEKEEP version. Please update the app first.'),
+          fatal: t(
+            'ไฟล์นี้สร้างจาก LIFEKEEP เวอร์ชันที่ใหม่กว่า กรุณาอัปเดตแอปก่อนกู้คืน',
+            'This backup was made by a newer LIFEKEEP version. Please update the app first.',
+          ),
         );
       }
       final createdAt = DateTime.tryParse(manifest['createdAt'] as String? ?? '')?.toLocal();
@@ -542,16 +556,20 @@ class BackupService {
   Future<RestoreResult> restore(BackupInspection inspection, RestoreMode mode) async {
     final data = inspection.data;
     if (!inspection.canRestore || data == null) {
-      throw AppException(ErrorKind.restore,
-          inspection.fatal ?? Lang.t('ไฟล์สำรองข้อมูลไม่ถูกต้อง', 'Invalid backup file'));
+      throw AppException(
+        ErrorKind.restore,
+        inspection.fatal ?? Lang.t('ไฟล์สำรองข้อมูลไม่ถูกต้อง', 'Invalid backup file'),
+      );
     }
 
     // 1. Safety backup of current data (so the user can always go back).
     String? safetyPath;
     try {
-      final hasData = ((await db.rawQuery(
-                      'SELECT (SELECT COUNT(*) FROM documents)+(SELECT COUNT(*) FROM tasks)+(SELECT COUNT(*) FROM events) AS n'))
-                  .first['n'] as num)
+      final hasData =
+          ((await db.rawQuery(
+                    'SELECT (SELECT COUNT(*) FROM documents)+(SELECT COUNT(*) FROM tasks)+(SELECT COUNT(*) FROM events) AS n',
+                  )).first['n']
+                  as num)
               .toInt() >
           0;
       if (hasData) {
@@ -560,8 +578,10 @@ class BackupService {
     } catch (e) {
       throw AppException(
         ErrorKind.restore,
-        Lang.t('ไม่สามารถสำรองข้อมูลปัจจุบันก่อนกู้คืนได้ จึงยกเลิกการกู้คืนเพื่อความปลอดภัย',
-            'Could not back up current data before restoring, so the restore was cancelled for safety.'),
+        Lang.t(
+          'ไม่สามารถสำรองข้อมูลปัจจุบันก่อนกู้คืนได้ จึงยกเลิกการกู้คืนเพื่อความปลอดภัย',
+          'Could not back up current data before restoring, so the restore was cancelled for safety.',
+        ),
         e,
       );
     }
@@ -593,8 +613,14 @@ class BackupService {
       }
     } catch (e) {
       await _safeDelete(staging);
-      throw AppException(ErrorKind.restore,
-          Lang.t('แตกไฟล์แนบไม่สำเร็จ ข้อมูลเดิมไม่ถูกเปลี่ยนแปลง', 'Could not extract attachments. Your data was not changed.'), e);
+      throw AppException(
+        ErrorKind.restore,
+        Lang.t(
+          'แตกไฟล์แนบไม่สำเร็จ ข้อมูลเดิมไม่ถูกเปลี่ยนแปลง',
+          'Could not extract attachments. Your data was not changed.',
+        ),
+        e,
+      );
     } finally {
       try {
         input?.closeSync();
@@ -628,8 +654,10 @@ class BackupService {
         // Guarantee the fallback category exists.
         final other = await txn.query('categories', where: 'id = ?', whereArgs: [ItemCategory.otherId]);
         if (other.isEmpty) {
-          await txn.insert('categories',
-              DefaultCategories.build(Lang.isEn).firstWhere((c) => c.id == ItemCategory.otherId).toMap());
+          await txn.insert(
+            'categories',
+            DefaultCategories.build(Lang.isEn).firstWhere((c) => c.id == ItemCategory.otherId).toMap(),
+          );
         }
         final catIds = (await txn.query('categories', columns: ['id'])).map((r) => r['id'] as String).toSet();
 
@@ -646,8 +674,10 @@ class BackupService {
         }
         if (mode == RestoreMode.replace) {
           for (final s in data.settings.entries) {
-            await txn.insert('settings', {'key': s.key, 'value': s.value},
-                conflictAlgorithm: ConflictAlgorithm.replace);
+            await txn.insert('settings', {
+              'key': s.key,
+              'value': s.value,
+            }, conflictAlgorithm: ConflictAlgorithm.replace);
           }
         }
         // Verify inside the transaction before committing.
@@ -659,8 +689,10 @@ class BackupService {
       await _safeDelete(staging);
       throw AppException(
         ErrorKind.restore,
-        Lang.t('กู้คืนข้อมูลไม่สำเร็จ ระบบได้ยกเลิกการเปลี่ยนแปลงทั้งหมดแล้ว ข้อมูลเดิมยังอยู่ครบ',
-            'Restore failed. All changes were rolled back and your existing data is intact.'),
+        Lang.t(
+          'กู้คืนข้อมูลไม่สำเร็จ ระบบได้ยกเลิกการเปลี่ยนแปลงทั้งหมดแล้ว ข้อมูลเดิมยังอยู่ครบ',
+          'Restore failed. All changes were rolled back and your existing data is intact.',
+        ),
         e,
       );
     }

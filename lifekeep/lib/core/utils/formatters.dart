@@ -7,12 +7,32 @@ class Fmt {
   Fmt._();
 
   static const _thMonths = [
-    'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
-    'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม',
+    'มกราคม',
+    'กุมภาพันธ์',
+    'มีนาคม',
+    'เมษายน',
+    'พฤษภาคม',
+    'มิถุนายน',
+    'กรกฎาคม',
+    'สิงหาคม',
+    'กันยายน',
+    'ตุลาคม',
+    'พฤศจิกายน',
+    'ธันวาคม',
   ];
   static const _thMonthsShort = [
-    'ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.',
-    'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.',
+    'ม.ค.',
+    'ก.พ.',
+    'มี.ค.',
+    'เม.ย.',
+    'พ.ค.',
+    'มิ.ย.',
+    'ก.ค.',
+    'ส.ค.',
+    'ก.ย.',
+    'ต.ค.',
+    'พ.ย.',
+    'ธ.ค.',
   ];
   static const _thWeekdays = ['จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์', 'อาทิตย์'];
   static const _thWeekdaysShort = ['จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส', 'อา'];
@@ -37,13 +57,11 @@ class Fmt {
     return '${_thMonths[d.month - 1]} ${_beYear(d.year)}';
   }
 
-  static String time(DateTime d) =>
-      '${d.hour.toString().padLeft(2, '0')}:${d.minute.toString().padLeft(2, '0')}';
+  static String time(DateTime d) => '${d.hour.toString().padLeft(2, '0')}:${d.minute.toString().padLeft(2, '0')}';
 
   static String dateTime(DateTime d) => '${date(d)} · ${time(d)}';
 
-  static String weekdayShort(int weekday) =>
-      Lang.isEn ? _enWeekdaysShort[weekday - 1] : _thWeekdaysShort[weekday - 1];
+  static String weekdayShort(int weekday) => Lang.isEn ? _enWeekdaysShort[weekday - 1] : _thWeekdaysShort[weekday - 1];
 
   /// "อีก 3 วัน", "วันนี้", "พรุ่งนี้", "เลยมา 2 วัน"
   static String relativeDays(int days) {

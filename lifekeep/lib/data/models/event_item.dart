@@ -47,34 +47,33 @@ class EventItem {
     ReminderConfig? reminder,
     int? colorValue,
     DateTime? updatedAt,
-  }) =>
-      EventItem(
-        id: id,
-        title: title ?? this.title,
-        description: description ?? this.description,
-        location: location ?? this.location,
-        startAt: startAt ?? this.startAt,
-        endAt: clearEnd ? null : (endAt ?? this.endAt),
-        allDay: allDay ?? this.allDay,
-        reminder: reminder ?? this.reminder,
-        colorValue: colorValue ?? this.colorValue,
-        createdAt: createdAt,
-        updatedAt: updatedAt ?? this.updatedAt,
-      );
+  }) => EventItem(
+    id: id,
+    title: title ?? this.title,
+    description: description ?? this.description,
+    location: location ?? this.location,
+    startAt: startAt ?? this.startAt,
+    endAt: clearEnd ? null : (endAt ?? this.endAt),
+    allDay: allDay ?? this.allDay,
+    reminder: reminder ?? this.reminder,
+    colorValue: colorValue ?? this.colorValue,
+    createdAt: createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
 
   Map<String, Object?> toMap() => {
-        'id': id,
-        'title': title,
-        'description': description,
-        'location': location,
-        'start_at': startAt.millisecondsSinceEpoch,
-        'end_at': endAt?.millisecondsSinceEpoch,
-        'all_day': allDay ? 1 : 0,
-        'reminder': reminder.encode(),
-        'color': colorValue,
-        'created_at': createdAt.millisecondsSinceEpoch,
-        'updated_at': updatedAt.millisecondsSinceEpoch,
-      };
+    'id': id,
+    'title': title,
+    'description': description,
+    'location': location,
+    'start_at': startAt.millisecondsSinceEpoch,
+    'end_at': endAt?.millisecondsSinceEpoch,
+    'all_day': allDay ? 1 : 0,
+    'reminder': reminder.encode(),
+    'color': colorValue,
+    'created_at': createdAt.millisecondsSinceEpoch,
+    'updated_at': updatedAt.millisecondsSinceEpoch,
+  };
 
   factory EventItem.fromMap(Map<String, Object?> m) {
     final end = (m['end_at'] as num?)?.toInt();

@@ -6,8 +6,7 @@ class Dates {
 
   static DateTime endOfDay(DateTime d) => DateTime(d.year, d.month, d.day, 23, 59, 59, 999);
 
-  static bool isSameDay(DateTime a, DateTime b) =>
-      a.year == b.year && a.month == b.month && a.day == b.day;
+  static bool isSameDay(DateTime a, DateTime b) => a.year == b.year && a.month == b.month && a.day == b.day;
 
   /// Calendar-day difference (b - a), DST safe (uses UTC dates).
   static int daysBetween(DateTime a, DateTime b) {
@@ -48,8 +47,7 @@ class ExpiryCalc {
   static const soonThresholdDays = 30;
 
   /// Days from [now] (calendar days) until [expiry]. Negative = expired.
-  static int? daysLeft(DateTime? expiry, DateTime now) =>
-      expiry == null ? null : Dates.daysBetween(now, expiry);
+  static int? daysLeft(DateTime? expiry, DateTime now) => expiry == null ? null : Dates.daysBetween(now, expiry);
 
   static ExpiryStatus status(DateTime? expiry, DateTime now, {int soonDays = soonThresholdDays}) {
     final d = daysLeft(expiry, now);
@@ -93,9 +91,13 @@ class ReminderCalc {
       // the same wall-clock time for day-based offsets.
       final days = o ~/ day;
       final rest = o % day;
-      final t = DateTime(anchor.year, anchor.month, anchor.day - days, anchor.hour,
-              anchor.minute)
-          .subtract(Duration(minutes: rest));
+      final t = DateTime(
+        anchor.year,
+        anchor.month,
+        anchor.day - days,
+        anchor.hour,
+        anchor.minute,
+      ).subtract(Duration(minutes: rest));
       if (t.isAfter(now)) {
         set.add(DateTime(t.year, t.month, t.day, t.hour, t.minute).millisecondsSinceEpoch);
       }

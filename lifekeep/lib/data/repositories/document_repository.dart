@@ -43,15 +43,10 @@ class DocumentRepository {
 
   Future<void> delete(String id) => db.delete('documents', where: 'id = ?', whereArgs: [id]);
 
-  Future<void> setPinned(String id, bool pinned) => db.update(
-        'documents',
-        {'is_pinned': pinned ? 1 : 0},
-        where: 'id = ?',
-        whereArgs: [id],
-      );
+  Future<void> setPinned(String id, bool pinned) =>
+      db.update('documents', {'is_pinned': pinned ? 1 : 0}, where: 'id = ?', whereArgs: [id]);
 
-  Future<int> count() async =>
-      Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM documents')) ?? 0;
+  Future<int> count() async => Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM documents')) ?? 0;
 
   /// Documents with an expiry date up to [until] (includes already expired).
   Future<List<DocumentItem>> expiringBefore(DateTime until) async {
@@ -79,13 +74,16 @@ class DocumentRepository {
     final q = query.trim();
     if (q.isEmpty) return [];
     final like = likePattern(q);
-    final rows = await db.rawQuery('''
+    final rows = await db.rawQuery(
+      '''
       SELECT d.* FROM documents d
       LEFT JOIN categories c ON c.id = d.category_id
       WHERE d.title LIKE ? ESCAPE '\\' OR d.description LIKE ? ESCAPE '\\'
          OR d.notes LIKE ? ESCAPE '\\' OR c.name LIKE ? ESCAPE '\\'
       ORDER BY d.is_pinned DESC, d.updated_at DESC
-      LIMIT 200''', [like, like, like, like]);
+      LIMIT 200''',
+      [like, like, like, like],
+    );
     return rows.map(DocumentItem.fromMap).toList();
   }
 }

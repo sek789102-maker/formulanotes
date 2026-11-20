@@ -53,13 +53,17 @@ class AttachmentService {
     final src = File(sourcePath);
     try {
       if (!await src.exists()) {
-        throw AppException(ErrorKind.file,
-            Lang.t('ไม่พบไฟล์ที่เลือก ไฟล์อาจถูกย้ายหรือลบ', 'The selected file was not found. It may have been moved or deleted.'));
+        throw AppException(
+          ErrorKind.file,
+          Lang.t(
+            'ไม่พบไฟล์ที่เลือก ไฟล์อาจถูกย้ายหรือลบ',
+            'The selected file was not found. It may have been moved or deleted.',
+          ),
+        );
       }
       final size = await src.length();
       if (size > maxFileBytes) {
-        throw AppException(ErrorKind.file,
-            Lang.t('ไฟล์มีขนาดใหญ่เกิน 50 MB', 'The file is larger than 50 MB'));
+        throw AppException(ErrorKind.file, Lang.t('ไฟล์มีขนาดใหญ่เกิน 50 MB', 'The file is larger than 50 MB'));
       }
       await ensureDir();
       final name = '${newId()}${_ext(sourcePath)}';

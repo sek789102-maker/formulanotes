@@ -18,14 +18,14 @@ void main() {
   tearDown(() async => env.dispose());
 
   DocumentItem doc({List<int> offsets = const [1440, 10080], DateTime? expiry}) => DocumentItem(
-        id: 'doc1',
-        title: 'Passport',
-        categoryId: 'cat_personal',
-        createdAt: now,
-        updatedAt: now,
-        expiryDate: expiry ?? future,
-        reminder: ReminderConfig(offsets),
-      );
+    id: 'doc1',
+    title: 'Passport',
+    categoryId: 'cat_personal',
+    createdAt: now,
+    updatedAt: now,
+    expiryDate: expiry ?? future,
+    reminder: ReminderConfig(offsets),
+  );
 
   test('document reminders are scheduled at the reminder time before expiry', () async {
     final ok = await env.controller.saveDocument(doc());
@@ -76,8 +76,10 @@ void main() {
     await env.controller.setTaskCompleted(t, true);
     expect(env.gateway.scheduled, isEmpty);
     await env.controller.setTaskCompleted(t, false);
-    expect(env.gateway.scheduled.values.map((v) => v.at).toSet(),
-        {DateTime(future.year, 1, 10, 15), DateTime(future.year, 1, 10, 14)});
+    expect(env.gateway.scheduled.values.map((v) => v.at).toSet(), {
+      DateTime(future.year, 1, 10, 15),
+      DateTime(future.year, 1, 10, 14),
+    });
   });
 
   test('events: all-day uses default time; past reminders are skipped', () async {
@@ -123,15 +125,17 @@ void main() {
 
   test('rescheduleAll caps pending notifications', () async {
     for (var i = 0; i < 150; i++) {
-      await env.services.documents.upsert(DocumentItem(
-        id: 'd$i',
-        title: 'D$i',
-        categoryId: 'cat_other',
-        createdAt: now,
-        updatedAt: now,
-        expiryDate: future.add(Duration(days: i)),
-        reminder: const ReminderConfig([1440, 3 * 1440, 7 * 1440]),
-      ));
+      await env.services.documents.upsert(
+        DocumentItem(
+          id: 'd$i',
+          title: 'D$i',
+          categoryId: 'cat_other',
+          createdAt: now,
+          updatedAt: now,
+          expiryDate: future.add(Duration(days: i)),
+          reminder: const ReminderConfig([1440, 3 * 1440, 7 * 1440]),
+        ),
+      );
     }
     await env.services.scheduler.rescheduleAll();
     expect(env.gateway.scheduled.length, ReminderScheduler.maxPending);

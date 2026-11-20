@@ -29,8 +29,7 @@ class CategoryRepository {
   Future<void> delete(String id) async {
     if (id == ItemCategory.otherId) return;
     await db.transaction((txn) async {
-      await txn.update('documents', {'category_id': ItemCategory.otherId},
-          where: 'category_id = ?', whereArgs: [id]);
+      await txn.update('documents', {'category_id': ItemCategory.otherId}, where: 'category_id = ?', whereArgs: [id]);
       await txn.update('tasks', {'category_id': null}, where: 'category_id = ?', whereArgs: [id]);
       await txn.delete('categories', where: 'id = ?', whereArgs: [id]);
     });

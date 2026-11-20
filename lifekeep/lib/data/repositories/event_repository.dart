@@ -17,8 +17,7 @@ class EventRepository {
     return rows.isEmpty ? null : EventItem.fromMap(rows.first);
   }
 
-  Future<void> upsert(EventItem e) =>
-      db.insert('events', e.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
+  Future<void> upsert(EventItem e) => db.insert('events', e.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
 
   Future<void> delete(String id) => db.delete('events', where: 'id = ?', whereArgs: [id]);
 
@@ -39,11 +38,14 @@ class EventRepository {
     final q = query.trim();
     if (q.isEmpty) return [];
     final like = likePattern(q);
-    final rows = await db.rawQuery('''
+    final rows = await db.rawQuery(
+      '''
       SELECT * FROM events
       WHERE title LIKE ? ESCAPE '\\' OR description LIKE ? ESCAPE '\\' OR location LIKE ? ESCAPE '\\'
       ORDER BY start_at DESC
-      LIMIT 200''', [like, like, like]);
+      LIMIT 200''',
+      [like, like, like],
+    );
     return rows.map(EventItem.fromMap).toList();
   }
 }

@@ -17,11 +17,7 @@ class AppDatabase {
   static const fileName = 'lifekeep.db';
   static const schemaVersion = 1;
 
-  static Future<Database> open({
-    DatabaseFactory? factory,
-    String? path,
-    bool englishDefaults = false,
-  }) async {
+  static Future<Database> open({DatabaseFactory? factory, String? path, bool englishDefaults = false}) async {
     final f = factory ?? databaseFactory;
     final dbPath = path ?? p.join(await f.getDatabasesPath(), fileName);
     try {
@@ -63,11 +59,7 @@ class AppDatabase {
     } on AppException {
       rethrow;
     } catch (e) {
-      throw AppException(
-        ErrorKind.database,
-        Lang.t('ไม่สามารถเปิดฐานข้อมูลได้', 'Could not open the database'),
-        e,
-      );
+      throw AppException(ErrorKind.database, Lang.t('ไม่สามารถเปิดฐานข้อมูลได้', 'Could not open the database'), e);
     }
   }
 

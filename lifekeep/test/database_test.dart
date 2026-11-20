@@ -14,28 +14,35 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import 'helpers.dart';
 
-DocumentItem doc(String id, {String title = 'Doc', String cat = 'cat_personal', DateTime? expiry, String notes = '', bool pinned = false, DateTime? updated}) =>
-    DocumentItem(
-      id: id,
-      title: title,
-      categoryId: cat,
-      notes: notes,
-      createdAt: DateTime(2026, 1, 1),
-      updatedAt: updated ?? DateTime(2026, 1, 1),
-      expiryDate: expiry,
-      reminder: const ReminderConfig([1440]),
-      attachmentPaths: const ['a.jpg'],
-      isPinned: pinned,
-    );
+DocumentItem doc(
+  String id, {
+  String title = 'Doc',
+  String cat = 'cat_personal',
+  DateTime? expiry,
+  String notes = '',
+  bool pinned = false,
+  DateTime? updated,
+}) => DocumentItem(
+  id: id,
+  title: title,
+  categoryId: cat,
+  notes: notes,
+  createdAt: DateTime(2026, 1, 1),
+  updatedAt: updated ?? DateTime(2026, 1, 1),
+  expiryDate: expiry,
+  reminder: const ReminderConfig([1440]),
+  attachmentPaths: const ['a.jpg'],
+  isPinned: pinned,
+);
 
 TaskItem task(String id, {String title = 'Task', DateTime? due, String? cat}) => TaskItem(
-      id: id,
-      title: title,
-      categoryId: cat,
-      dueAt: due,
-      createdAt: DateTime(2026, 1, 1),
-      updatedAt: DateTime(2026, 1, 1),
-    );
+  id: id,
+  title: title,
+  categoryId: cat,
+  dueAt: due,
+  createdAt: DateTime(2026, 1, 1),
+  updatedAt: DateTime(2026, 1, 1),
+);
 
 void main() {
   late Database db;
@@ -111,7 +118,10 @@ void main() {
 
     test('priority and category survive round-trip; delete works', () async {
       final repo = TaskRepository(db);
-      final t = task('t2', cat: 'cat_home').copyWith(priority: TaskPriority.high, hasTime: true, dueAt: DateTime(2026, 12, 1, 14, 30));
+      final t = task(
+        't2',
+        cat: 'cat_home',
+      ).copyWith(priority: TaskPriority.high, hasTime: true, dueAt: DateTime(2026, 12, 1, 14, 30));
       await repo.upsert(t);
       final got = (await repo.byId('t2'))!;
       expect(got.priority, TaskPriority.high);
@@ -135,8 +145,8 @@ void main() {
   group('events', () {
     test('between() returns overlapping multi-day events', () async {
       final repo = EventRepository(db);
-      EventItem e(String id, DateTime s, [DateTime? end]) => EventItem(
-          id: id, title: id, startAt: s, endAt: end, createdAt: DateTime(2026), updatedAt: DateTime(2026));
+      EventItem e(String id, DateTime s, [DateTime? end]) =>
+          EventItem(id: id, title: id, startAt: s, endAt: end, createdAt: DateTime(2026), updatedAt: DateTime(2026));
       await repo.upsert(e('trip', DateTime(2026, 11, 28), DateTime(2026, 12, 3)));
       await repo.upsert(e('meet', DateTime(2026, 12, 10, 9)));
       await repo.upsert(e('past', DateTime(2026, 10, 1)));
@@ -150,7 +160,9 @@ void main() {
   group('categories', () {
     test('deleting a category moves documents to Other and clears tasks', () async {
       final cats = CategoryRepository(db);
-      await cats.upsert(ItemCategory(id: 'x', name: 'Custom', colorValue: 0xFF000000, iconKey: 'star', createdAt: DateTime(2026)));
+      await cats.upsert(
+        ItemCategory(id: 'x', name: 'Custom', colorValue: 0xFF000000, iconKey: 'star', createdAt: DateTime(2026)),
+      );
       await DocumentRepository(db).upsert(doc('d', cat: 'x'));
       await TaskRepository(db).upsert(task('t', cat: 'x'));
       expect((await cats.usageCounts())['x'], 2);
@@ -173,8 +185,16 @@ void main() {
       await DocumentRepository(db).upsert(doc('d2', title: 'Passport', cat: 'cat_personal'));
       await DocumentRepository(db).upsert(doc('d3', title: '100% discount_code', cat: 'cat_finance'));
       await TaskRepository(db).upsert(task('t1', title: 'จ่ายค่าประกันรถ', cat: 'cat_insurance'));
-      await EventRepository(db).upsert(EventItem(
-          id: 'e1', title: 'นัดหมอฟัน', location: 'คลินิก', startAt: DateTime(2026, 12, 1), createdAt: DateTime(2026), updatedAt: DateTime(2026)));
+      await EventRepository(db).upsert(
+        EventItem(
+          id: 'e1',
+          title: 'นัดหมอฟัน',
+          location: 'คลินิก',
+          startAt: DateTime(2026, 12, 1),
+          createdAt: DateTime(2026),
+          updatedAt: DateTime(2026),
+        ),
+      );
     });
 
     test('matches title, notes, category name and location', () async {
@@ -211,8 +231,13 @@ void main() {
     final dir = await databaseFactoryFfiNoIsolate.getDatabasesPath();
     final path = '$dir/lifekeep_future_test.db';
     await databaseFactoryFfiNoIsolate.deleteDatabase(path);
-    final future = await databaseFactoryFfiNoIsolate.openDatabase(path,
-        options: OpenDatabaseOptions(version: AppDatabase.schemaVersion + 5, onCreate: (d, v) => d.execute('CREATE TABLE x(a)')));
+    final future = await databaseFactoryFfiNoIsolate.openDatabase(
+      path,
+      options: OpenDatabaseOptions(
+        version: AppDatabase.schemaVersion + 5,
+        onCreate: (d, v) => d.execute('CREATE TABLE x(a)'),
+      ),
+    );
     await future.close();
     await expectLater(AppDatabase.open(factory: databaseFactoryFfiNoIsolate, path: path), throwsA(anything));
     final check = await databaseFactoryFfiNoIsolate.openDatabase(path);

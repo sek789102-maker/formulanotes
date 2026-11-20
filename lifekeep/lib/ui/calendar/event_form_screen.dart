@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/l10n/lang.dart';
-import '../../core/theme/app_theme.dart';
 import '../../core/utils/dates.dart';
 import '../../core/utils/formatters.dart';
 import '../../core/utils/ids.dart';
@@ -10,7 +9,7 @@ import '../../core/utils/validators.dart';
 import '../../data/models/event_item.dart';
 import '../../data/models/reminder_config.dart';
 import '../../state/app_controller.dart';
-import '../widgets/common.dart';
+import '../design/design.dart';
 import '../widgets/form_widgets.dart';
 
 class EventFormScreen extends StatefulWidget {
@@ -29,7 +28,8 @@ class _EventFormScreenState extends State<EventFormScreen> {
   late final _location = TextEditingController(text: widget.event?.location);
   late bool _allDay = widget.event?.allDay ?? false;
   late DateTime _start = widget.event?.startAt ?? _defaultStart();
-  late DateTime? _end = widget.event?.endAt ?? (widget.event == null ? _defaultStart().add(const Duration(hours: 1)) : null);
+  late DateTime? _end =
+      widget.event?.endAt ?? (widget.event == null ? _defaultStart().add(const Duration(hours: 1)) : null);
   late ReminderConfig _reminder = widget.event?.reminder ?? const ReminderConfig([60]);
   late int? _color = widget.event?.colorValue;
   bool _saving = false;
@@ -48,8 +48,12 @@ class _EventFormScreenState extends State<EventFormScreen> {
   @override
   void initState() {
     super.initState();
+    // Only real text edits count (focus/cursor changes also notify).
     for (final c in [_title, _desc, _location]) {
-      c.addListener(() => _dirty = true);
+      final initial = c.text;
+      c.addListener(() {
+        if (c.text != initial) _dirty = true;
+      });
     }
   }
 
@@ -62,10 +66,10 @@ class _EventFormScreenState extends State<EventFormScreen> {
   }
 
   void _mark(VoidCallback f) => setState(() {
-        f();
-        _dirty = true;
-        _rangeError = null;
-      });
+    f();
+    _dirty = true;
+    _rangeError = null;
+  });
 
   Future<void> _pickStart() async {
     final d = await pickDate(context, initial: _start);
@@ -129,7 +133,9 @@ class _EventFormScreenState extends State<EventFormScreen> {
     showSnack(
       context,
       reminderOk
-          ? (_isEdit ? context.tr('บันทึกการแก้ไขแล้ว', 'Changes saved') : context.tr('เพิ่มกิจกรรมแล้ว', 'Event added'))
+          ? (_isEdit
+                ? context.tr('บันทึกการแก้ไขแล้ว', 'Changes saved')
+                : context.tr('เพิ่มกิจกรรมแล้ว', 'Event added'))
           : context.tr('บันทึกแล้ว แต่ตั้งการแจ้งเตือนไม่สำเร็จ', 'Saved, but reminders could not be scheduled'),
       error: !reminderOk,
     );
@@ -149,13 +155,18 @@ class _EventFormScreenState extends State<EventFormScreen> {
     if (!ok || !mounted) return;
     final c = context.read<AppController>();
     final nav = Navigator.of(context);
-    final done = await runAction(context, () => c.deleteEvent(e), success: context.tr('ลบกิจกรรมแล้ว', 'Event deleted'));
+    final done = await runAction(
+      context,
+      () => c.deleteEvent(e),
+      success: context.tr('ลบกิจกรรมแล้ว', 'Event deleted'),
+    );
     if (done) nav.pop();
   }
 
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final selectedColor = _color ?? AppColors.primary.toARGB32();
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) async {
@@ -174,113 +185,140 @@ class _EventFormScreenState extends State<EventFormScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text(_isEdit ? context.tr('แก้ไขกิจกรรม', 'Edit event') : context.tr('เพิ่มกิจกรรม', 'Add event')),
+          title: Text(_isEdit ? context.tr('แก้ไขกิจกรรม', 'Edit event') : context.tr('เพิ่มกิจกรรม', 'New event')),
           actions: [
             if (_isEdit)
-              IconButton(tooltip: context.tr('ลบ', 'Delete'), icon: const Icon(Icons.delete_outline_rounded), onPressed: _delete),
-            Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: TextButton(onPressed: _saving ? null : _save, child: Text(context.tr('บันทึก', 'Save'))),
-            ),
+              IconButton(
+                tooltip: context.tr('ลบ', 'Delete'),
+                icon: const Icon(Icons.delete_outline_rounded),
+                onPressed: _delete,
+              ),
+            TextButton(onPressed: _saving ? null : _save, child: Text(context.tr('บันทึก', 'Save'))),
+            const SizedBox(width: Space.sm),
           ],
+        ),
+        bottomNavigationBar: SaveBar(
+          label: _isEdit ? context.tr('บันทึกการแก้ไข', 'Save changes') : context.tr('บันทึกกิจกรรม', 'Save event'),
+          busy: _saving,
+          onPressed: _save,
         ),
         body: Form(
           key: _form,
-          child: ListView(padding: const EdgeInsets.fromLTRB(16, 8, 16, 40), children: [
-            TextFormField(
-              controller: _title,
-              autofocus: !_isEdit,
-              maxLength: Validators.maxTitle,
-              textInputAction: TextInputAction.next,
-              decoration: InputDecoration(labelText: context.tr('ชื่อกิจกรรม *', 'Event title *'), counterText: ''),
-              validator: Validators.title,
-            ),
-            const SizedBox(height: 12),
-            TextFormField(
-              controller: _location,
-              textInputAction: TextInputAction.next,
-              decoration: InputDecoration(
-                labelText: context.tr('สถานที่', 'Location'),
-                prefixIcon: const Icon(Icons.place_outlined),
-              ),
-            ),
-            FormSection(
-              title: context.tr('วันและเวลา', 'Date & time'),
-              icon: Icons.schedule_rounded,
-              child: Column(children: [
-                SwitchListTile(
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 4),
-                  title: Text(context.tr('ทั้งวัน', 'All day')),
-                  value: _allDay,
-                  onChanged: (v) => _mark(() => _allDay = v),
-                ),
-                PickerTile(
-                  icon: Icons.play_circle_outline_rounded,
-                  label: context.tr('เริ่ม', 'Starts'),
-                  value: _allDay ? Fmt.date(_start) : Fmt.dateTime(_start),
-                  onTap: _pickStart,
-                ),
-                const SizedBox(height: 10),
-                PickerTile(
-                  icon: Icons.stop_circle_outlined,
-                  label: context.tr('สิ้นสุด (ไม่บังคับ)', 'Ends (optional)'),
-                  value: _end == null ? null : (_allDay ? Fmt.date(_end!) : Fmt.dateTime(_end!)),
-                  onTap: _pickEnd,
-                  onClear: () => _mark(() => _end = null),
-                ),
-                if (_rangeError != null)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8),
-                    child: Text(_rangeError!, style: TextStyle(color: scheme.error)),
-                  ),
-              ]),
-            ),
-            FormSection(
-              title: context.tr('การแจ้งเตือน', 'Reminders'),
-              icon: Icons.notifications_none_rounded,
-              child: ReminderPicker(config: _reminder, enabled: true, onChanged: (r) => _mark(() => _reminder = r)),
-            ),
-            FormSection(
-              title: context.tr('สี', 'Colour'),
-              icon: Icons.palette_outlined,
-              child: Wrap(spacing: 10, runSpacing: 10, children: [
-                for (final col in AppColors.categoryPalette)
-                  GestureDetector(
-                    onTap: () => _mark(() => _color = col.toARGB32()),
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 150),
-                      width: 34,
-                      height: 34,
-                      decoration: BoxDecoration(
-                        color: col,
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: (_color ?? AppColors.primary.toARGB32()) == col.toARGB32() ? scheme.onSurface : Colors.transparent,
-                          width: 2.5,
-                        ),
+          child: ContentWidth(
+            child: ListView(
+              padding: const EdgeInsets.fromLTRB(Space.page, Space.xs, Space.page, Space.xl),
+              children: [
+                FormBlock(
+                  title: context.tr('กิจกรรม', 'Event'),
+                  icon: Icons.event_note_outlined,
+                  children: [
+                    TextFormField(
+                      controller: _title,
+                      autofocus: !_isEdit,
+                      maxLength: Validators.maxTitle,
+                      textInputAction: TextInputAction.next,
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w500),
+                      decoration: InputDecoration(
+                        labelText: context.tr('ชื่อกิจกรรม *', 'Event title *'),
+                        counterText: '',
+                      ),
+                      validator: Validators.title,
+                    ),
+                    TextFormField(
+                      controller: _location,
+                      textInputAction: TextInputAction.next,
+                      decoration: InputDecoration(
+                        labelText: context.tr('สถานที่', 'Location'),
+                        prefixIcon: const Icon(Icons.place_outlined, size: 20),
                       ),
                     ),
+                  ],
+                ),
+                FormBlock(
+                  title: context.tr('วันและเวลา', 'Date & time'),
+                  icon: Icons.schedule_rounded,
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(context.tr('ทั้งวัน', 'All day'), style: Theme.of(context).textTheme.labelMedium),
+                      const SizedBox(width: Space.xs),
+                      Transform.scale(
+                        scale: 0.85,
+                        child: Switch(value: _allDay, onChanged: (v) => _mark(() => _allDay = v)),
+                      ),
+                    ],
                   ),
-              ]),
+                  children: [
+                    PickerField(
+                      icon: Icons.play_circle_outline_rounded,
+                      label: context.tr('เริ่ม', 'Starts'),
+                      value: _allDay ? Fmt.fullDate(_start) : Fmt.dateTime(_start),
+                      onTap: _pickStart,
+                    ),
+                    PickerField(
+                      icon: Icons.stop_circle_outlined,
+                      label: context.tr('สิ้นสุด (ไม่บังคับ)', 'Ends (optional)'),
+                      value: _end == null ? null : (_allDay ? Fmt.fullDate(_end!) : Fmt.dateTime(_end!)),
+                      onTap: _pickEnd,
+                      onClear: () => _mark(() => _end = null),
+                    ),
+                    if (_rangeError != null)
+                      Text(_rangeError!, style: Theme.of(context).textTheme.bodySmall?.copyWith(color: scheme.error)),
+                    ReminderPicker(config: _reminder, enabled: true, onChanged: (r) => _mark(() => _reminder = r)),
+                  ],
+                ),
+                FormBlock(
+                  title: context.tr('สีและรายละเอียด', 'Colour & details'),
+                  icon: Icons.palette_outlined,
+                  children: [
+                    Wrap(
+                      spacing: Space.sm,
+                      runSpacing: Space.sm,
+                      children: [
+                        for (final col in AppColors.categoryPalette)
+                          Semantics(
+                            selected: selectedColor == col.toARGB32(),
+                            button: true,
+                            child: GestureDetector(
+                              onTap: () => _mark(() => _color = col.toARGB32()),
+                              child: AnimatedContainer(
+                                duration: Motion.fast,
+                                width: 32,
+                                height: 32,
+                                decoration: BoxDecoration(
+                                  color: col,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: selectedColor == col.toARGB32() ? scheme.surface : Colors.transparent,
+                                    width: 3,
+                                  ),
+                                  boxShadow: selectedColor == col.toARGB32()
+                                      ? [BoxShadow(color: col, spreadRadius: 2)]
+                                      : null,
+                                ),
+                                child: selectedColor == col.toARGB32()
+                                    ? const Icon(Icons.check_rounded, size: 16, color: Colors.white)
+                                    : null,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                    TextFormField(
+                      controller: _desc,
+                      minLines: 2,
+                      maxLines: 6,
+                      decoration: InputDecoration(
+                        labelText: context.tr('รายละเอียด', 'Details'),
+                        alignLabelWithHint: true,
+                      ),
+                      validator: Validators.longText,
+                    ),
+                  ],
+                ),
+              ],
             ),
-            FormSection(
-              title: context.tr('รายละเอียด', 'Details'),
-              icon: Icons.notes_rounded,
-              child: TextFormField(
-                controller: _desc,
-                minLines: 2,
-                maxLines: 6,
-                decoration: InputDecoration(labelText: context.tr('รายละเอียด', 'Details')),
-                validator: Validators.longText,
-              ),
-            ),
-            const SizedBox(height: 20),
-            FilledButton.icon(
-              onPressed: _saving ? null : _save,
-              icon: const Icon(Icons.check_rounded),
-              label: Text(context.tr('บันทึกกิจกรรม', 'Save event')),
-            ),
-          ]),
+          ),
         ),
       ),
     );

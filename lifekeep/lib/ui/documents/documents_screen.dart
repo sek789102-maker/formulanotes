@@ -5,8 +5,10 @@ import '../../core/l10n/lang.dart';
 import '../../core/utils/dates.dart';
 import '../../data/models/document_item.dart';
 import '../../data/repositories/document_repository.dart';
+import '../../data/repositories/settings_repository.dart';
 import '../../state/app_controller.dart';
-import '../widgets/common.dart';
+import '../design/design.dart';
+import '../widgets/form_widgets.dart';
 import '../widgets/item_tiles.dart';
 import 'document_detail_screen.dart';
 import 'document_form_screen.dart';
@@ -58,29 +60,43 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
     }).toList();
   }
 
-  String _sortLabel(BuildContext context, DocumentSort s) {
-    switch (s) {
-      case DocumentSort.updatedDesc:
-        return context.tr('แก้ไขล่าสุด', 'Recently updated');
-      case DocumentSort.createdDesc:
-        return context.tr('เพิ่มล่าสุด', 'Recently added');
-      case DocumentSort.titleAsc:
-        return context.tr('ชื่อ ก–ฮ / A–Z', 'Title A–Z');
-      case DocumentSort.expiryAsc:
-        return context.tr('ใกล้หมดอายุก่อน', 'Expiring first');
-    }
-  }
+  String _sortLabel(BuildContext context, DocumentSort s) => switch (s) {
+    DocumentSort.updatedDesc => context.tr('แก้ไขล่าสุด', 'Recently updated'),
+    DocumentSort.createdDesc => context.tr('เพิ่มล่าสุด', 'Recently added'),
+    DocumentSort.titleAsc => context.tr('ชื่อ ก–ฮ / A–Z', 'Title A–Z'),
+    DocumentSort.expiryAsc => context.tr('ใกล้หมดอายุก่อน', 'Expiring first'),
+  };
+
+  void _open(DocumentItem d) =>
+      Navigator.push(context, MaterialPageRoute(builder: (_) => DocumentDetailScreen(documentId: d.id)));
 
   @override
   Widget build(BuildContext context) {
     final c = context.watch<AppController>();
+    final grid = c.settings[SettingKeys.documentsView] == 'grid';
+    final scheme = Theme.of(context).colorScheme;
+    final cat = c.maybeCategory(_categoryId);
+
+    Widget chip(String label, bool selected, VoidCallback onTap, {Widget? avatar}) => Padding(
+      padding: const EdgeInsets.only(right: 6),
+      child: FilterChip(label: Text(label), avatar: avatar, selected: selected, onSelected: (_) => onTap()),
+    );
+
     return Scaffold(
       appBar: AppBar(
         title: Text(context.tr('เอกสาร', 'Documents')),
         actions: [
+          IconButton(
+            tooltip: grid ? context.tr('มุมมองรายการ', 'List view') : context.tr('มุมมองตาราง', 'Grid view'),
+            icon: AnimatedSwitcher(
+              duration: Motion.fast,
+              child: Icon(grid ? Icons.view_agenda_outlined : Icons.grid_view_rounded, key: ValueKey(grid)),
+            ),
+            onPressed: () => c.setSetting(SettingKeys.documentsView, grid ? 'list' : 'grid'),
+          ),
           PopupMenuButton<DocumentSort>(
             tooltip: context.tr('เรียงลำดับ', 'Sort'),
-            icon: const Icon(Icons.sort_rounded),
+            icon: const Icon(Icons.swap_vert_rounded),
             initialValue: _sort,
             onSelected: (s) => setState(() => _sort = s),
             itemBuilder: (context) => [
@@ -88,7 +104,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                 CheckedPopupMenuItem(value: s, checked: s == _sort, child: Text(_sortLabel(context, s))),
             ],
           ),
-          const SizedBox(width: 4),
+          const SizedBox(width: Space.xs),
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -97,105 +113,166 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const DocumentFormScreen())),
         child: const Icon(Icons.add_rounded),
       ),
-      body: Column(children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
-          child: SearchField(
-            controller: _search,
-            hint: context.tr('ค้นหาชื่อ รายละเอียด หมวดหมู่ หมายเหตุ', 'Search title, details, category, notes'),
-            onChanged: (v) => setState(() => _query = v),
-          ),
-        ),
-        SizedBox(
-          height: 44,
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            children: [
-              for (final f in DocFilter.values)
-                Padding(
-                  padding: const EdgeInsets.only(right: 8),
-                  child: ChoiceChip(
-                    label: Text(switch (f) {
-                      DocFilter.all => context.tr('ทั้งหมด', 'All'),
-                      DocFilter.pinned => context.tr('ปักหมุด', 'Pinned'),
-                      DocFilter.expiring => context.tr('ใกล้หมดอายุ', 'Expiring'),
-                      DocFilter.expired => context.tr('หมดอายุแล้ว', 'Expired'),
-                    }),
-                    selected: _filter == f,
-                    onSelected: (_) => setState(() => _filter = f),
-                  ),
-                ),
-            ],
-          ),
-        ),
-        SizedBox(
-          height: 44,
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: FilterChip(
-                  label: Text(context.tr('ทุกหมวดหมู่', 'All categories')),
-                  selected: _categoryId == null,
-                  onSelected: (_) => setState(() => _categoryId = null),
-                ),
+      body: ContentWidth(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(Space.page, 0, Space.page, Space.sm),
+              child: SearchField(
+                controller: _search,
+                hint: context.tr('ค้นหาเอกสาร', 'Search documents'),
+                onChanged: (v) => setState(() => _query = v),
               ),
-              for (final cat in c.categories)
-                Padding(
-                  padding: const EdgeInsets.only(right: 8),
-                  child: FilterChip(
-                    avatar: Icon(cat.icon, size: 16, color: cat.color),
-                    label: Text(cat.name),
-                    selected: _categoryId == cat.id,
-                    onSelected: (v) => setState(() => _categoryId = v ? cat.id : null),
+            ),
+            SizedBox(
+              height: 40,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: Space.page),
+                children: [
+                  // Category picker chip (one chip instead of a row per category).
+                  Padding(
+                    padding: const EdgeInsets.only(right: 6),
+                    child: InputChip(
+                      avatar: Icon(
+                        cat?.icon ?? Icons.label_outline_rounded,
+                        size: 16,
+                        color: cat?.color ?? scheme.onSurfaceVariant,
+                      ),
+                      label: Text(cat?.name ?? context.tr('ทุกหมวดหมู่', 'All categories')),
+                      selected: cat != null,
+                      deleteIcon: Icon(cat == null ? Icons.expand_more_rounded : Icons.close_rounded, size: 16),
+                      onDeleted: cat == null ? null : () => setState(() => _categoryId = null),
+                      onPressed: () async {
+                        final r = await showCategorySheet(
+                          context,
+                          selectedId: _categoryId,
+                          allowNone: true,
+                          title: context.tr('กรองตามหมวดหมู่', 'Filter by category'),
+                        );
+                        if (r != null) setState(() => _categoryId = r.isEmpty ? null : r);
+                      },
+                    ),
                   ),
-                ),
-            ],
-          ),
-        ),
-        Expanded(
-          child: DataBuilder<List<DocumentItem>>(
-            deps: [_sort],
-            load: (c) => c.s.documents.all(sort: _sort),
-            builder: (context, all) {
-              if (all.isEmpty) {
-                return EmptyState(
-                  icon: Icons.folder_open_rounded,
-                  title: context.tr('ยังไม่มีเอกสาร', 'No documents yet'),
-                  message: context.tr('เพิ่มบัตร ใบอนุญาต กรมธรรม์ หรือเอกสารสำคัญอื่น ๆ',
-                      'Add ID cards, licences, policies or other important papers'),
-                  actionLabel: context.tr('เพิ่มเอกสาร', 'Add document'),
-                  onAction: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const DocumentFormScreen())),
-                );
-              }
-              final list = _apply(c, all);
-              if (list.isEmpty) {
-                return EmptyState(
-                  icon: Icons.search_off_rounded,
-                  title: context.tr('ไม่พบเอกสาร', 'No matching documents'),
-                  message: context.tr('ลองเปลี่ยนคำค้นหาหรือตัวกรอง', 'Try another search or filter'),
-                  compact: true,
-                );
-              }
-              return ListView.separated(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 96),
-                itemCount: list.length,
-                separatorBuilder: (_, _) => const SizedBox(height: 8),
-                itemBuilder: (context, i) => DocumentCard(
-                  doc: list[i],
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => DocumentDetailScreen(documentId: list[i].id)),
+                  Container(
+                    width: 1,
+                    margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
+                    color: scheme.outlineVariant,
                   ),
-                ),
-              );
-            },
-          ),
+                  const SizedBox(width: 4),
+                  chip(
+                    context.tr('ทั้งหมด', 'All'),
+                    _filter == DocFilter.all,
+                    () => setState(() => _filter = DocFilter.all),
+                  ),
+                  chip(
+                    context.tr('ปักหมุด', 'Pinned'),
+                    _filter == DocFilter.pinned,
+                    () => setState(() => _filter = DocFilter.pinned),
+                  ),
+                  chip(
+                    context.tr('ใกล้หมดอายุ', 'Expiring'),
+                    _filter == DocFilter.expiring,
+                    () => setState(() => _filter = DocFilter.expiring),
+                  ),
+                  chip(
+                    context.tr('หมดอายุแล้ว', 'Expired'),
+                    _filter == DocFilter.expired,
+                    () => setState(() => _filter = DocFilter.expired),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: DataBuilder<List<DocumentItem>>(
+                deps: [_sort],
+                load: (c) => c.s.documents.all(sort: _sort),
+                builder: (context, all) {
+                  if (all.isEmpty) {
+                    return EmptyState(
+                      icon: Icons.folder_open_rounded,
+                      title: context.tr('ยังไม่มีเอกสาร', 'No documents yet'),
+                      message: context.tr(
+                        'เก็บบัตร ใบอนุญาต กรมธรรม์ และเอกสารสำคัญไว้ที่นี่',
+                        'Keep IDs, licences, policies and other papers here',
+                      ),
+                      actionLabel: context.tr('เพิ่มเอกสาร', 'Add document'),
+                      onAction: () =>
+                          Navigator.push(context, MaterialPageRoute(builder: (_) => const DocumentFormScreen())),
+                    );
+                  }
+                  final list = _apply(c, all);
+                  if (list.isEmpty) {
+                    return EmptyState(
+                      icon: Icons.search_off_rounded,
+                      title: context.tr('ไม่พบเอกสาร', 'No matching documents'),
+                      message: context.tr('ลองเปลี่ยนคำค้นหาหรือตัวกรอง', 'Try another search or filter'),
+                      compact: true,
+                    );
+                  }
+                  final showPinnedSection =
+                      _filter == DocFilter.all &&
+                      _query.isEmpty &&
+                      list.any((d) => d.isPinned) &&
+                      list.any((d) => !d.isPinned);
+                  final pinned = showPinnedSection ? list.where((d) => d.isPinned).toList() : <DocumentItem>[];
+                  final rest = showPinnedSection ? list.where((d) => !d.isPinned).toList() : list;
+
+                  Widget section(List<DocumentItem> docs) => grid
+                      ? GridView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                            maxCrossAxisExtent: 220,
+                            mainAxisSpacing: Space.md,
+                            crossAxisSpacing: Space.md,
+                            childAspectRatio: 0.86,
+                          ),
+                          itemCount: docs.length,
+                          itemBuilder: (context, i) => FadeSlideIn(
+                            index: i,
+                            child: DocumentGridCard(doc: docs[i], onTap: () => _open(docs[i])),
+                          ),
+                        )
+                      : LkGroup(
+                          dividerIndent: 72,
+                          children: [
+                            for (final d in docs) DocumentRow(doc: d, highlight: _query, onTap: () => _open(d)),
+                          ],
+                        );
+
+                  return ListView(
+                    padding: const EdgeInsets.fromLTRB(Space.page, Space.xs, Space.page, 96),
+                    children: [
+                      if (pinned.isNotEmpty) ...[
+                        LkSectionHeader(
+                          title: context.tr('ปักหมุด', 'Pinned'),
+                          count: pinned.length,
+                          padding: const EdgeInsets.fromLTRB(Space.xs, Space.sm, Space.xs, Space.sm),
+                        ),
+                        section(pinned),
+                      ],
+                      LkSectionHeader(
+                        title: showPinnedSection
+                            ? context.tr('เอกสารอื่น ๆ', 'Other documents')
+                            : context.tr('${list.length} รายการ', '${list.length} items'),
+                        count: showPinnedSection ? rest.length : null,
+                        padding: EdgeInsets.fromLTRB(
+                          Space.xs,
+                          pinned.isEmpty ? Space.sm : Space.xl,
+                          Space.xs,
+                          Space.sm,
+                        ),
+                      ),
+                      FadeSlideIn(child: section(rest)),
+                    ],
+                  );
+                },
+              ),
+            ),
+          ],
         ),
-      ]),
+      ),
     );
   }
 }

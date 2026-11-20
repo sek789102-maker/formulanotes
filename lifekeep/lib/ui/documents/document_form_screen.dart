@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/l10n/lang.dart';
+import '../../core/utils/dates.dart';
 import '../../core/utils/errors.dart';
 import '../../core/utils/formatters.dart';
 import '../../core/utils/ids.dart';
@@ -11,13 +12,14 @@ import '../../core/utils/validators.dart';
 import '../../data/models/category.dart';
 import '../../data/models/document_item.dart';
 import '../../data/models/reminder_config.dart';
-import '../../core/utils/dates.dart';
 import '../../state/app_controller.dart';
+import '../design/design.dart';
 import '../lock/lock_gate.dart';
-import '../widgets/common.dart';
 import '../widgets/form_widgets.dart';
 import '../widgets/item_tiles.dart';
 import 'image_viewer_screen.dart';
+
+enum _ImageSource { gallery, camera, files }
 
 class DocumentFormScreen extends StatefulWidget {
   const DocumentFormScreen({super.key, this.document});
@@ -34,8 +36,8 @@ class _DocumentFormScreenState extends State<DocumentFormScreen> {
   late final _notes = TextEditingController(text: widget.document?.notes);
   late String _categoryId = widget.document?.categoryId ?? ItemCategory.otherId;
   late DateTime? _expiry = widget.document?.expiryDate;
-  late ReminderConfig _reminder = widget.document?.reminder ??
-      const ReminderConfig([ReminderCalc.oneDay, ReminderCalc.sevenDays]);
+  late ReminderConfig _reminder =
+      widget.document?.reminder ?? const ReminderConfig([ReminderCalc.oneDay, ReminderCalc.sevenDays]);
   late bool _pinned = widget.document?.isPinned ?? false;
   late final List<String> _attachments = [...?widget.document?.attachmentPaths];
 
@@ -54,8 +56,12 @@ class _DocumentFormScreenState extends State<DocumentFormScreen> {
   @override
   void initState() {
     super.initState();
+    // Only real text edits count (focus/cursor changes also notify).
     for (final c in [_title, _desc, _notes]) {
-      c.addListener(() => _dirty = true);
+      final initial = c.text;
+      c.addListener(() {
+        if (c.text != initial) _dirty = true;
+      });
     }
   }
 
@@ -68,54 +74,70 @@ class _DocumentFormScreenState extends State<DocumentFormScreen> {
   }
 
   void _mark(VoidCallback f) => setState(() {
-        f();
-        _dirty = true;
-      });
+    f();
+    _dirty = true;
+  });
 
-  Future<void> _pickGallery() async {
+  void _addName(String name) => _mark(() {
+    _attachments.add(name);
+    _added.add(name);
+  });
+
+  Future<void> _addImages() async {
+    final src = await showOptionSheet<_ImageSource>(
+      context,
+      title: context.tr('เพิ่มรูปภาพ', 'Add images'),
+      options: [
+        SheetOption(
+          value: _ImageSource.gallery,
+          icon: Icons.photo_library_outlined,
+          label: context.tr('เลือกจากแกลเลอรี', 'Choose from gallery'),
+          subtitle: context.tr('เลือกได้หลายรูป', 'Multiple images'),
+        ),
+        SheetOption(
+          value: _ImageSource.camera,
+          icon: Icons.photo_camera_outlined,
+          label: context.tr('ถ่ายรูป', 'Take a photo'),
+        ),
+        SheetOption(
+          value: _ImageSource.files,
+          icon: Icons.folder_open_outlined,
+          label: context.tr('เลือกจากไฟล์', 'Choose image files'),
+        ),
+      ],
+    );
+    if (src == null || !mounted) return;
     final c = context.read<AppController>();
     await _withPicking(() async {
-      final files = await LockGuard.external(
-        () => ImagePicker().pickMultiImage(maxWidth: 3000, maxHeight: 3000, imageQuality: 90, requestFullMetadata: false),
-      );
-      for (final f in files) {
-        final name = await c.s.attachments.importFile(f.path);
-        _mark(() {
-          _attachments.add(name);
-          _added.add(name);
-        });
-      }
-    });
-  }
-
-  Future<void> _pickCamera() async {
-    final c = context.read<AppController>();
-    await _withPicking(() async {
-      final f = await LockGuard.external(
-        () => ImagePicker().pickImage(source: ImageSource.camera, maxWidth: 3000, maxHeight: 3000, imageQuality: 90),
-      );
-      if (f == null) return;
-      final name = await c.s.attachments.importFile(f.path);
-      _mark(() {
-        _attachments.add(name);
-        _added.add(name);
-      });
-    });
-  }
-
-  Future<void> _pickFiles() async {
-    final c = context.read<AppController>();
-    await _withPicking(() async {
-      final files = await LockGuard.external(() => FilePicker.pickFiles(type: FileType.image));
-      for (final f in files) {
-        final path = f.path;
-        final name = path != null
-            ? await c.s.attachments.importFile(path)
-            : await c.s.attachments.importStream(f.xFile.openRead(), f.name);
-        _mark(() {
-          _attachments.add(name);
-          _added.add(name);
-        });
+      switch (src) {
+        case _ImageSource.gallery:
+          final files = await LockGuard.external(
+            () => ImagePicker().pickMultiImage(
+              maxWidth: 3000,
+              maxHeight: 3000,
+              imageQuality: 90,
+              requestFullMetadata: false,
+            ),
+          );
+          for (final f in files) {
+            _addName(await c.s.attachments.importFile(f.path));
+          }
+        case _ImageSource.camera:
+          final f = await LockGuard.external(
+            () =>
+                ImagePicker().pickImage(source: ImageSource.camera, maxWidth: 3000, maxHeight: 3000, imageQuality: 90),
+          );
+          if (f != null) _addName(await c.s.attachments.importFile(f.path));
+        case _ImageSource.files:
+          final files = await LockGuard.external(() => FilePicker.pickFiles(type: FileType.image));
+          for (final f in files) {
+            final path = f.path;
+            _addName(
+              path != null
+                  ? await c.s.attachments.importFile(path)
+                  : await c.s.attachments.importStream(f.xFile.openRead(), f.name),
+            );
+          }
       }
     });
   }
@@ -129,8 +151,10 @@ class _DocumentFormScreenState extends State<DocumentFormScreen> {
       if (!mounted) return;
       final msg = e is AppException
           ? e.userMessage
-          : context.tr('ไม่สามารถเลือกรูปภาพได้ กรุณาตรวจสอบสิทธิ์การเข้าถึงรูปภาพ',
-              'Could not pick images. Please check photo access permission.');
+          : context.tr(
+              'ไม่สามารถเลือกรูปภาพได้ กรุณาตรวจสอบสิทธิ์การเข้าถึงรูปภาพ',
+              'Could not pick images. Please check photo permission.',
+            );
       showSnack(context, msg, error: true);
     } finally {
       if (mounted) setState(() => _busyPicking = false);
@@ -181,7 +205,9 @@ class _DocumentFormScreenState extends State<DocumentFormScreen> {
     showSnack(
       context,
       reminderOk
-          ? (_isEdit ? context.tr('บันทึกการแก้ไขแล้ว', 'Changes saved') : context.tr('เพิ่มเอกสารแล้ว', 'Document added'))
+          ? (_isEdit
+                ? context.tr('บันทึกการแก้ไขแล้ว', 'Changes saved')
+                : context.tr('เพิ่มเอกสารแล้ว', 'Document added'))
           : context.tr('บันทึกแล้ว แต่ตั้งการแจ้งเตือนไม่สำเร็จ', 'Saved, but reminders could not be scheduled'),
       error: !reminderOk,
     );
@@ -202,6 +228,8 @@ class _DocumentFormScreenState extends State<DocumentFormScreen> {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final t = Theme.of(context).textTheme;
+    final expiryDays = ExpiryCalc.daysLeft(_expiry, DateTime.now());
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) async {
@@ -217,158 +245,238 @@ class _DocumentFormScreenState extends State<DocumentFormScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text(_isEdit ? context.tr('แก้ไขเอกสาร', 'Edit document') : context.tr('เพิ่มเอกสาร', 'Add document')),
+          title: Text(_isEdit ? context.tr('แก้ไขเอกสาร', 'Edit document') : context.tr('เพิ่มเอกสาร', 'New document')),
           actions: [
-            Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: TextButton(
-                onPressed: _saving ? null : _save,
-                child: Text(context.tr('บันทึก', 'Save')),
-              ),
-            ),
+            TextButton(onPressed: _saving ? null : _save, child: Text(context.tr('บันทึก', 'Save'))),
+            const SizedBox(width: Space.sm),
           ],
+        ),
+        bottomNavigationBar: SaveBar(
+          label: _isEdit ? context.tr('บันทึกการแก้ไข', 'Save changes') : context.tr('บันทึกเอกสาร', 'Save document'),
+          busy: _saving,
+          onPressed: _save,
         ),
         body: Form(
           key: _form,
-          child: ListView(padding: const EdgeInsets.fromLTRB(16, 8, 16, 40), children: [
-            TextFormField(
-              controller: _title,
-              textInputAction: TextInputAction.next,
-              maxLength: Validators.maxTitle,
-              decoration: InputDecoration(
-                labelText: context.tr('ชื่อเอกสาร *', 'Title *'),
-                hintText: context.tr('เช่น บัตรประชาชน, ใบขับขี่', 'e.g. ID card, Driving licence'),
-                counterText: '',
-              ),
-              validator: Validators.title,
-            ),
-            FormSection(
-              title: context.tr('หมวดหมู่', 'Category'),
-              icon: Icons.label_outline_rounded,
-              child: CategorySelector(selectedId: _categoryId, onChanged: (v) => _mark(() => _categoryId = v ?? ItemCategory.otherId)),
-            ),
-            FormSection(
-              title: context.tr('รายละเอียด', 'Details'),
-              icon: Icons.notes_rounded,
-              child: Column(children: [
-                TextFormField(
-                  controller: _desc,
-                  minLines: 1,
-                  maxLines: 3,
-                  decoration: InputDecoration(labelText: context.tr('คำอธิบาย', 'Description')),
-                  validator: Validators.longText,
+          child: ContentWidth(
+            child: ListView(
+              padding: const EdgeInsets.fromLTRB(Space.page, Space.xs, Space.page, Space.xl),
+              children: [
+                FormBlock(
+                  title: context.tr('ข้อมูลเอกสาร', 'Document'),
+                  icon: Icons.description_outlined,
+                  children: [
+                    TextFormField(
+                      controller: _title,
+                      textInputAction: TextInputAction.next,
+                      maxLength: Validators.maxTitle,
+                      style: t.bodyLarge?.copyWith(fontWeight: FontWeight.w500),
+                      decoration: InputDecoration(
+                        labelText: context.tr('ชื่อเอกสาร *', 'Title *'),
+                        hintText: context.tr('เช่น บัตรประชาชน, ใบขับขี่', 'e.g. ID card, Driving licence'),
+                        counterText: '',
+                      ),
+                      validator: Validators.title,
+                    ),
+                    CategoryPickerField(
+                      selectedId: _categoryId,
+                      onChanged: (v) => _mark(() => _categoryId = v ?? ItemCategory.otherId),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 12),
-                TextFormField(
-                  controller: _notes,
-                  minLines: 2,
-                  maxLines: 6,
-                  decoration: InputDecoration(
-                    labelText: context.tr('หมายเหตุ', 'Notes'),
-                    hintText: context.tr('เช่น เลขที่เอกสาร สถานที่เก็บตัวจริง', 'e.g. document number, where the original is kept'),
-                  ),
-                  validator: Validators.longText,
-                ),
-              ]),
-            ),
-            FormSection(
-              title: context.tr('วันหมดอายุและการแจ้งเตือน', 'Expiry & reminders'),
-              icon: Icons.event_outlined,
-              child: Column(children: [
-                PickerTile(
-                  icon: Icons.event_busy_outlined,
-                  label: context.tr('วันหมดอายุ', 'Expiry date'),
-                  value: _expiry == null ? null : Fmt.date(_expiry!),
-                  onTap: () async {
-                    final d = await pickDate(context, initial: _expiry ?? DateTime.now().add(const Duration(days: 365)));
-                    if (d != null) _mark(() => _expiry = d);
-                  },
-                  onClear: () => _mark(() => _expiry = null),
-                ),
-                const SizedBox(height: 12),
-                ReminderPicker(
-                  config: _reminder,
-                  enabled: _expiry != null,
-                  forDocument: true,
-                  disabledHint: context.tr('กำหนดวันหมดอายุเพื่อตั้งการแจ้งเตือน', 'Set an expiry date to add reminders'),
-                  onChanged: (r) => _mark(() => _reminder = r),
-                ),
-              ]),
-            ),
-            FormSection(
-              title: context.tr('รูปภาพแนบ', 'Attachments'),
-              icon: Icons.photo_library_outlined,
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                if (_attachments.isNotEmpty)
-                  Wrap(spacing: 8, runSpacing: 8, children: [
-                    for (var i = 0; i < _attachments.length; i++)
-                      Stack(clipBehavior: Clip.none, children: [
-                        GestureDetector(
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (_) => ImageViewerScreen(names: List.of(_attachments), initialIndex: i)),
+                FormBlock(
+                  title: context.tr('วันหมดอายุและการแจ้งเตือน', 'Expiry & reminders'),
+                  icon: Icons.event_outlined,
+                  trailing: expiryDays == null
+                      ? null
+                      : Text(
+                          Fmt.relativeDays(expiryDays),
+                          style: t.labelMedium?.copyWith(
+                            color: expiryDays < 0 ? context.status.danger : scheme.primary,
                           ),
-                          child: AttachmentThumb(name: _attachments[i], size: 88),
                         ),
-                        Positioned(
-                          top: -6,
-                          right: -6,
-                          child: Material(
-                            color: scheme.surface,
-                            shape: const CircleBorder(),
-                            elevation: 1,
-                            child: InkWell(
-                              customBorder: const CircleBorder(),
-                              onTap: () => _removeAttachment(_attachments[i]),
-                              child: Padding(
-                                padding: const EdgeInsets.all(4),
-                                child: Icon(Icons.close_rounded, size: 16, color: scheme.error),
+                  children: [
+                    PickerField(
+                      icon: Icons.event_busy_outlined,
+                      label: context.tr('วันหมดอายุ', 'Expiry date'),
+                      value: _expiry == null ? null : Fmt.fullDate(_expiry!),
+                      onTap: () async {
+                        final d = await pickDate(
+                          context,
+                          initial: _expiry ?? DateTime.now().add(const Duration(days: 365)),
+                        );
+                        if (d != null) _mark(() => _expiry = d);
+                      },
+                      onClear: () => _mark(() => _expiry = null),
+                    ),
+                    ReminderPicker(
+                      config: _reminder,
+                      enabled: _expiry != null,
+                      forDocument: true,
+                      disabledHint: context.tr(
+                        'ใส่วันหมดอายุเพื่อเปิดการแจ้งเตือน',
+                        'Add an expiry date to enable reminders',
+                      ),
+                      onChanged: (r) => _mark(() => _reminder = r),
+                    ),
+                  ],
+                ),
+                FormBlock(
+                  title: context.tr('รูปภาพแนบ', 'Images'),
+                  icon: Icons.photo_library_outlined,
+                  trailing: _attachments.isEmpty
+                      ? null
+                      : Text('${_attachments.length}', style: t.labelMedium?.copyWith(color: scheme.onSurfaceVariant)),
+                  children: [
+                    SizedBox(
+                      height: 92,
+                      child: ListView(
+                        scrollDirection: Axis.horizontal,
+                        children: [
+                          _AddImageTile(busy: _busyPicking, onTap: _busyPicking ? null : _addImages),
+                          for (var i = 0; i < _attachments.length; i++)
+                            Padding(
+                              padding: const EdgeInsets.only(left: Space.sm),
+                              child: _ThumbWithRemove(
+                                name: _attachments[i],
+                                onOpen: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => ImageViewerScreen(names: List.of(_attachments), initialIndex: i),
+                                  ),
+                                ),
+                                onRemove: () => _removeAttachment(_attachments[i]),
                               ),
                             ),
-                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                FormBlock(
+                  title: context.tr('รายละเอียดเพิ่มเติม', 'More details'),
+                  icon: Icons.notes_rounded,
+                  children: [
+                    TextFormField(
+                      controller: _desc,
+                      minLines: 1,
+                      maxLines: 3,
+                      decoration: InputDecoration(labelText: context.tr('คำอธิบายสั้น', 'Short description')),
+                      validator: Validators.longText,
+                    ),
+                    TextFormField(
+                      controller: _notes,
+                      minLines: 2,
+                      maxLines: 6,
+                      decoration: InputDecoration(
+                        labelText: context.tr('หมายเหตุ', 'Notes'),
+                        hintText: context.tr(
+                          'เช่น เลขที่เอกสาร ที่เก็บตัวจริง',
+                          'e.g. number, where the original is kept',
                         ),
-                      ]),
-                  ]),
-                if (_attachments.isNotEmpty) const SizedBox(height: 12),
-                if (_busyPicking) const LinearProgressIndicator(),
-                Wrap(spacing: 8, runSpacing: 8, children: [
-                  OutlinedButton.icon(
-                    onPressed: _busyPicking ? null : _pickGallery,
-                    icon: const Icon(Icons.photo_outlined),
-                    label: Text(context.tr('แกลเลอรี', 'Gallery')),
-                  ),
-                  OutlinedButton.icon(
-                    onPressed: _busyPicking ? null : _pickCamera,
-                    icon: const Icon(Icons.photo_camera_outlined),
-                    label: Text(context.tr('ถ่ายรูป', 'Camera')),
-                  ),
-                  OutlinedButton.icon(
-                    onPressed: _busyPicking ? null : _pickFiles,
-                    icon: const Icon(Icons.folder_open_outlined),
-                    label: Text(context.tr('เลือกไฟล์รูป', 'Image files')),
-                  ),
-                ]),
-              ]),
+                        alignLabelWithHint: true,
+                      ),
+                      validator: Validators.longText,
+                    ),
+                  ],
+                ),
+                LkGroup(
+                  children: [
+                    LkSwitchRow(
+                      leading: Icon(
+                        _pinned ? Icons.push_pin_rounded : Icons.push_pin_outlined,
+                        color: scheme.primary,
+                        size: 22,
+                      ),
+                      title: context.tr('ปักหมุดเอกสารสำคัญ', 'Pin as important'),
+                      subtitle: context.tr('แสดงไว้บนสุดของรายการ', 'Shown at the top of the list'),
+                      value: _pinned,
+                      onChanged: (v) => _mark(() => _pinned = v),
+                    ),
+                  ],
+                ),
+              ],
             ),
-            const SizedBox(height: 12),
-            SwitchListTile(
-              contentPadding: const EdgeInsets.symmetric(horizontal: 4),
-              title: Text(context.tr('ปักหมุดเอกสารสำคัญ', 'Pin as important')),
-              subtitle: Text(context.tr('แสดงไว้บนสุดของรายการ', 'Shown at the top of the list')),
-              secondary: const Icon(Icons.push_pin_outlined),
-              value: _pinned,
-              onChanged: (v) => _mark(() => _pinned = v),
-            ),
-            const SizedBox(height: 16),
-            FilledButton.icon(
-              onPressed: _saving ? null : _save,
-              icon: _saving
-                  ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
-                  : const Icon(Icons.check_rounded),
-              label: Text(context.tr('บันทึกเอกสาร', 'Save document')),
-            ),
-          ]),
+          ),
         ),
+      ),
+    );
+  }
+}
+
+class _AddImageTile extends StatelessWidget {
+  const _AddImageTile({required this.onTap, required this.busy});
+  final VoidCallback? onTap;
+  final bool busy;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Material(
+      color: scheme.primaryContainer.withValues(alpha: 0.55),
+      borderRadius: Radii.brMd,
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: SizedBox(
+          width: 92,
+          height: 92,
+          child: busy
+              ? const Center(child: SizedBox(width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 2.4)))
+              : Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.add_photo_alternate_outlined, color: scheme.primary, size: 26),
+                    const SizedBox(height: Space.xs),
+                    Text(
+                      context.tr('เพิ่มรูป', 'Add'),
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(color: scheme.primary),
+                    ),
+                  ],
+                ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ThumbWithRemove extends StatelessWidget {
+  const _ThumbWithRemove({required this.name, required this.onOpen, required this.onRemove});
+  final String name;
+  final VoidCallback onOpen;
+  final VoidCallback onRemove;
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeSlideIn(
+      child: Stack(
+        children: [
+          GestureDetector(
+            onTap: onOpen,
+            child: AttachmentThumb(name: name, size: 92, radius: Radii.md),
+          ),
+          Positioned(
+            top: 4,
+            right: 4,
+            child: Material(
+              color: Colors.black.withValues(alpha: 0.55),
+              shape: const CircleBorder(),
+              child: InkWell(
+                customBorder: const CircleBorder(),
+                onTap: onRemove,
+                child: Padding(
+                  padding: const EdgeInsets.all(4),
+                  child: Icon(
+                    Icons.close_rounded,
+                    size: 15,
+                    color: Colors.white,
+                    semanticLabel: context.tr('ลบรูป', 'Remove image'),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

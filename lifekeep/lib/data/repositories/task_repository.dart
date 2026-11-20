@@ -20,8 +20,7 @@ class TaskRepository {
     return rows.isEmpty ? null : TaskItem.fromMap(rows.first);
   }
 
-  Future<void> upsert(TaskItem t) =>
-      db.insert('tasks', t.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
+  Future<void> upsert(TaskItem t) => db.insert('tasks', t.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
 
   Future<void> delete(String id) => db.delete('tasks', where: 'id = ?', whereArgs: [id]);
 
@@ -29,11 +28,7 @@ class TaskRepository {
     final ts = (now ?? DateTime.now()).millisecondsSinceEpoch;
     await db.update(
       'tasks',
-      {
-        'is_completed': completed ? 1 : 0,
-        'completed_at': completed ? ts : null,
-        'updated_at': ts,
-      },
+      {'is_completed': completed ? 1 : 0, 'completed_at': completed ? ts : null, 'updated_at': ts},
       where: 'id = ?',
       whereArgs: [id],
     );
@@ -67,13 +62,16 @@ class TaskRepository {
     final q = query.trim();
     if (q.isEmpty) return [];
     final like = likePattern(q);
-    final rows = await db.rawQuery('''
+    final rows = await db.rawQuery(
+      '''
       SELECT t.* FROM tasks t
       LEFT JOIN categories c ON c.id = t.category_id
       WHERE t.title LIKE ? ESCAPE '\\' OR t.description LIKE ? ESCAPE '\\'
          OR c.name LIKE ? ESCAPE '\\'
       ORDER BY t.is_completed ASC, t.due_at IS NULL, t.due_at ASC
-      LIMIT 200''', [like, like, like]);
+      LIMIT 200''',
+      [like, like, like],
+    );
     return rows.map(TaskItem.fromMap).toList();
   }
 }

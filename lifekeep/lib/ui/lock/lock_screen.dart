@@ -126,44 +126,52 @@ class _LockScreenState extends State<LockScreen> {
           builder: (context, box) => SingleChildScrollView(
             child: ConstrainedBox(
               constraints: BoxConstraints(minHeight: box.maxHeight),
-              child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                const SizedBox(height: 24),
-                Container(
-                  width: 64,
-                  height: 64,
-                  decoration: BoxDecoration(color: scheme.primary, borderRadius: BorderRadius.circular(20)),
-                  child: Icon(Icons.lock_outline_rounded, color: scheme.onPrimary, size: 30),
-                ),
-                const SizedBox(height: 16),
-                Text('LIFEKEEP', style: text.titleLarge?.copyWith(letterSpacing: 2)),
-                const SizedBox(height: 6),
-                Text(context.tr('ใส่ PIN เพื่อปลดล็อก', 'Enter PIN to unlock'),
-                    style: text.bodyMedium?.copyWith(color: scheme.onSurfaceVariant)),
-                SizedBox(
-                  height: 40,
-                  child: Center(
-                    child: Text(
-                      _lockout != null
-                          ? context.tr('ลองใหม่ได้ใน ${_lockout!.inSeconds} วินาที', 'Try again in ${_lockout!.inSeconds}s')
-                          : (_message ?? ''),
-                      style: TextStyle(color: scheme.error),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 24),
+                  Container(
+                    width: 64,
+                    height: 64,
+                    decoration: BoxDecoration(color: scheme.primary, borderRadius: BorderRadius.circular(20)),
+                    child: Icon(Icons.lock_outline_rounded, color: scheme.onPrimary, size: 30),
+                  ),
+                  const SizedBox(height: 16),
+                  Text('LIFEKEEP', style: text.titleLarge?.copyWith(letterSpacing: 2)),
+                  const SizedBox(height: 6),
+                  Text(
+                    context.tr('ใส่ PIN เพื่อปลดล็อก', 'Enter PIN to unlock'),
+                    style: text.bodyMedium?.copyWith(color: scheme.onSurfaceVariant),
+                  ),
+                  SizedBox(
+                    height: 40,
+                    child: Center(
+                      child: Text(
+                        _lockout != null
+                            ? context.tr(
+                                'ลองใหม่ได้ใน ${_lockout!.inSeconds} วินาที',
+                                'Try again in ${_lockout!.inSeconds}s',
+                              )
+                            : (_message ?? ''),
+                        style: TextStyle(color: scheme.error),
+                      ),
                     ),
                   ),
-                ),
-                PinPad(
-                  length: _pin.length,
-                  maxLength: _len,
-                  error: _error,
-                  enabled: !_busy && _lockout == null,
-                  onDigit: _onDigit,
-                  onDelete: () => setState(() {
-                    if (_pin.isNotEmpty) _pin = _pin.substring(0, _pin.length - 1);
-                    _error = false;
-                  }),
-                  onBiometric: c.biometricEnabled ? _biometric : null,
-                ),
-                const SizedBox(height: 24),
-              ]),
+                  PinPad(
+                    length: _pin.length,
+                    maxLength: _len,
+                    error: _error,
+                    enabled: !_busy && _lockout == null,
+                    onDigit: _onDigit,
+                    onDelete: () => setState(() {
+                      if (_pin.isNotEmpty) _pin = _pin.substring(0, _pin.length - 1);
+                      _error = false;
+                    }),
+                    onBiometric: c.biometricEnabled ? _biometric : null,
+                  ),
+                  const SizedBox(height: 24),
+                ],
+              ),
             ),
           ),
         ),

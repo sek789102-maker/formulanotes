@@ -18,7 +18,13 @@ class FakeGateway implements NotificationGateway {
   Future<void> init() async {}
 
   @override
-  Future<void> schedule({required int id, required String title, required String body, required DateTime at, String? payload}) async {
+  Future<void> schedule({
+    required int id,
+    required String title,
+    required String body,
+    required DateTime at,
+    String? payload,
+  }) async {
     if (failSchedule) throw Exception('boom');
     if (scheduled.containsKey(id)) throw StateError('duplicate id $id');
     scheduled[id] = (title: title, body: body, at: at);

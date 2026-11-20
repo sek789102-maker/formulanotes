@@ -55,7 +55,8 @@ class PinResult {
 /// Android Keystore-backed secure storage. Repeated failures trigger an
 /// increasing lockout.
 class SecurityService {
-  SecurityService(this.kv, {LocalAuthentication? auth, this.iterations = 60000}) : _auth = auth; // ignore: prefer_initializing_formals
+  SecurityService(this.kv, {LocalAuthentication? auth, this.iterations = 60000})
+    : _auth = auth; // ignore: prefer_initializing_formals
 
   final SecureKV kv;
   final LocalAuthentication? _auth;
@@ -83,7 +84,13 @@ class SecurityService {
     final hash = await _derive(pin, salt, iterations);
     await kv.write(
       _kPin,
-      jsonEncode({'v': 1, 'len': pin.length, 'iter': iterations, 'salt': base64Encode(salt), 'hash': base64Encode(hash)}),
+      jsonEncode({
+        'v': 1,
+        'len': pin.length,
+        'iter': iterations,
+        'salt': base64Encode(salt),
+        'hash': base64Encode(hash),
+      }),
     );
     await kv.write(_kLock, 'true');
     await kv.delete(_kFails);

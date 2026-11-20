@@ -33,31 +33,36 @@ class _MainShellState extends State<MainShell> {
           index: _index,
           children: const [HomeScreen(), DocumentsScreen(), TasksScreen(), CalendarScreen()],
         ),
-        bottomNavigationBar: NavigationBar(
-          selectedIndex: _index,
-          onDestinationSelected: _select,
-          destinations: [
-            NavigationDestination(
-              icon: const Icon(Icons.home_outlined),
-              selectedIcon: const Icon(Icons.home_rounded),
-              label: context.tr('หน้าแรก', 'Home'),
-            ),
-            NavigationDestination(
-              icon: const Icon(Icons.folder_outlined),
-              selectedIcon: const Icon(Icons.folder_rounded),
-              label: context.tr('เอกสาร', 'Documents'),
-            ),
-            NavigationDestination(
-              icon: const Icon(Icons.check_circle_outline_rounded),
-              selectedIcon: const Icon(Icons.check_circle_rounded),
-              label: context.tr('งาน', 'Tasks'),
-            ),
-            NavigationDestination(
-              icon: const Icon(Icons.calendar_month_outlined),
-              selectedIcon: const Icon(Icons.calendar_month_rounded),
-              label: context.tr('ปฏิทิน', 'Calendar'),
-            ),
-          ],
+        bottomNavigationBar: DecoratedBox(
+          decoration: BoxDecoration(
+            border: Border(top: BorderSide(color: Theme.of(context).colorScheme.outlineVariant)),
+          ),
+          child: NavigationBar(
+            selectedIndex: _index,
+            onDestinationSelected: _select,
+            destinations: [
+              NavigationDestination(
+                icon: const Icon(Icons.home_outlined),
+                selectedIcon: const Icon(Icons.home_rounded),
+                label: context.tr('หน้าแรก', 'Home'),
+              ),
+              NavigationDestination(
+                icon: const Icon(Icons.folder_outlined),
+                selectedIcon: const Icon(Icons.folder_rounded),
+                label: context.tr('เอกสาร', 'Documents'),
+              ),
+              NavigationDestination(
+                icon: const Icon(Icons.check_circle_outline_rounded),
+                selectedIcon: const Icon(Icons.check_circle_rounded),
+                label: context.tr('งาน', 'Tasks'),
+              ),
+              NavigationDestination(
+                icon: const Icon(Icons.calendar_month_outlined),
+                selectedIcon: const Icon(Icons.calendar_month_rounded),
+                label: context.tr('ปฏิทิน', 'Calendar'),
+              ),
+            ],
+          ),
         ),
       ),
     );

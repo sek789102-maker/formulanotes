@@ -15,8 +15,7 @@ class Lang {
 
   static String t(String th, String en) => isEn ? en : th;
 
-  static AppLanguage parse(String? v) =>
-      v == 'en' ? AppLanguage.en : AppLanguage.th;
+  static AppLanguage parse(String? v) => v == 'en' ? AppLanguage.en : AppLanguage.th;
 }
 
 extension TrX on BuildContext {

@@ -52,7 +52,13 @@ void main() {
     test('fire times subtract offsets, drop past, dedupe and sort', () {
       final anchor = DateTime(2026, 12, 10, 9);
       final now = DateTime(2026, 12, 5, 12);
-      final r = ReminderCalc.fireTimes(anchor, [ReminderCalc.sevenDays, ReminderCalc.oneDay, ReminderCalc.threeDays, ReminderCalc.oneDay, 0], now);
+      final r = ReminderCalc.fireTimes(anchor, [
+        ReminderCalc.sevenDays,
+        ReminderCalc.oneDay,
+        ReminderCalc.threeDays,
+        ReminderCalc.oneDay,
+        0,
+      ], now);
       expect(r, [DateTime(2026, 12, 7, 9), DateTime(2026, 12, 9, 9), DateTime(2026, 12, 10, 9)]);
     });
 

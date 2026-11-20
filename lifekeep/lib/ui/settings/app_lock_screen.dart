@@ -4,11 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/l10n/lang.dart';
-import '../../core/theme/app_theme.dart';
 import '../../services/security_service.dart';
 import '../../state/app_controller.dart';
 import '../lock/pin_pad.dart';
-import '../widgets/common.dart';
+import '../design/design.dart';
 
 class AppLockSettingsScreen extends StatefulWidget {
   const AppLockSettingsScreen({super.key});
@@ -82,61 +81,103 @@ class _AppLockSettingsScreenState extends State<AppLockSettingsScreen> {
     final scheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(title: Text(context.tr('ล็อกแอป', 'App lock'))),
-      body: ListView(padding: const EdgeInsets.fromLTRB(16, 0, 16, 32), children: [
-        AppCard(
-          child: Row(children: [
-            IconBadge(icon: c.lockEnabled ? Icons.lock_rounded : Icons.lock_open_rounded, color: scheme.primary, size: 48),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(c.lockEnabled ? context.tr('ล็อกแอปเปิดอยู่', 'App lock is on') : context.tr('ล็อกแอปปิดอยู่', 'App lock is off'),
-                    style: Theme.of(context).textTheme.titleMedium),
-                const SizedBox(height: 4),
-                Text(
-                  context.tr('ต้องใส่ PIN ทุกครั้งที่เปิดแอปหรือกลับเข้าแอป และซ่อนเนื้อหาในหน้าแอปล่าสุด',
-                      'PIN required whenever the app opens or returns, and content is hidden in Recent Apps'),
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant),
-                ),
-              ]),
+      body: ContentWidth(
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(Space.page, 0, Space.page, Space.xxxl),
+          children: [
+            LkPanel(
+              child: Row(
+                children: [
+                  AnimatedContainer(
+                    duration: Motion.medium,
+                    width: 52,
+                    height: 52,
+                    decoration: BoxDecoration(
+                      color: c.lockEnabled ? context.status.successContainer : scheme.surfaceContainerHigh,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Icon(
+                      c.lockEnabled ? Icons.lock_rounded : Icons.lock_open_rounded,
+                      color: c.lockEnabled ? context.status.success : scheme.onSurfaceVariant,
+                      size: 26,
+                    ),
+                  ),
+                  const SizedBox(width: Space.md),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          c.lockEnabled
+                              ? context.tr('ล็อกแอปเปิดอยู่', 'App lock is on')
+                              : context.tr('ล็อกแอปปิดอยู่', 'App lock is off'),
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          context.tr(
+                            'ต้องใส่ PIN ทุกครั้งที่เปิดหรือกลับเข้าแอป และซ่อนเนื้อหาในหน้าแอปล่าสุด',
+                            'PIN required whenever the app opens or returns; content hidden in Recent Apps',
+                          ),
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ]),
-        ),
-        const SizedBox(height: 16),
-        if (!c.lockEnabled)
-          FilledButton.icon(onPressed: _enable, icon: const Icon(Icons.pin_outlined), label: Text(context.tr('ตั้ง PIN และเปิดล็อก', 'Set PIN & enable')))
-        else
-          Card(
-            child: Column(children: [
-              SwitchListTile(
-                secondary: const Icon(Icons.fingerprint_rounded),
-                title: Text(context.tr('ปลดล็อกด้วยลายนิ้วมือ / ใบหน้า', 'Unlock with biometrics')),
-                subtitle: Text(_bioAvailable
-                    ? context.tr('ใช้ข้อมูลชีวมิติที่ลงทะเบียนในเครื่อง', 'Uses biometrics enrolled on this device')
-                    : context.tr('อุปกรณ์ไม่รองรับหรือยังไม่ได้ลงทะเบียน', 'Not supported or not enrolled on this device')),
-                value: c.biometricEnabled,
-                onChanged: _bioAvailable ? _toggleBio : null,
+            const SizedBox(height: Space.md),
+            if (!c.lockEnabled)
+              FilledButton.icon(
+                onPressed: _enable,
+                icon: const Icon(Icons.pin_outlined),
+                label: Text(context.tr('ตั้ง PIN และเปิดล็อก', 'Set PIN & enable')),
+              )
+            else
+              LkGroup(
+                dividerIndent: 56,
+                children: [
+                  LkSwitchRow(
+                    leading: Icon(Icons.fingerprint_rounded, color: scheme.primary),
+                    title: context.tr('ปลดล็อกด้วยลายนิ้วมือ / ใบหน้า', 'Unlock with biometrics'),
+                    subtitle: _bioAvailable
+                        ? context.tr('ใช้ข้อมูลชีวมิติที่ลงทะเบียนในเครื่อง', 'Uses biometrics enrolled on this device')
+                        : context.tr(
+                            'อุปกรณ์ไม่รองรับหรือยังไม่ได้ลงทะเบียน',
+                            'Not supported or not enrolled on this device',
+                          ),
+                    value: c.biometricEnabled,
+                    onChanged: _bioAvailable ? _toggleBio : null,
+                  ),
+                  LkRow(
+                    leading: Icon(Icons.password_rounded, color: scheme.onSurfaceVariant),
+                    title: context.tr('เปลี่ยน PIN', 'Change PIN'),
+                    showChevron: true,
+                    onTap: _change,
+                  ),
+                  LkRow(
+                    leading: Icon(Icons.lock_open_rounded, color: context.status.danger),
+                    title: context.tr('ปิดล็อกแอป', 'Disable app lock'),
+                    titleStyle: Theme.of(context).textTheme.bodyLarge
+                        ?.copyWith(color: context.status.danger, fontWeight: FontWeight.w500),
+                    onTap: _disable,
+                  ),
+                ],
               ),
-              const Divider(indent: 56),
-              ListTile(leading: const Icon(Icons.password_rounded), title: Text(context.tr('เปลี่ยน PIN', 'Change PIN')), onTap: _change),
-              const Divider(indent: 56),
-              ListTile(
-                leading: Icon(Icons.lock_open_rounded, color: context.status.danger),
-                title: Text(context.tr('ปิดล็อกแอป', 'Disable app lock'), style: TextStyle(color: context.status.danger)),
-                onTap: _disable,
+            const SizedBox(height: Space.md),
+            LkBanner(
+              icon: Icons.key_rounded,
+              color: scheme.primary,
+              background: scheme.primaryContainer.withValues(alpha: 0.6),
+              message: context.tr(
+                'PIN ไม่ถูกเก็บเป็นข้อความ เก็บเฉพาะค่าแฮช (PBKDF2-SHA256 + salt) ใน Secure Storage หากลืม PIN จะกู้คืนไม่ได้ ต้องล้างข้อมูลแอป จึงควรสำรองข้อมูลไว้เสมอ',
+                'Your PIN is never stored as text — only a salted PBKDF2-SHA256 hash in secure storage. A forgotten PIN cannot be recovered, so keep backups.',
               ),
-            ]),
-          ),
-        const SizedBox(height: 16),
-        Text(
-          context.tr(
-            'PIN ไม่ถูกเก็บเป็นข้อความ ระบบเก็บเฉพาะค่าแฮช (PBKDF2-SHA256 + salt) ใน Secure Storage ของเครื่อง '
-                'หากลืม PIN จะไม่สามารถกู้คืนได้ ต้องล้างข้อมูลแอป ดังนั้นควรสำรองข้อมูลไว้เสมอ',
-            'Your PIN is never stored as text — only a salted PBKDF2-SHA256 hash in the device\'s secure storage. '
-                'A forgotten PIN cannot be recovered (app data would need to be cleared), so keep backups.',
-          ),
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant),
+            ),
+          ],
         ),
-      ]),
+      ),
     );
   }
 }
@@ -185,47 +226,51 @@ class _PinSetupScreenState extends State<PinSetupScreen> {
       appBar: AppBar(title: Text(context.tr('ตั้ง PIN', 'Set PIN'))),
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Column(children: [
-            const SizedBox(height: 24),
-            Text(
-              _confirming ? context.tr('ยืนยัน PIN อีกครั้ง', 'Confirm your PIN') : context.tr('ตั้ง PIN 4–6 หลัก', 'Choose a 4–6 digit PIN'),
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            SizedBox(
-              height: 36,
-              child: Center(
-                child: Text(
-                  _error ? context.tr('PIN ไม่ตรงกัน กรุณาตั้งใหม่', 'PINs did not match. Try again.') : '',
-                  style: TextStyle(color: scheme.error),
+          child: Column(
+            children: [
+              const SizedBox(height: 24),
+              Text(
+                _confirming
+                    ? context.tr('ยืนยัน PIN อีกครั้ง', 'Confirm your PIN')
+                    : context.tr('ตั้ง PIN 4–6 หลัก', 'Choose a 4–6 digit PIN'),
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              SizedBox(
+                height: 36,
+                child: Center(
+                  child: Text(
+                    _error ? context.tr('PIN ไม่ตรงกัน กรุณาตั้งใหม่', 'PINs did not match. Try again.') : '',
+                    style: TextStyle(color: scheme.error),
+                  ),
                 ),
               ),
-            ),
-            PinPad(
-              length: _pin.length,
-              maxLength: max,
-              onDigit: (d) {
-                if (_pin.length >= max) return;
-                setState(() {
-                  _pin += d;
-                  _error = false;
-                });
-                if (_confirming && _pin.length == _first.length) _next();
-              },
-              onDelete: () => setState(() {
-                if (_pin.isNotEmpty) _pin = _pin.substring(0, _pin.length - 1);
-              }),
-            ),
-            const SizedBox(height: 16),
-            if (!_confirming)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32),
-                child: FilledButton(
-                  onPressed: _pin.length >= 4 ? _next : null,
-                  child: Text(context.tr('ถัดไป', 'Next')),
-                ),
+              PinPad(
+                length: _pin.length,
+                maxLength: max,
+                onDigit: (d) {
+                  if (_pin.length >= max) return;
+                  setState(() {
+                    _pin += d;
+                    _error = false;
+                  });
+                  if (_confirming && _pin.length == _first.length) _next();
+                },
+                onDelete: () => setState(() {
+                  if (_pin.isNotEmpty) _pin = _pin.substring(0, _pin.length - 1);
+                }),
               ),
-            const SizedBox(height: 24),
-          ]),
+              const SizedBox(height: 16),
+              if (!_confirming)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 32),
+                  child: FilledButton(
+                    onPressed: _pin.length >= 4 ? _next : null,
+                    child: Text(context.tr('ถัดไป', 'Next')),
+                  ),
+                ),
+              const SizedBox(height: 24),
+            ],
+          ),
         ),
       ),
     );
@@ -304,36 +349,46 @@ class _PinVerifyScreenState extends State<PinVerifyScreen> {
       appBar: AppBar(title: Text(context.tr('ยืนยัน PIN ปัจจุบัน', 'Enter current PIN'))),
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Column(children: [
-            const SizedBox(height: 24),
-            Text(context.tr('ใส่ PIN ปัจจุบัน', 'Enter your current PIN'), style: Theme.of(context).textTheme.titleLarge),
-            SizedBox(
-              height: 36,
-              child: Center(
-                child: Text(
-                  _lockout != null ? context.tr('ลองใหม่ได้ใน ${_lockout!.inSeconds} วินาที', 'Try again in ${_lockout!.inSeconds}s') : (_msg ?? ''),
-                  style: TextStyle(color: scheme.error),
+          child: Column(
+            children: [
+              const SizedBox(height: 24),
+              Text(
+                context.tr('ใส่ PIN ปัจจุบัน', 'Enter your current PIN'),
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              SizedBox(
+                height: 36,
+                child: Center(
+                  child: Text(
+                    _lockout != null
+                        ? context.tr(
+                            'ลองใหม่ได้ใน ${_lockout!.inSeconds} วินาที',
+                            'Try again in ${_lockout!.inSeconds}s',
+                          )
+                        : (_msg ?? ''),
+                    style: TextStyle(color: scheme.error),
+                  ),
                 ),
               ),
-            ),
-            PinPad(
-              length: _pin.length,
-              maxLength: _len,
-              enabled: !_busy && _lockout == null,
-              error: _msg != null && _pin.isEmpty,
-              onDigit: (d) {
-                if (_pin.length >= _len) return;
-                setState(() {
-                  _pin += d;
-                  _msg = null;
-                });
-                if (_pin.length == _len) _submit();
-              },
-              onDelete: () => setState(() {
-                if (_pin.isNotEmpty) _pin = _pin.substring(0, _pin.length - 1);
-              }),
-            ),
-          ]),
+              PinPad(
+                length: _pin.length,
+                maxLength: _len,
+                enabled: !_busy && _lockout == null,
+                error: _msg != null && _pin.isEmpty,
+                onDigit: (d) {
+                  if (_pin.length >= _len) return;
+                  setState(() {
+                    _pin += d;
+                    _msg = null;
+                  });
+                  if (_pin.length == _len) _submit();
+                },
+                onDelete: () => setState(() {
+                  if (_pin.isNotEmpty) _pin = _pin.substring(0, _pin.length - 1);
+                }),
+              ),
+            ],
+          ),
         ),
       ),
     );

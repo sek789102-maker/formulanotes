@@ -23,8 +23,7 @@ class SettingsRepository {
     if (value == null) {
       await db.delete('settings', where: 'key = ?', whereArgs: [key]);
     } else {
-      await db.insert('settings', {'key': key, 'value': value},
-          conflictAlgorithm: ConflictAlgorithm.replace);
+      await db.insert('settings', {'key': key, 'value': value}, conflictAlgorithm: ConflictAlgorithm.replace);
     }
   }
 }
@@ -51,6 +50,10 @@ class SettingKeys {
   static const lastManualBackupAt = 'last_manual_backup_at';
   static const lastTimezone = 'last_timezone';
   static const dataNoticeSeen = 'data_notice_seen';
+
+  /// UI preferences (no schema change: stored in the key/value table).
+  static const documentsView = 'documents_view';
+  static const recentSearches = 'recent_searches';
 
   static const backupable = {
     themeMode,

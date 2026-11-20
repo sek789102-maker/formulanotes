@@ -45,36 +45,35 @@ class TaskItem {
     bool clearCompletedAt = false,
     ReminderConfig? reminder,
     DateTime? updatedAt,
-  }) =>
-      TaskItem(
-        id: id,
-        title: title ?? this.title,
-        description: description ?? this.description,
-        categoryId: clearCategory ? null : (categoryId ?? this.categoryId),
-        dueAt: clearDue ? null : (dueAt ?? this.dueAt),
-        hasTime: hasTime ?? this.hasTime,
-        priority: priority ?? this.priority,
-        isCompleted: isCompleted ?? this.isCompleted,
-        completedAt: clearCompletedAt ? null : (completedAt ?? this.completedAt),
-        reminder: reminder ?? this.reminder,
-        createdAt: createdAt,
-        updatedAt: updatedAt ?? this.updatedAt,
-      );
+  }) => TaskItem(
+    id: id,
+    title: title ?? this.title,
+    description: description ?? this.description,
+    categoryId: clearCategory ? null : (categoryId ?? this.categoryId),
+    dueAt: clearDue ? null : (dueAt ?? this.dueAt),
+    hasTime: hasTime ?? this.hasTime,
+    priority: priority ?? this.priority,
+    isCompleted: isCompleted ?? this.isCompleted,
+    completedAt: clearCompletedAt ? null : (completedAt ?? this.completedAt),
+    reminder: reminder ?? this.reminder,
+    createdAt: createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
 
   Map<String, Object?> toMap() => {
-        'id': id,
-        'title': title,
-        'description': description,
-        'category_id': categoryId,
-        'due_at': dueAt?.millisecondsSinceEpoch,
-        'has_time': hasTime ? 1 : 0,
-        'priority': priority.index,
-        'is_completed': isCompleted ? 1 : 0,
-        'completed_at': completedAt?.millisecondsSinceEpoch,
-        'reminder': reminder.encode(),
-        'created_at': createdAt.millisecondsSinceEpoch,
-        'updated_at': updatedAt.millisecondsSinceEpoch,
-      };
+    'id': id,
+    'title': title,
+    'description': description,
+    'category_id': categoryId,
+    'due_at': dueAt?.millisecondsSinceEpoch,
+    'has_time': hasTime ? 1 : 0,
+    'priority': priority.index,
+    'is_completed': isCompleted ? 1 : 0,
+    'completed_at': completedAt?.millisecondsSinceEpoch,
+    'reminder': reminder.encode(),
+    'created_at': createdAt.millisecondsSinceEpoch,
+    'updated_at': updatedAt.millisecondsSinceEpoch,
+  };
 
   factory TaskItem.fromMap(Map<String, Object?> m) {
     final due = (m['due_at'] as num?)?.toInt();

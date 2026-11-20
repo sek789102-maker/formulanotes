@@ -9,7 +9,7 @@ import '../../core/utils/validators.dart';
 import '../../data/models/reminder_config.dart';
 import '../../data/models/task_item.dart';
 import '../../state/app_controller.dart';
-import '../widgets/common.dart';
+import '../design/design.dart';
 import '../widgets/form_widgets.dart';
 
 class TaskFormScreen extends StatefulWidget {
@@ -41,8 +41,13 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
   @override
   void initState() {
     super.initState();
-    _title.addListener(() => _dirty = true);
-    _desc.addListener(() => _dirty = true);
+    // Only real text edits count (focus/cursor changes also notify).
+    for (final c in [_title, _desc]) {
+      final initial = c.text;
+      c.addListener(() {
+        if (c.text != initial) _dirty = true;
+      });
+    }
   }
 
   @override
@@ -53,9 +58,9 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
   }
 
   void _mark(VoidCallback f) => setState(() {
-        f();
-        _dirty = true;
-      });
+    f();
+    _dirty = true;
+  });
 
   DateTime? get _dueAt {
     final d = _date;
@@ -120,6 +125,50 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
     if (done) nav.pop();
   }
 
+  Widget _priorityOption(TaskPriority p, String label) {
+    final scheme = Theme.of(context).colorScheme;
+    final sel = _priority == p;
+    final color = priorityColor(context, p.index);
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 3),
+        child: Material(
+          color: sel ? color.withValues(alpha: 0.12) : scheme.surfaceContainerHigh,
+          shape: RoundedRectangleBorder(
+            borderRadius: Radii.brMd,
+            side: BorderSide(color: sel ? color : Colors.transparent, width: 1.4),
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            onTap: () => _mark(() => _priority = p),
+            child: SizedBox(
+              height: 42,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    p == TaskPriority.high ? Icons.flag_rounded : Icons.outlined_flag_rounded,
+                    size: 17,
+                    color: color,
+                  ),
+                  const SizedBox(width: 5),
+                  Flexible(
+                    child: Text(
+                      label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(color: sel ? color : scheme.onSurface),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -140,7 +189,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text(_isEdit ? context.tr('แก้ไขงาน', 'Edit task') : context.tr('เพิ่มงาน', 'Add task')),
+          title: Text(_isEdit ? context.tr('แก้ไขงาน', 'Edit task') : context.tr('เพิ่มงาน', 'New task')),
           actions: [
             if (_isEdit)
               IconButton(
@@ -148,116 +197,134 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                 icon: const Icon(Icons.delete_outline_rounded),
                 onPressed: _delete,
               ),
-            Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: TextButton(onPressed: _saving ? null : _save, child: Text(context.tr('บันทึก', 'Save'))),
-            ),
+            TextButton(onPressed: _saving ? null : _save, child: Text(context.tr('บันทึก', 'Save'))),
+            const SizedBox(width: Space.sm),
           ],
+        ),
+        bottomNavigationBar: SaveBar(
+          label: _isEdit ? context.tr('บันทึกการแก้ไข', 'Save changes') : context.tr('บันทึกงาน', 'Save task'),
+          busy: _saving,
+          onPressed: _save,
         ),
         body: Form(
           key: _form,
-          child: ListView(padding: const EdgeInsets.fromLTRB(16, 8, 16, 40), children: [
-            TextFormField(
-              controller: _title,
-              autofocus: !_isEdit,
-              maxLength: Validators.maxTitle,
-              textInputAction: TextInputAction.next,
-              decoration: InputDecoration(labelText: context.tr('ชื่องาน *', 'Task *'), counterText: ''),
-              validator: Validators.title,
-            ),
-            const SizedBox(height: 12),
-            TextFormField(
-              controller: _desc,
-              minLines: 2,
-              maxLines: 6,
-              decoration: InputDecoration(labelText: context.tr('รายละเอียด', 'Details')),
-              validator: Validators.longText,
-            ),
-            FormSection(
-              title: context.tr('กำหนดส่ง', 'Due'),
-              icon: Icons.event_outlined,
-              child: Column(children: [
-                PickerTile(
-                  icon: Icons.calendar_today_outlined,
-                  label: context.tr('วันที่', 'Date'),
-                  value: _date == null ? null : Fmt.date(_date!),
-                  onTap: () async {
-                    final d = await pickDate(context, initial: _date ?? DateTime.now());
-                    if (d != null) _mark(() => _date = d);
-                  },
-                  onClear: () => _mark(() {
-                    _date = null;
-                    _time = null;
-                  }),
-                ),
-                const SizedBox(height: 10),
-                PickerTile(
-                  icon: Icons.schedule_rounded,
-                  label: context.tr('เวลา', 'Time'),
-                  value: _time == null
-                      ? (_date == null ? null : context.tr('ทั้งวัน', 'All day'))
-                      : '${_time!.hour.toString().padLeft(2, '0')}:${_time!.minute.toString().padLeft(2, '0')}',
-                  onTap: () async {
-                    final t = await pickTime(context, initial: _time);
-                    if (t != null) {
-                      _mark(() {
-                        _time = t;
-                        _date ??= DateTime.now();
-                      });
-                    }
-                  },
-                  onClear: _time == null ? null : () => _mark(() => _time = null),
-                ),
-              ]),
-            ),
-            FormSection(
-              title: context.tr('ความสำคัญ', 'Priority'),
-              icon: Icons.flag_outlined,
-              child: SizedBox(
-                width: double.infinity,
-                child: SegmentedButton<TaskPriority>(
-                  segments: [
-                    ButtonSegment(value: TaskPriority.low, label: Text(context.tr('ต่ำ', 'Low'))),
-                    ButtonSegment(value: TaskPriority.normal, label: Text(context.tr('ปกติ', 'Normal'))),
-                    ButtonSegment(value: TaskPriority.high, label: Text(context.tr('สูง', 'High'))),
+          child: ContentWidth(
+            child: ListView(
+              padding: const EdgeInsets.fromLTRB(Space.page, Space.xs, Space.page, Space.xl),
+              children: [
+                FormBlock(
+                  title: context.tr('รายละเอียดงาน', 'Task'),
+                  icon: Icons.check_circle_outline_rounded,
+                  children: [
+                    TextFormField(
+                      controller: _title,
+                      autofocus: !_isEdit,
+                      maxLength: Validators.maxTitle,
+                      textInputAction: TextInputAction.next,
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w500),
+                      decoration: InputDecoration(labelText: context.tr('ชื่องาน *', 'Task *'), counterText: ''),
+                      validator: Validators.title,
+                    ),
+                    TextFormField(
+                      controller: _desc,
+                      minLines: 1,
+                      maxLines: 5,
+                      decoration: InputDecoration(
+                        labelText: context.tr('รายละเอียด', 'Details'),
+                        alignLabelWithHint: true,
+                      ),
+                      validator: Validators.longText,
+                    ),
+                    CategoryPickerField(
+                      selectedId: _categoryId,
+                      allowNone: true,
+                      onChanged: (v) => _mark(() => _categoryId = v),
+                    ),
                   ],
-                  selected: {_priority},
-                  onSelectionChanged: (s) => _mark(() => _priority = s.first),
                 ),
-              ),
+                FormBlock(
+                  title: context.tr('กำหนดส่ง', 'Due'),
+                  icon: Icons.event_outlined,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          flex: 3,
+                          child: PickerField(
+                            icon: Icons.calendar_today_outlined,
+                            label: context.tr('วันที่', 'Date'),
+                            value: _date == null ? null : Fmt.date(_date!),
+                            onTap: () async {
+                              final d = await pickDate(context, initial: _date ?? DateTime.now());
+                              if (d != null) _mark(() => _date = d);
+                            },
+                            onClear: () => _mark(() {
+                              _date = null;
+                              _time = null;
+                            }),
+                          ),
+                        ),
+                        const SizedBox(width: Space.sm),
+                        Expanded(
+                          flex: 2,
+                          child: PickerField(
+                            icon: Icons.schedule_rounded,
+                            label: context.tr('เวลา', 'Time'),
+                            value: _time == null
+                                ? (_date == null ? null : context.tr('ทั้งวัน', 'All day'))
+                                : '${_time!.hour.toString().padLeft(2, '0')}:${_time!.minute.toString().padLeft(2, '0')}',
+                            onTap: () async {
+                              final t = await pickTime(context, initial: _time);
+                              if (t != null) {
+                                _mark(() {
+                                  _time = t;
+                                  _date ??= DateTime.now();
+                                });
+                              }
+                            },
+                            onClear: _time == null ? null : () => _mark(() => _time = null),
+                          ),
+                        ),
+                      ],
+                    ),
+                    ReminderPicker(
+                      config: _reminder,
+                      enabled: _date != null,
+                      disabledHint: context.tr(
+                        'เลือกวันส่งเพื่อเปิดการแจ้งเตือน',
+                        'Pick a due date to enable reminders',
+                      ),
+                      onChanged: (r) => _mark(() => _reminder = r),
+                    ),
+                  ],
+                ),
+                FormBlock(
+                  title: context.tr('ความสำคัญ', 'Priority'),
+                  icon: Icons.flag_outlined,
+                  children: [
+                    Row(
+                      children: [
+                        _priorityOption(TaskPriority.low, context.tr('ต่ำ', 'Low')),
+                        _priorityOption(TaskPriority.normal, context.tr('ปกติ', 'Normal')),
+                        _priorityOption(TaskPriority.high, context.tr('สูง', 'High')),
+                      ],
+                    ),
+                  ],
+                ),
+                if (_isEdit)
+                  LkGroup(
+                    children: [
+                      LkSwitchRow(
+                        leading: Icon(Icons.task_alt_rounded, color: context.status.success),
+                        title: context.tr('ทำเสร็จแล้ว', 'Completed'),
+                        value: _completed,
+                        onChanged: (v) => _mark(() => _completed = v),
+                      ),
+                    ],
+                  ),
+              ],
             ),
-            FormSection(
-              title: context.tr('หมวดหมู่', 'Category'),
-              icon: Icons.label_outline_rounded,
-              child: CategorySelector(selectedId: _categoryId, allowNone: true, onChanged: (v) => _mark(() => _categoryId = v)),
-            ),
-            FormSection(
-              title: context.tr('การแจ้งเตือน', 'Reminders'),
-              icon: Icons.notifications_none_rounded,
-              child: ReminderPicker(
-                config: _reminder,
-                enabled: _date != null,
-                disabledHint: context.tr('กำหนดวันส่งเพื่อตั้งการแจ้งเตือน', 'Set a due date to add reminders'),
-                onChanged: (r) => _mark(() => _reminder = r),
-              ),
-            ),
-            if (_isEdit) ...[
-              const SizedBox(height: 12),
-              SwitchListTile(
-                contentPadding: const EdgeInsets.symmetric(horizontal: 4),
-                secondary: const Icon(Icons.task_alt_rounded),
-                title: Text(context.tr('ทำเสร็จแล้ว', 'Completed')),
-                value: _completed,
-                onChanged: (v) => _mark(() => _completed = v),
-              ),
-            ],
-            const SizedBox(height: 20),
-            FilledButton.icon(
-              onPressed: _saving ? null : _save,
-              icon: const Icon(Icons.check_rounded),
-              label: Text(context.tr('บันทึกงาน', 'Save task')),
-            ),
-          ]),
+          ),
         ),
       ),
     );

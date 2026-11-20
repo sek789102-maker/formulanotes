@@ -17,25 +17,36 @@ Future<void> seed(TestEnv env, {String prefix = ''}) async {
   final now = DateTime(2026, 11, 20);
   final img = File('${env.dir.path}/src.jpg')..writeAsBytesSync(List.generate(5000, (i) => i % 256));
   final att = await env.services.attachments.importFile(img.path);
-  await env.services.documents.upsert(DocumentItem(
-    id: '${prefix}doc',
-    title: 'บัตรประชาชน',
-    categoryId: 'cat_personal',
-    notes: 'หมายเหตุ',
-    createdAt: now,
-    updatedAt: now,
-    expiryDate: DateTime(2031, 1, 1),
-    reminder: const ReminderConfig([1440]),
-    attachmentPaths: [att],
-    isPinned: true,
-  ));
-  await env.services.tasks.upsert(TaskItem(id: '${prefix}task', title: 'งาน', createdAt: now, updatedAt: now, dueAt: DateTime(2030)));
-  await env.services.events.upsert(EventItem(id: '${prefix}event', title: 'กิจกรรม', startAt: DateTime(2030), createdAt: now, updatedAt: now));
+  await env.services.documents.upsert(
+    DocumentItem(
+      id: '${prefix}doc',
+      title: 'บัตรประชาชน',
+      categoryId: 'cat_personal',
+      notes: 'หมายเหตุ',
+      createdAt: now,
+      updatedAt: now,
+      expiryDate: DateTime(2031, 1, 1),
+      reminder: const ReminderConfig([1440]),
+      attachmentPaths: [att],
+      isPinned: true,
+    ),
+  );
+  await env.services.tasks.upsert(
+    TaskItem(id: '${prefix}task', title: 'งาน', createdAt: now, updatedAt: now, dueAt: DateTime(2030)),
+  );
+  await env.services.events.upsert(
+    EventItem(id: '${prefix}event', title: 'กิจกรรม', startAt: DateTime(2030), createdAt: now, updatedAt: now),
+  );
   await env.services.settings.set(SettingKeys.themeMode, 'dark');
 }
 
 /// Rewrites a backup zip, letting [edit] modify manifest/data JSON.
-Future<String> tamper(String src, String dst, {void Function(Map<String, dynamic> manifest, Map<String, dynamic> data)? edit, bool keepSha = false}) async {
+Future<String> tamper(
+  String src,
+  String dst, {
+  void Function(Map<String, dynamic> manifest, Map<String, dynamic> data)? edit,
+  bool keepSha = false,
+}) async {
   final input = InputFileStream(src);
   final archive = ZipDecoder().decodeStream(input);
   final manifest = jsonDecode(utf8.decode(archive.findFile('manifest.json')!.readBytes()!)) as Map<String, dynamic>;
@@ -85,7 +96,9 @@ void main() {
   test('replace-restore into another install recreates everything incl. attachments', () async {
     await seed(a);
     final info = await a.services.backup.createBackup(includeAttachments: true);
-    await b.services.tasks.upsert(TaskItem(id: 'old', title: 'old', createdAt: DateTime(2026), updatedAt: DateTime(2026)));
+    await b.services.tasks.upsert(
+      TaskItem(id: 'old', title: 'old', createdAt: DateTime(2026), updatedAt: DateTime(2026)),
+    );
 
     final ins = await b.services.backup.inspect(info.path, verifyAttachments: true);
     final r = await b.controller.restore(ins, RestoreMode.replace);
@@ -110,7 +123,9 @@ void main() {
     await seed(a);
     final info = await a.services.backup.createBackup(includeAttachments: false);
     await seed(b, prefix: 'b_');
-    await b.services.tasks.upsert(TaskItem(id: 'task', title: 'mine', createdAt: DateTime(2026), updatedAt: DateTime(2026)));
+    await b.services.tasks.upsert(
+      TaskItem(id: 'task', title: 'mine', createdAt: DateTime(2026), updatedAt: DateTime(2026)),
+    );
 
     final ins = await b.services.backup.inspect(info.path);
     final r = await b.controller.restore(ins, RestoreMode.merge);
@@ -137,7 +152,11 @@ void main() {
   test('backup from a newer format version is rejected', () async {
     await seed(a);
     final info = await a.services.backup.createBackup(includeAttachments: false);
-    final newer = await tamper(info.path, '${a.dir.path}/newer.zip', edit: (m, d) => m['formatVersion'] = BackupFormat.version + 1);
+    final newer = await tamper(
+      info.path,
+      '${a.dir.path}/newer.zip',
+      edit: (m, d) => m['formatVersion'] = BackupFormat.version + 1,
+    );
     final ins = await a.services.backup.inspect(newer);
     expect(ins.canRestore, isFalse);
     expect(ins.formatVersion, BackupFormat.version + 1);
@@ -215,7 +234,10 @@ void main() {
   test('isDue respects frequency', () {
     final last = DateTime(2026, 11, 1, 12);
     expect(AutoBackupService.isDue(last: null, frequency: 'daily', now: last), isTrue);
-    expect(AutoBackupService.isDue(last: last, frequency: 'daily', now: last.add(const Duration(hours: 23, minutes: 40))), isTrue);
+    expect(
+      AutoBackupService.isDue(last: last, frequency: 'daily', now: last.add(const Duration(hours: 23, minutes: 40))),
+      isTrue,
+    );
     expect(AutoBackupService.isDue(last: last, frequency: 'daily', now: last.add(const Duration(hours: 20))), isFalse);
     expect(AutoBackupService.isDue(last: last, frequency: 'weekly', now: last.add(const Duration(days: 3))), isFalse);
     expect(AutoBackupService.isDue(last: last, frequency: 'weekly', now: last.add(const Duration(days: 7))), isTrue);

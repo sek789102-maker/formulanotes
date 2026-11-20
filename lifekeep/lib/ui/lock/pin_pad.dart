@@ -27,50 +27,60 @@ class PinPad extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     Widget key(String d) => _Key(
-          enabled: enabled,
-          onTap: () {
-            HapticFeedback.selectionClick();
-            onDigit(d);
-          },
-          child: Text(d, style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w500)),
-        );
-    return Column(mainAxisSize: MainAxisSize.min, children: [
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          for (var i = 0; i < maxLength; i++)
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 150),
-              margin: const EdgeInsets.symmetric(horizontal: 8),
-              width: 14,
-              height: 14,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: error ? scheme.error : (i < length ? scheme.primary : Colors.transparent),
-                border: Border.all(color: error ? scheme.error : scheme.outline, width: 1.5),
+      enabled: enabled,
+      onTap: () {
+        HapticFeedback.selectionClick();
+        onDigit(d);
+      },
+      child: Text(d, style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w500)),
+    );
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            for (var i = 0; i < maxLength; i++)
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 150),
+                margin: const EdgeInsets.symmetric(horizontal: 8),
+                width: 14,
+                height: 14,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: error ? scheme.error : (i < length ? scheme.primary : Colors.transparent),
+                  border: Border.all(color: error ? scheme.error : scheme.outline, width: 1.5),
+                ),
               ),
-            ),
-        ],
-      ),
-      const SizedBox(height: 32),
-      for (final row in const [
-        ['1', '2', '3'],
-        ['4', '5', '6'],
-        ['7', '8', '9'],
-      ])
-        Row(mainAxisAlignment: MainAxisAlignment.center, children: [for (final d in row) key(d)]),
-      Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-        onBiometric == null
-            ? const SizedBox(width: 88, height: 72)
-            : _Key(enabled: enabled, onTap: onBiometric!, child: Icon(Icons.fingerprint_rounded, size: 30, color: scheme.primary)),
-        key('0'),
-        _Key(
-          enabled: enabled,
-          onTap: onDelete,
-          child: Icon(Icons.backspace_outlined, color: scheme.onSurfaceVariant),
+          ],
         ),
-      ]),
-    ]);
+        const SizedBox(height: 32),
+        for (final row in const [
+          ['1', '2', '3'],
+          ['4', '5', '6'],
+          ['7', '8', '9'],
+        ])
+          Row(mainAxisAlignment: MainAxisAlignment.center, children: [for (final d in row) key(d)]),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            onBiometric == null
+                ? const SizedBox(width: 88, height: 72)
+                : _Key(
+                    enabled: enabled,
+                    onTap: onBiometric!,
+                    child: Icon(Icons.fingerprint_rounded, size: 30, color: scheme.primary),
+                  ),
+            key('0'),
+            _Key(
+              enabled: enabled,
+              onTap: onDelete,
+              child: Icon(Icons.backspace_outlined, color: scheme.onSurfaceVariant),
+            ),
+          ],
+        ),
+      ],
+    );
   }
 }
 
@@ -91,7 +101,10 @@ class _Key extends StatelessWidget {
           color: Colors.transparent,
           shape: const StadiumBorder(),
           clipBehavior: Clip.antiAlias,
-          child: InkWell(onTap: enabled ? onTap : null, child: Center(child: child)),
+          child: InkWell(
+            onTap: enabled ? onTap : null,
+            child: Center(child: child),
+          ),
         ),
       ),
     );

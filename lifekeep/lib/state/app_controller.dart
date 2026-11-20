@@ -32,11 +32,11 @@ class AppServices {
     required this.attachments,
     required this.backupDir,
     required this.appVersion,
-  })  : documents = DocumentRepository(db),
-        tasks = TaskRepository(db),
-        events = EventRepository(db),
-        categories = CategoryRepository(db),
-        settings = SettingsRepository(db) {
+  }) : documents = DocumentRepository(db),
+       tasks = TaskRepository(db),
+       events = EventRepository(db),
+       categories = CategoryRepository(db),
+       settings = SettingsRepository(db) {
     scheduler = ReminderScheduler(db: db, gateway: gateway, settings: settings);
     backup = BackupService(
       db: db,
@@ -100,8 +100,10 @@ class AppController extends ChangeNotifier {
     for (final c in categories) {
       if (c.id == id) return c;
     }
-    return categories.cast<ItemCategory>().firstWhere((c) => c.id == ItemCategory.otherId,
-        orElse: () => DefaultCategories.build(Lang.isEn).last);
+    return categories.cast<ItemCategory>().firstWhere(
+      (c) => c.id == ItemCategory.otherId,
+      orElse: () => DefaultCategories.build(Lang.isEn).last,
+    );
   }
 
   ItemCategory? maybeCategory(String? id) {
@@ -175,8 +177,10 @@ class AppController extends ChangeNotifier {
         await s.gateway.showNow(
           id: 1,
           title: Lang.t('สำรองข้อมูลอัตโนมัติไม่สำเร็จ', 'Automatic backup failed'),
-          body: Lang.t('เปิด LIFEKEEP > ตั้งค่า > สำรองและกู้คืน เพื่อตรวจสอบ',
-              'Open LIFEKEEP > Settings > Backup & Restore to check.'),
+          body: Lang.t(
+            'เปิด LIFEKEEP > ตั้งค่า > สำรองและกู้คืน เพื่อตรวจสอบ',
+            'Open LIFEKEEP > Settings > Backup & Restore to check.',
+          ),
         );
       } catch (_) {}
     }
@@ -342,14 +346,16 @@ class AppController extends ChangeNotifier {
   /// backups are kept.
   Future<void> deleteAllData({required bool includeBackups}) async {
     await s.scheduler.cancelAllReminders();
-    await _db(() => s.db.transaction((txn) async {
-          for (final t in AppDatabase.contentTables) {
-            await txn.delete(t);
-          }
-          for (final c in DefaultCategories.build(Lang.isEn)) {
-            await txn.insert('categories', c.toMap());
-          }
-        }));
+    await _db(
+      () => s.db.transaction((txn) async {
+        for (final t in AppDatabase.contentTables) {
+          await txn.delete(t);
+        }
+        for (final c in DefaultCategories.build(Lang.isEn)) {
+          await txn.insert('categories', c.toMap());
+        }
+      }),
+    );
     await s.attachments.deleteAll();
     if (includeBackups) {
       for (final b in await s.backup.listBackups()) {

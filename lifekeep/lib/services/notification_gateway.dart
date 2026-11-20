@@ -68,41 +68,42 @@ class LocalNotificationGateway implements NotificationGateway {
       if (kDebugMode) debugPrint('Timezone fallback: $e');
     }
     await _plugin.initialize(
-      settings: const InitializationSettings(
-        android: AndroidInitializationSettings('ic_stat_lifekeep'),
-      ),
+      settings: const InitializationSettings(android: AndroidInitializationSettings('ic_stat_lifekeep')),
     );
     final android = _android;
     if (android != null) {
-      await android.createNotificationChannel(AndroidNotificationChannel(
-        reminderChannelId,
-        Lang.t('การแจ้งเตือน', 'Reminders'),
-        description: Lang.t('แจ้งเตือนงาน กิจกรรม และเอกสารใกล้หมดอายุ',
-            'Task, event and document expiry reminders'),
-        importance: Importance.high,
-      ));
-      await android.createNotificationChannel(AndroidNotificationChannel(
-        systemChannelId,
-        Lang.t('ระบบ', 'System'),
-        description: Lang.t('สถานะการสำรองข้อมูล', 'Backup status'),
-        importance: Importance.defaultImportance,
-      ));
+      await android.createNotificationChannel(
+        AndroidNotificationChannel(
+          reminderChannelId,
+          Lang.t('การแจ้งเตือน', 'Reminders'),
+          description: Lang.t('แจ้งเตือนงาน กิจกรรม และเอกสารใกล้หมดอายุ', 'Task, event and document expiry reminders'),
+          importance: Importance.high,
+        ),
+      );
+      await android.createNotificationChannel(
+        AndroidNotificationChannel(
+          systemChannelId,
+          Lang.t('ระบบ', 'System'),
+          description: Lang.t('สถานะการสำรองข้อมูล', 'Backup status'),
+          importance: Importance.defaultImportance,
+        ),
+      );
     }
     _ready = true;
   }
 
   NotificationDetails _details(String channel) => NotificationDetails(
-        android: AndroidNotificationDetails(
-          channel,
-          channel == reminderChannelId ? Lang.t('การแจ้งเตือน', 'Reminders') : Lang.t('ระบบ', 'System'),
-          importance: channel == reminderChannelId ? Importance.high : Importance.defaultImportance,
-          priority: channel == reminderChannelId ? Priority.high : Priority.defaultPriority,
-          icon: 'ic_stat_lifekeep',
-          color: const Color(0xFF233B67),
-          category: AndroidNotificationCategory.reminder,
-          visibility: NotificationVisibility.private,
-        ),
-      );
+    android: AndroidNotificationDetails(
+      channel,
+      channel == reminderChannelId ? Lang.t('การแจ้งเตือน', 'Reminders') : Lang.t('ระบบ', 'System'),
+      importance: channel == reminderChannelId ? Importance.high : Importance.defaultImportance,
+      priority: channel == reminderChannelId ? Priority.high : Priority.defaultPriority,
+      icon: 'ic_stat_lifekeep',
+      color: const Color(0xFF233B67),
+      category: AndroidNotificationCategory.reminder,
+      visibility: NotificationVisibility.private,
+    ),
+  );
 
   @override
   Future<void> schedule({

@@ -16,11 +16,14 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
+  build-and-verify:
     runs-on: ubuntu-latest
+    timeout-minutes: 90
     defaults:
       run:
         working-directory: lifekeep
+    env:
+      OUT: ${{ github.workspace }}/release/build
     steps:
       - uses: actions/checkout@v4
 
@@ -41,36 +44,97 @@ jobs:
       - name: Analyze
         run: flutter analyze
 
-      - name: Test
-        run: flutter test
+      - name: Unit & widget tests
+        run: flutter test --reporter expanded 2>&1 | tee ../unit-tests.log
 
-      - name: Build release APK
-        run: flutter build apk --release
-
-      - name: Verify APK
+      # Optional: sign with the upload key when repository secrets exist.
+      # Without them the release build is debug-signed (installable for
+      # testing only; Play Console rejects debug-signed bundles).
+      - name: Configure upload key (optional)
+        env:
+          KS_B64: ${{ secrets.LIFEKEEP_UPLOAD_KEYSTORE_B64 }}
+          KS_PASS: ${{ secrets.LIFEKEEP_UPLOAD_KEYSTORE_PASSWORD }}
         run: |
-          APK=build/app/outputs/flutter-apk/app-release.apk
-          test -f "$APK"
-          ls -la "$APK"
-          sha256sum "$APK"
-          # Privacy check: the release manifest must not request INTERNET.
+          if [ -n "$KS_B64" ] && [ -n "$KS_PASS" ]; then
+            echo "$KS_B64" | base64 -d > "$RUNNER_TEMP/upload.jks"
+            {
+              echo "LIFEKEEP_UPLOAD_STORE_FILE=$RUNNER_TEMP/upload.jks"
+              echo "LIFEKEEP_UPLOAD_STORE_PASSWORD=$KS_PASS"
+              echo "LIFEKEEP_UPLOAD_KEY_PASSWORD=$KS_PASS"
+              echo "LIFEKEEP_UPLOAD_KEY_ALIAS=upload"
+            } >> "$GITHUB_ENV"
+            echo "SIGNING=upload-key" >> "$GITHUB_ENV"
+          else
+            echo "SIGNING=debug-key" >> "$GITHUB_ENV"
+          fi
+
+      - name: Build release App Bundle + APK
+        run: |
+          mkdir -p "$OUT"
+          flutter build appbundle --release
+          flutter build apk --release
+          cp build/app/outputs/bundle/release/app-release.aab "$OUT/LIFEKEEP-ci-$SIGNING.aab"
+          cp build/app/outputs/flutter-apk/app-release.apk "$OUT/LIFEKEEP-ci-$SIGNING.apk"
+
+      - name: Build release-mode functional check APK (not shipped)
+        run: |
+          flutter build apk --release -t tool/release_smoke/main.dart
+          mkdir -p "$RUNNER_TEMP/ci"
+          cp build/app/outputs/flutter-apk/app-release.apk "$RUNNER_TEMP/ci/smoke.apk"
+
+      - name: Inspect release artifacts
+        run: |
+          APK="$OUT/LIFEKEEP-ci-$SIGNING.apk"
           AAPT=$(ls $ANDROID_HOME/build-tools/*/aapt2 | sort -V | tail -1)
-          "$AAPT" dump permissions "$APK" | tee ../apk-permissions.txt
-          if grep -q "android.permission.INTERNET" ../apk-permissions.txt; then echo "INTERNET permission found!"; exit 1; fi
+          {
+            echo "## Badging"; "$AAPT" dump badging "$APK" | grep -E "^(package|sdkVersion|targetSdkVersion|application-label|native-code|uses-permission)" ;
+            echo; echo "## Sizes"; ls -l "$OUT"/*.aab "$OUT"/*.apk | awk '{print $5, $9}'
+            echo; echo "## SHA-256"; sha256sum "$OUT"/*.aab "$OUT"/*.apk | sed "s#$OUT/##"
+          } | tee "$OUT/artifact-inspection.txt"
+          "$AAPT" dump permissions "$APK" > "$OUT/apk-permissions.txt"
+          if grep -q "android.permission.INTERNET" "$OUT/apk-permissions.txt"; then echo "INTERNET permission found!"; exit 1; fi
+          grep -q "targetSdkVersion:'36'" "$OUT/artifact-inspection.txt" || { echo "targetSdk must be 36"; exit 1; }
+          cp ../unit-tests.log "$OUT/unit-tests.log"
 
-      - uses: actions/upload-artifact@v4
-        with:
-          name: LIFEKEEP-apk
-          path: lifekeep/build/app/outputs/flutter-apk/app-release.apk
-
-      - name: Commit APK to output/
+      - name: Enable KVM for the emulator
         working-directory: .
         run: |
-          mkdir -p output
-          cp lifekeep/build/app/outputs/flutter-apk/app-release.apk output/LIFEKEEP.apk
-          cp apk-permissions.txt output/apk-permissions.txt
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: On-device checks (Android emulator API 35)
+        id: emu
+        continue-on-error: true
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          working-directory: .
+          script: bash lifekeep/tool/ci/emulator_checks.sh "$RUNNER_TEMP/ci/smoke.apk" "$OUT/LIFEKEEP-ci-$SIGNING.apk" "$OUT/device"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: LIFEKEEP-release-build
+          path: release/build
+
+      - name: Commit build outputs and reports
+        if: always()
+        working-directory: .
+        run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add output/LIFEKEEP.apk output/apk-permissions.txt
-          git commit -m "Build LIFEKEEP release APK (${GITHUB_SHA::7})" || exit 0
+          git rm -q --cached -r --ignore-unmatch release/build >/dev/null 2>&1 || true
+          echo "commit=${GITHUB_SHA::7} signing=$SIGNING emulator=${{ steps.emu.outcome }}" > release/build/BUILD_INFO.txt
+          git add -f release/build
+          git commit -m "CI release build ${GITHUB_SHA::7} (${SIGNING}, emulator: ${{ steps.emu.outcome }})" || exit 0
+          git pull --rebase -q origin "${GITHUB_REF_NAME}" || true
           git push
+
+      - name: Fail if on-device checks failed
+        if: steps.emu.outcome != 'success'
+        run: exit 1

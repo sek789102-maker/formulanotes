@@ -7,11 +7,24 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
-// Optional release signing: create android/key.properties (see README). Never commit it.
+// Release signing (upload key). Never commit keystores or passwords.
+// Source 1: android/key.properties (git-ignored).
+// Source 2: environment variables (e.g. GitHub Actions secrets):
+//   LIFEKEEP_UPLOAD_STORE_FILE, LIFEKEEP_UPLOAD_STORE_PASSWORD,
+//   LIFEKEEP_UPLOAD_KEY_ALIAS, LIFEKEEP_UPLOAD_KEY_PASSWORD
 val keystoreProperties = Properties()
 val keystorePropertiesFile = rootProject.file("key.properties")
 if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+}
+fun signingValue(prop: String, env: String): String? =
+    (keystoreProperties[prop] as String?) ?: System.getenv(env)?.takeIf { it.isNotBlank() }
+val uploadStoreFile = signingValue("storeFile", "LIFEKEEP_UPLOAD_STORE_FILE")
+val hasUploadKey = uploadStoreFile != null && file(uploadStoreFile).exists()
+// Pass -PrequireUploadKey=true for Play builds: fail instead of falling back to the debug key.
+val requireUploadKey = (project.findProperty("requireUploadKey") as String?) == "true"
+if (requireUploadKey && !hasUploadKey) {
+    throw GradleException("Upload keystore not configured (see README: Release signing).")
 }
 
 android {
@@ -28,7 +41,8 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.lifekeep.app"
+        // Permanent Play Store identity: cannot change after the first upload.
+        applicationId = "com.sek789102.lifekeep"
         minSdk = maxOf(flutter.minSdkVersion, 24)
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
@@ -37,21 +51,22 @@ android {
     }
 
     signingConfigs {
-        if (keystorePropertiesFile.exists()) {
+        if (hasUploadKey) {
             create("release") {
-                keyAlias = keystoreProperties["keyAlias"] as String
-                keyPassword = keystoreProperties["keyPassword"] as String
-                storeFile = file(keystoreProperties["storeFile"] as String)
-                storePassword = keystoreProperties["storePassword"] as String
+                storeFile = file(uploadStoreFile!!)
+                storePassword = signingValue("storePassword", "LIFEKEEP_UPLOAD_STORE_PASSWORD")
+                keyAlias = signingValue("keyAlias", "LIFEKEEP_UPLOAD_KEY_ALIAS") ?: "upload"
+                keyPassword = signingValue("keyPassword", "LIFEKEEP_UPLOAD_KEY_PASSWORD")
             }
         }
     }
 
     buildTypes {
         release {
-            // Uses your own key when android/key.properties exists, otherwise the debug key
-            // so that the APK is still installable for personal use.
-            signingConfig = if (keystorePropertiesFile.exists()) {
+            // R8 code + resource shrinking is enabled by the Flutter Gradle plugin.
+            // Uses the upload key when configured, otherwise the debug key so the
+            // APK is still installable for testing (Play rejects debug-signed bundles).
+            signingConfig = if (hasUploadKey) {
                 signingConfigs.getByName("release")
             } else {
                 signingConfigs.getByName("debug")

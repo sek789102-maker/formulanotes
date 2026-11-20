@@ -85,26 +85,36 @@ flutter build apk --release
 # ผลลัพธ์: build/app/outputs/flutter-apk/app-release.apk
 ```
 
-### ใช้ keystore ของตนเอง (สำหรับเผยแพร่)
+### เซ็นแอปสำหรับ Google Play (Upload key)
 
-```bash
-keytool -genkey -v -keystore ~/lifekeep-release.jks -keyalg RSA -keysize 2048 -validity 10000 -alias lifekeep
-```
+- Package name: **`com.sek789102.lifekeep`** (เปลี่ยนไม่ได้หลังอัปโหลดครั้งแรก)
+- ใช้ **Play App Signing**: Google เก็บ App signing key ส่วนเราเก็บเฉพาะ **Upload key**
+- ห้าม commit keystore/รหัสผ่าน (`*.jks`, `key.properties` ถูก ignore แล้ว)
 
-สร้างไฟล์ `lifekeep/android/key.properties` (ห้าม commit — อยู่ใน .gitignore แล้ว):
+วิธีที่ 1 — ไฟล์ `lifekeep/android/key.properties`:
 
 ```properties
+storeFile=/path/to/lifekeep-upload.jks
 storePassword=<รหัสผ่าน>
+keyAlias=upload
 keyPassword=<รหัสผ่าน>
-keyAlias=lifekeep
-storeFile=/home/<user>/lifekeep-release.jks
 ```
 
-เมื่อมีไฟล์นี้ `flutter build apk --release` จะเซ็นด้วย key ของคุณโดยอัตโนมัติ
+วิธีที่ 2 — Environment variables: `LIFEKEEP_UPLOAD_STORE_FILE`, `LIFEKEEP_UPLOAD_STORE_PASSWORD`, `LIFEKEEP_UPLOAD_KEY_ALIAS`, `LIFEKEEP_UPLOAD_KEY_PASSWORD`
+
+```bash
+flutter build appbundle --release -PrequireUploadKey=true   # ล้มเหลวทันทีถ้าไม่มี upload key
+```
+
+ถ้าไม่ได้ตั้ง upload key จะเซ็นด้วย debug key (ติดตั้งทดสอบได้ แต่ Play Console ไม่รับ)
+
+เอกสาร Release ทั้งหมดอยู่ที่โฟลเดอร์ `release/` ของ repo
 
 ### Build ผ่าน GitHub Actions
 
-Workflow `.github/workflows/lifekeep-android.yml` จะ analyze → test → build APK → ตรวจว่าไม่มีสิทธิ์ INTERNET → อัปโหลด artifact และ commit `output/LIFEKEEP.apk` กลับไปยัง branch
+Workflow `.github/workflows/lifekeep-android.yml`: analyze → unit/widget tests → build AAB+APK (release, R8) → ตรวจสิทธิ์/targetSdk → ทดสอบบน Android emulator (integration tests, release-mode functional check, แจ้งเตือนจริง, รีสตาร์ตแอป) → commit ผลไว้ที่ `release/build/`
+
+Workflow `lifekeep-release-verify.yml`: ตรวจลายเซ็นไฟล์ที่เซ็นด้วย upload key ใน `release/signed/` (apksigner/jarsigner/bundletool) และติดตั้งบน emulator
 
 ## การแก้ปัญหาเบื้องต้น
 

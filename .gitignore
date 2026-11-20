@@ -1,0 +1,6 @@
+# Signing secrets must never be committed
+*.jks
+*.keystore
+*.p12
+key.properties
+**/signing-private/

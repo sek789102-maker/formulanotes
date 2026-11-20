@@ -1,6 +1,8 @@
 name: Build APK
 
 on:
+  push:
+    branches: [ main, master ]
   workflow_dispatch:
 
 jobs:
@@ -12,11 +14,11 @@ jobs:
 
       - name: Unzip project
         run: |
-          unzip -o "*.zip"
+          unzip -o "*.zip" || true
           if [ ! -f "build.gradle.kts" ]; then
             SUBDIR=$(find . -maxdepth 2 -name "build.gradle.kts" -exec dirname {} \; | head -n 1)
             if [ -n "$SUBDIR" ] && [ "$SUBDIR" != "." ]; then
-              cp -r "$SUBDIR"/* .
+              cp -r "$SUBDIR"/. .
             fi
           fi
 
@@ -26,14 +28,10 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: Generate debug keystore
-        run: |
-          keytool -genkey -v -keystore debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
-
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-version: '9.3.1'
+          gradle-version: '8.7'
 
       - name: Build Debug APK
         run: gradle assembleDebug

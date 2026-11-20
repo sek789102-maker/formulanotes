@@ -46,7 +46,7 @@ jobs:
             AAB_SHA=$(keytool -printcert -jarfile "$AAB" | grep -m1 'SHA256:' | sed 's/.*SHA256: //' | tr -d ' :')
             [ "$AAB_SHA" = "$EXPECTED" ] && echo "- ✅ signed by the upload certificate (SHA-256 matches upload-certificate-sha256.txt)" || { echo "- ❌ certificate mismatch"; exit 1; }
             java -jar /tmp/bundletool.jar dump manifest --bundle="$AAB" | grep -oE '(package|android:versionCode|android:versionName)="[^"]*"' | sed 's/^/- /'
-            java -jar /tmp/bundletool.jar dump manifest --bundle="$AAB" | grep -c 'android.permission.INTERNET' | sed 's/^/- INTERNET permission entries: /'
+            echo "- INTERNET permission entries: $(java -jar /tmp/bundletool.jar dump manifest --bundle="$AAB" | grep -c 'android.permission.INTERNET' || true)"
           } | tee "$OUT/verification.md"
           # Throwaway key, only to install the bundle's content on the emulator.
           keytool -genkeypair -keystore /tmp/test.jks -storepass testtest -keypass testtest -alias t -keyalg RSA -dname CN=test -validity 2 >/dev/null 2>&1

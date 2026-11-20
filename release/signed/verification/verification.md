@@ -1,6 +1,6 @@
 # Signed release verification
 
-- Commit: 6c1ce57
+- Commit: 08ee1bf
 
 ## App Bundle (LIFEKEEP-1.0.0-1-release.aab)
 - ✅ bundletool validate: OK
@@ -10,3 +10,6 @@
 - android:versionName="1.0.0"
 - package="com.sek789102.lifekeep"
 - INTERNET permission entries: 0
+- ✅ universal APK built from the signed AAB installed on emulator (API 35)
+- ✅ app running 10 s after launch
+- crash/error lines in logcat: 0

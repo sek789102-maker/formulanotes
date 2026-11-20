@@ -68,7 +68,7 @@ jobs:
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           script: |
             adb install /tmp/universal.apk && echo "- ✅ universal APK built from the signed AAB installed on emulator (API 35)" >> release/signed/verification/verification.md
-            adb shell am start -W -n com.sek789102.lifekeep/com.lifekeep.app.MainActivity > /dev/null; sleep 10
+            adb shell am start -W -n com.sek789102.lifekeep/com.sek789102.lifekeep.MainActivity > /dev/null; sleep 10
             [ -n "$(adb shell pidof com.sek789102.lifekeep)" ] && echo "- ✅ app running 10 s after launch" >> release/signed/verification/verification.md || echo "- ❌ app not running" >> release/signed/verification/verification.md
             adb exec-out screencap -p > release/signed/verification/signed_apk_launch.png
             adb logcat -d | grep -cE "FATAL EXCEPTION|E/flutter" | sed 's/^/- crash\/error lines in logcat: /' >> release/signed/verification/verification.md

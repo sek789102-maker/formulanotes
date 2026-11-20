@@ -293,9 +293,24 @@ class AppController extends ChangeNotifier {
       setSetting(SettingKeys.themeMode, m == ThemeMode.system ? 'system' : (m == ThemeMode.dark ? 'dark' : 'light'));
 
   Future<void> setLanguage(AppLanguage l) async {
+    final previous = language;
     Lang.current = l;
+    if (previous != l) await _localizeDefaultCategories(from: previous, to: l);
     // Notification texts are generated at scheduling time -> regenerate.
     await setSetting(SettingKeys.language, l == AppLanguage.en ? 'en' : 'th', reschedule: true);
+  }
+
+  /// Renames built-in categories to the new language, but only those the
+  /// user has not renamed (name still equals the old default name).
+  Future<void> _localizeDefaultCategories({required AppLanguage from, required AppLanguage to}) async {
+    final oldNames = {for (final c in DefaultCategories.build(from == AppLanguage.en)) c.id: c.name};
+    final newNames = {for (final c in DefaultCategories.build(to == AppLanguage.en)) c.id: c.name};
+    for (final c in await s.categories.all()) {
+      if (c.isDefault && oldNames[c.id] == c.name && newNames[c.id] != null) {
+        await _db(() => s.categories.upsert(c.copyWith(name: newNames[c.id])));
+      }
+    }
+    categories = await s.categories.all();
   }
 
   Future<bool> ensureNotificationPermission() async {

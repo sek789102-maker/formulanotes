@@ -1,4 +1,4 @@
-package com.lifekeep.app
+package com.sek789102.lifekeep
 
 import android.view.WindowManager
 import io.flutter.embedding.android.FlutterFragmentActivity

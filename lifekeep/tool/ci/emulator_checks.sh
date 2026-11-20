@@ -4,7 +4,7 @@
 set -uo pipefail
 SMOKE_APK="$1"; PROD_APK="$2"; OUT="$3"
 PKG=com.sek789102.lifekeep
-ACT=com.lifekeep.app.MainActivity
+ACT=com.sek789102.lifekeep.MainActivity
 mkdir -p "$OUT"
 REPORT="$OUT/device-report.md"
 fails=0

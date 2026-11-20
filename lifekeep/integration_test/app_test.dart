@@ -17,6 +17,9 @@ Future<void> settle(WidgetTester t, [int seconds = 2]) async {
 }
 
 Future<void> boot(WidgetTester t) async {
+  // Drop any previous app tree (open routes/sheets) before starting fresh.
+  await t.pumpWidget(const SizedBox());
+  await t.pump(const Duration(milliseconds: 300));
   await t.pumpWidget(const BootstrapApp());
   for (var i = 0; i < 100 && find.byType(NavigationBar).evaluate().isEmpty; i++) {
     await t.pump(const Duration(milliseconds: 100));

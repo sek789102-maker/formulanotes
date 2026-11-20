@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -32,9 +31,10 @@ class _BootstrapAppState extends State<BootstrapApp> {
   late Future<AppController> _future = _init();
 
   Future<AppController> _init() async {
-    final systemEn = ui.PlatformDispatcher.instance.locale.languageCode == 'en';
     final support = await getApplicationSupportDirectory();
-    final db = await AppDatabase.open(englishDefaults: systemEn);
+    // Default categories match the default UI language (Thai); they are
+    // renamed automatically if the user switches the app to English.
+    final db = await AppDatabase.open();
     final services = AppServices(
       db: db,
       gateway: LocalNotificationGateway(),

@@ -3,6 +3,7 @@
 // Uses the real app bootstrap: Android SQLite, file system, secure storage
 // and notification plugins - no fakes.
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:lifekeep/app.dart';
@@ -17,7 +18,9 @@ Future<void> settle(WidgetTester t, [int seconds = 2]) async {
 }
 
 Future<void> boot(WidgetTester t) async {
-  // Drop any previous app tree (open routes/sheets) before starting fresh.
+  // Drop any previous app tree (open routes/sheets, keyboard) before starting.
+  FocusManager.instance.primaryFocus?.unfocus();
+  await SystemChannels.textInput.invokeMethod<void>('TextInput.hide');
   await t.pumpWidget(const SizedBox());
   await t.pump(const Duration(milliseconds: 300));
   await t.pumpWidget(const BootstrapApp());
@@ -114,6 +117,8 @@ void main() {
     await boot(t);
     await t.tap(find.byTooltip('ตั้งค่า'));
     await settle(t);
+    await t.scrollUntilVisible(find.text('สำรองและกู้คืนข้อมูล'), 200, scrollable: find.byType(Scrollable).first);
+    await settle(t, 1);
     await t.tap(find.text('สำรองและกู้คืนข้อมูล'));
     await settle(t);
     await t.tap(find.text('สำรองในเครื่อง'));

@@ -41,7 +41,8 @@ jobs:
             echo; echo "- Commit: ${GITHUB_SHA::7}"
             echo; echo "## App Bundle ($AAB)"
             java -jar /tmp/bundletool.jar validate --bundle="$AAB" > /dev/null && echo "- ✅ bundletool validate: OK"
-            jarsigner -verify -strict "$AAB" > /tmp/js.txt 2>&1 && echo "- ✅ jarsigner -verify -strict: $(grep -o 'jar verified.' /tmp/js.txt)"
+            # (-strict would flag the self-signed certificate, which is normal for upload keys)
+            jarsigner -verify "$AAB" > /tmp/js.txt 2>&1; grep -q "jar verified" /tmp/js.txt && echo "- ✅ jarsigner -verify: jar verified" || { echo "- ❌ jarsigner verification failed"; exit 1; }
             AAB_SHA=$(keytool -printcert -jarfile "$AAB" | grep -m1 'SHA256:' | sed 's/.*SHA256: //' | tr -d ' :')
             [ "$AAB_SHA" = "$EXPECTED" ] && echo "- ✅ signed by the upload certificate (SHA-256 matches upload-certificate-sha256.txt)" || { echo "- ❌ certificate mismatch"; exit 1; }
             java -jar /tmp/bundletool.jar dump manifest --bundle="$AAB" | grep -oE '(package|android:versionCode|android:versionName)="[^"]*"' | sed 's/^/- /'

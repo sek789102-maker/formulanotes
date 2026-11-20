@@ -1,0 +1,83 @@
+Resolving dependencies...
+Downloading packages...
+  cross_file 0.3.5+5 (0.4.0 available)
+  material_color_utilities 0.13.0 (0.13.1 available)
+  test_api 0.7.12 (0.7.15 available)
+Got dependencies!
+3 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+00:00 +0: loading /home/runner/work/formulanotes/formulanotes/lifekeep/test/validation_test.dart
+00:00 +0: /home/runner/work/formulanotes/formulanotes/lifekeep/test/dates_test.dart: Dates daysBetween counts calendar days, ignoring time
+00:00 +1: /home/runner/work/formulanotes/formulanotes/lifekeep/test/dates_test.dart: Dates daysBetween counts calendar days, ignoring time
+00:00 +2: /home/runner/work/formulanotes/formulanotes/lifekeep/test/validation_test.dart: event range
+00:00 +3: /home/runner/work/formulanotes/formulanotes/lifekeep/test/dates_test.dart: Dates addMonths clamps the day
+00:00 +4: /home/runner/work/formulanotes/formulanotes/lifekeep/test/validation_test.dart: custom reminder input
+00:00 +5: /home/runner/work/formulanotes/formulanotes/lifekeep/test/validation_test.dart: custom reminder input
+00:00 +6: /home/runner/work/formulanotes/formulanotes/lifekeep/test/dates_test.dart: ExpiryCalc status thresholds
+00:00 +7: /home/runner/work/formulanotes/formulanotes/lifekeep/test/validation_test.dart: PIN format
+00:00 +8: /home/runner/work/formulanotes/formulanotes/lifekeep/test/dates_test.dart: ExpiryCalc daysLeft
+00:00 +9: /home/runner/work/formulanotes/formulanotes/lifekeep/test/validation_test.dart: ReminderConfig encode/decode/toggle is robust
+00:00 +10: /home/runner/work/formulanotes/formulanotes/lifekeep/test/validation_test.dart: ReminderConfig encode/decode/toggle is robust
+00:00 +11: /home/runner/work/formulanotes/formulanotes/lifekeep/test/dates_test.dart: ReminderCalc fire times subtract offsets, drop past, dedupe and sort
+00:00 +12: /home/runner/work/formulanotes/formulanotes/lifekeep/test/dates_test.dart: ReminderCalc fire times subtract offsets, drop past, dedupe and sort
+00:00 +13: /home/runner/work/formulanotes/formulanotes/lifekeep/test/validation_test.dart: LIKE pattern escaping
+00:00 +14: /home/runner/work/formulanotes/formulanotes/lifekeep/test/validation_test.dart: LIKE pattern escaping
+00:00 +15: /home/runner/work/formulanotes/formulanotes/lifekeep/test/dates_test.dart: ReminderCalc invalid offsets are ignored
+00:00 +16: /home/runner/work/formulanotes/formulanotes/lifekeep/test/validation_test.dart: attachment names cannot escape the folder
+00:00 +17: /home/runner/work/formulanotes/formulanotes/lifekeep/test/dates_test.dart: ReminderCalc item anchor for date-only items uses default time
+00:00 +18: /home/runner/work/formulanotes/formulanotes/lifekeep/test/dates_test.dart: TaskGrouping groups
+00:00 +19: loading /home/runner/work/formulanotes/formulanotes/lifekeep/test/large_data_test.dart
+00:02 +19: /home/runner/work/formulanotes/formulanotes/lifekeep/test/large_data_test.dart: 3,000 records: queries, search, reminders cap, backup/restore round-trip
+00:08 +20: /home/runner/work/formulanotes/formulanotes/lifekeep/test/widget_flow_test.dart: home → add task via form → Tasks tabs → complete → calendar → settings
+00:08 +21: /home/runner/work/formulanotes/formulanotes/lifekeep/test/widget_flow_test.dart: documents: add via form, list ↔ grid, search highlight, detail
+00:08 +22: /home/runner/work/formulanotes/formulanotes/lifekeep/test/widget_flow_test.dart: documents: add via form, list ↔ grid, search highlight, detail
+00:08 +23: /home/runner/work/formulanotes/formulanotes/lifekeep/test/widget_flow_test.dart: documents: add via form, list ↔ grid, search highlight, detail
+00:08 +24: /home/runner/work/formulanotes/formulanotes/lifekeep/test/widget_flow_test.dart: documents: add via form, list ↔ grid, search highlight, detail
+00:08 +25: /home/runner/work/formulanotes/formulanotes/lifekeep/test/widget_flow_test.dart: documents: add via form, list ↔ grid, search highlight, detail
+00:08 +26: /home/runner/work/formulanotes/formulanotes/lifekeep/test/widget_flow_test.dart: documents: add via form, list ↔ grid, search highlight, detail
+00:08 +27: /home/runner/work/formulanotes/formulanotes/lifekeep/test/widget_flow_test.dart: documents: add via form, list ↔ grid, search highlight, detail
+00:08 +28: /home/runner/work/formulanotes/formulanotes/lifekeep/test/widget_flow_test.dart: documents: add via form, list ↔ grid, search highlight, detail
+00:08 +29: /home/runner/work/formulanotes/formulanotes/lifekeep/test/widget_flow_test.dart: documents: add via form, list ↔ grid, search highlight, detail
+00:08 +30: /home/runner/work/formulanotes/formulanotes/lifekeep/test/widget_flow_test.dart: documents: add via form, list ↔ grid, search highlight, detail
+00:08 +31: /home/runner/work/formulanotes/formulanotes/lifekeep/test/widget_flow_test.dart: documents: add via form, list ↔ grid, search highlight, detail
+00:08 +32: /home/runner/work/formulanotes/formulanotes/lifekeep/test/widget_flow_test.dart: documents: add via form, list ↔ grid, search highlight, detail
+00:09 +33: /home/runner/work/formulanotes/formulanotes/lifekeep/test/widget_flow_test.dart: documents: add via form, list ↔ grid, search highlight, detail
+00:09 +34: /home/runner/work/formulanotes/formulanotes/lifekeep/test/widget_flow_test.dart: documents: add via form, list ↔ grid, search highlight, detail
+00:09 +34: /home/runner/work/formulanotes/formulanotes/lifekeep/test/database_test.dart: opening a database from a newer schema version is refused without changes
+error AppException(ErrorKind.database): ฐานข้อมูลถูกสร้างโดย LIFEKEEP เวอร์ชันที่ใหม่กว่า กรุณาติดตั้งเวอร์ชันล่าสุด (ข้อมูลยังไม่ถูกแก้ไข) during open, closing...
+00:09 +35: /home/runner/work/formulanotes/formulanotes/lifekeep/test/widget_flow_test.dart: documents: add via form, list ↔ grid, search highlight, detail
+00:11 +36: /home/runner/work/formulanotes/formulanotes/lifekeep/test/layout_stress_test.dart: no overflow at 320x640 text x1.3
+00:12 +37: /home/runner/work/formulanotes/formulanotes/lifekeep/test/layout_stress_test.dart: no overflow at 320x640 text x1.3
+00:12 +38: /home/runner/work/formulanotes/formulanotes/lifekeep/test/layout_stress_test.dart: no overflow at 320x640 text x1.3
+00:12 +39: /home/runner/work/formulanotes/formulanotes/lifekeep/test/layout_stress_test.dart: no overflow at 320x640 text x1.3
+00:12 +40: /home/runner/work/formulanotes/formulanotes/lifekeep/test/layout_stress_test.dart: no overflow at 320x640 text x1.3
+00:12 +41: /home/runner/work/formulanotes/formulanotes/lifekeep/test/layout_stress_test.dart: no overflow at 320x640 text x1.3
+00:12 +42: /home/runner/work/formulanotes/formulanotes/lifekeep/test/layout_stress_test.dart: no overflow at 320x640 text x1.3
+00:13 +43: /home/runner/work/formulanotes/formulanotes/lifekeep/test/layout_stress_test.dart: no overflow at 412x915 text x1.0
+00:14 +44: /home/runner/work/formulanotes/formulanotes/lifekeep/test/layout_stress_test.dart: no overflow at 412x915 text x1.0
+00:14 +45: /home/runner/work/formulanotes/formulanotes/lifekeep/test/layout_stress_test.dart: no overflow at 412x915 text x1.0
+00:14 +46: /home/runner/work/formulanotes/formulanotes/lifekeep/test/layout_stress_test.dart: no overflow at 412x915 text x1.0
+00:14 +47: /home/runner/work/formulanotes/formulanotes/lifekeep/test/layout_stress_test.dart: no overflow at 412x915 text x1.0
+00:14 +48: /home/runner/work/formulanotes/formulanotes/lifekeep/test/layout_stress_test.dart: no overflow at 412x915 text x1.0
+00:14 +49: /home/runner/work/formulanotes/formulanotes/lifekeep/test/layout_stress_test.dart: no overflow at 412x915 text x1.0
+00:14 +50: /home/runner/work/formulanotes/formulanotes/lifekeep/test/layout_stress_test.dart: no overflow at 412x915 text x1.0
+00:14 +51: /home/runner/work/formulanotes/formulanotes/lifekeep/test/layout_stress_test.dart: no overflow at 412x915 text x1.0
+00:14 +52: /home/runner/work/formulanotes/formulanotes/lifekeep/test/backup_test.dart: auto backup runs when due, rotates old ones only after success
+00:14 +53: /home/runner/work/formulanotes/formulanotes/lifekeep/test/layout_stress_test.dart: no overflow at 800x1280 text x1.0
+00:15 +54: /home/runner/work/formulanotes/formulanotes/lifekeep/test/layout_stress_test.dart: no overflow at 800x1280 text x1.0
+00:15 +55: /home/runner/work/formulanotes/formulanotes/lifekeep/test/layout_stress_test.dart: no overflow at 800x1280 text x1.0
+00:16 +56: /home/runner/work/formulanotes/formulanotes/lifekeep/test/layout_stress_test.dart: no overflow at 800x1280 text x1.0
+00:16 +57: /home/runner/work/formulanotes/formulanotes/lifekeep/test/layout_stress_test.dart: no overflow at 800x1280 text x1.0
+00:16 +58: /home/runner/work/formulanotes/formulanotes/lifekeep/test/layout_stress_test.dart: no overflow at 800x1280 text x1.0
+00:16 +59: /home/runner/work/formulanotes/formulanotes/lifekeep/test/reminder_scheduler_test.dart: deleting cancels reminders
+00:16 +60: /home/runner/work/formulanotes/formulanotes/lifekeep/test/reminder_scheduler_test.dart: completing a task cancels its reminder; reopening restores it
+00:16 +61: /home/runner/work/formulanotes/formulanotes/lifekeep/test/reminder_scheduler_test.dart: events: all-day uses default time; past reminders are skipped
+00:16 +62: /home/runner/work/formulanotes/formulanotes/lifekeep/test/reminder_scheduler_test.dart: disabling a reminder type and rescheduleAll removes them
+00:16 +63: /home/runner/work/formulanotes/formulanotes/lifekeep/test/reminder_scheduler_test.dart: changing reminder time of day reschedules
+00:17 +64: /home/runner/work/formulanotes/formulanotes/lifekeep/test/reminder_scheduler_test.dart: gateway failure is reported but the item is still saved
+schedule failed: Exception: boom
+schedule failed: Exception: boom
+00:17 +65: /home/runner/work/formulanotes/formulanotes/lifekeep/test/reminder_scheduler_test.dart: rescheduleAll caps pending notifications
+00:18 +66: /home/runner/work/formulanotes/formulanotes/lifekeep/test/reminder_scheduler_test.dart: stableHash is deterministic and outside reserved ids
+00:18 +67: /home/runner/work/formulanotes/formulanotes/lifekeep/test/reminder_scheduler_test.dart: plan respects global switch
+00:18 +68: All tests passed!

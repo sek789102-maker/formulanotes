@@ -16,7 +16,8 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace = "com.lifekeep.app"
-    compileSdk = flutter.compileSdkVersion
+    // androidx.core 1.19+ (pulled in by plugins) requires compiling against API 37.
+    compileSdk = maxOf(flutter.compileSdkVersion, 37)
     ndkVersion = flutter.ndkVersion
 
     compileOptions {

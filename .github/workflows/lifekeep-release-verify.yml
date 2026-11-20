@@ -1,13 +1,15 @@
 name: LIFEKEEP signed release verification
 
-# Verifies the upload-key-signed AAB/APK committed under release/signed/.
+# Verifies the upload-key-signed AAB committed under release/signed/:
+# bundle validity, signature, certificate fingerprint, and that the bundle's
+# content installs and launches on Android (APKs generated from the AAB here
+# are signed with a throwaway key, only for this install test).
 # Contains no secrets: only the public certificate fingerprint is compared.
 on:
   push:
     branches: [ 'claude/lifekeep-**' ]
     paths:
       - 'release/signed/*.aab'
-      - 'release/signed/*.apk'
       - '.github/workflows/lifekeep-release-verify.yml'
   workflow_dispatch:
 
@@ -31,25 +33,24 @@ jobs:
           set -euo pipefail
           cd release/signed
           OUT=verification; mkdir -p "$OUT"
-          AAB=$(ls *.aab | head -1); APK=$(ls *.apk | head -1)
+          AAB=$(ls *.aab | head -1)
           EXPECTED=$(tr -d ' :\n' < upload-certificate-sha256.txt | tr 'a-f' 'A-F')
-          BT=$(ls $ANDROID_HOME/build-tools | sort -V | tail -1)
           curl -sL -o /tmp/bundletool.jar https://github.com/google/bundletool/releases/download/1.18.1/bundletool-all-1.18.1.jar
           {
             echo "# Signed release verification"
-            echo; echo "- Commit: ${GITHUB_SHA::7}  ·  build-tools $BT"
+            echo; echo "- Commit: ${GITHUB_SHA::7}"
             echo; echo "## App Bundle ($AAB)"
             java -jar /tmp/bundletool.jar validate --bundle="$AAB" > /dev/null && echo "- ✅ bundletool validate: OK"
             jarsigner -verify -strict "$AAB" > /tmp/js.txt 2>&1 && echo "- ✅ jarsigner -verify -strict: $(grep -o 'jar verified.' /tmp/js.txt)"
             AAB_SHA=$(keytool -printcert -jarfile "$AAB" | grep -m1 'SHA256:' | sed 's/.*SHA256: //' | tr -d ' :')
-            [ "$AAB_SHA" = "$EXPECTED" ] && echo "- ✅ AAB signed by upload certificate (SHA-256 matches)" || { echo "- ❌ AAB certificate mismatch"; exit 1; }
-            echo; echo "## APK ($APK)"
-            $ANDROID_HOME/build-tools/$BT/apksigner verify --verbose --print-certs "$APK" > /tmp/as.txt
-            grep -E "Verified using v[0-9]+ scheme" /tmp/as.txt | sed 's/^/- /'
-            APK_SHA=$(grep -m1 'certificate SHA-256 digest' /tmp/as.txt | sed 's/.*: //' | tr 'a-f' 'A-F')
-            [ "$APK_SHA" = "$EXPECTED" ] && echo "- ✅ APK signed by upload certificate (SHA-256 matches)" || { echo "- ❌ APK certificate mismatch"; exit 1; }
-            $ANDROID_HOME/build-tools/$BT/aapt2 dump badging "$APK" | grep -E "^(package|targetSdkVersion|sdkVersion)" | sed 's/^/- /'
+            [ "$AAB_SHA" = "$EXPECTED" ] && echo "- ✅ signed by the upload certificate (SHA-256 matches upload-certificate-sha256.txt)" || { echo "- ❌ certificate mismatch"; exit 1; }
+            java -jar /tmp/bundletool.jar dump manifest --bundle="$AAB" | grep -oE '(package|android:versionCode|android:versionName)="[^"]*"' | sed 's/^/- /'
+            java -jar /tmp/bundletool.jar dump manifest --bundle="$AAB" | grep -c 'android.permission.INTERNET' | sed 's/^/- INTERNET permission entries: /'
           } | tee "$OUT/verification.md"
+          # Throwaway key, only to install the bundle's content on the emulator.
+          keytool -genkeypair -keystore /tmp/test.jks -storepass testtest -keypass testtest -alias t -keyalg RSA -dname CN=test -validity 2 >/dev/null 2>&1
+          java -jar /tmp/bundletool.jar build-apks --bundle="$AAB" --output=/tmp/app.apks --mode=universal --ks=/tmp/test.jks --ks-pass=pass:testtest --ks-key-alias=t --key-pass=pass:testtest
+          unzip -o -q /tmp/app.apks universal.apk -d /tmp/
 
       - name: Enable KVM
         run: |
@@ -66,7 +67,7 @@ jobs:
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           script: |
-            adb install release/signed/$(ls release/signed | grep '\.apk$' | head -1) && echo "- ✅ installed on emulator" >> release/signed/verification/verification.md
+            adb install /tmp/universal.apk && echo "- ✅ universal APK built from the signed AAB installed on emulator (API 35)" >> release/signed/verification/verification.md
             adb shell am start -W -n com.sek789102.lifekeep/com.lifekeep.app.MainActivity > /dev/null; sleep 10
             [ -n "$(adb shell pidof com.sek789102.lifekeep)" ] && echo "- ✅ app running 10 s after launch" >> release/signed/verification/verification.md || echo "- ❌ app not running" >> release/signed/verification/verification.md
             adb exec-out screencap -p > release/signed/verification/signed_apk_launch.png

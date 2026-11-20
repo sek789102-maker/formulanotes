@@ -1,0 +1,76 @@
+name: LIFEKEEP Android build
+
+on:
+  push:
+    branches: [ 'claude/lifekeep-**' ]
+    paths:
+      - 'lifekeep/**'
+      - '.github/workflows/lifekeep-android.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: lifekeep-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: lifekeep
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.47.9'
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Analyze
+        run: flutter analyze
+
+      - name: Test
+        run: flutter test
+
+      - name: Build release APK
+        run: flutter build apk --release
+
+      - name: Verify APK
+        run: |
+          APK=build/app/outputs/flutter-apk/app-release.apk
+          test -f "$APK"
+          ls -la "$APK"
+          sha256sum "$APK"
+          # Privacy check: the release manifest must not request INTERNET.
+          AAPT=$(ls $ANDROID_HOME/build-tools/*/aapt2 | sort -V | tail -1)
+          "$AAPT" dump permissions "$APK" | tee ../apk-permissions.txt
+          if grep -q "android.permission.INTERNET" ../apk-permissions.txt; then echo "INTERNET permission found!"; exit 1; fi
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: LIFEKEEP-apk
+          path: lifekeep/build/app/outputs/flutter-apk/app-release.apk
+
+      - name: Commit APK to output/
+        working-directory: .
+        run: |
+          mkdir -p output
+          cp lifekeep/build/app/outputs/flutter-apk/app-release.apk output/LIFEKEEP.apk
+          cp apk-permissions.txt output/apk-permissions.txt
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add output/LIFEKEEP.apk output/apk-permissions.txt
+          git commit -m "Build LIFEKEEP release APK (${GITHUB_SHA::7})" || exit 0
+          git push

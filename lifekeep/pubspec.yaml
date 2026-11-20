@@ -1,0 +1,36 @@
+name: lifekeep
+description: "LIFEKEEP - offline-first, privacy-first life organizer (documents, tasks, calendar, reminders)."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  archive: ^4.7.1
+  crypto: ^3.0.8
+  file_picker: ^13.4.0
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  flutter_local_notifications: ^23.0.3
+  flutter_secure_storage: ^11.2.0
+  flutter_timezone: ^5.1.1
+  image_picker: ^1.2.4
+  intl: ^0.20.3
+  local_auth: ^3.0.2
+  path: ^1.9.1
+  path_provider: ^2.1.6
+  provider: ^6.1.5+1
+  sqflite: ^2.4.6
+  timezone: ^0.11.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  sqflite_common_ffi: ^2.4.7
+
+flutter:
+  uses-material-design: true

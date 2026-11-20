@@ -97,9 +97,9 @@ application-label-zu:'LIFEKEEP'
 native-code: 'arm64-v8a' 'armeabi-v7a' 'x86_64'
 
 ## Sizes
-62019141 /home/runner/work/formulanotes/formulanotes/release/build/LIFEKEEP-ci-debug-key.aab
+62019145 /home/runner/work/formulanotes/formulanotes/release/build/LIFEKEEP-ci-debug-key.aab
 64768589 /home/runner/work/formulanotes/formulanotes/release/build/LIFEKEEP-ci-debug-key.apk
 
 ## SHA-256
-3b742e0ebdccdbc4dad14d966ed0799e15e75a234168bea1891d890a9d10f6a7  LIFEKEEP-ci-debug-key.aab
-bd86a9fc8c275892c91a2275935d82081e988e8b94718337e61dc6051fde52cb  LIFEKEEP-ci-debug-key.apk
+30bfc8f1ccf660890150d50398c50550fdae170bcb95361be1034d26bf801189  LIFEKEEP-ci-debug-key.aab
+829df10ad48d27c3e155b69ecfe3b54d9f50897d99cce959fca73a6e86222837  LIFEKEEP-ci-debug-key.apk

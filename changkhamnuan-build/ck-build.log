@@ -23,13 +23,13 @@
 > Task :app:createDebugCompatibleScreenManifests UP-TO-DATE
 > Task :app:extractDeepLinksDebug UP-TO-DATE
 > Task :app:processDebugMainManifest UP-TO-DATE
-> Task :app:checkDebugDuplicateClasses
 > Task :app:processDebugManifest UP-TO-DATE
+> Task :app:processDebugManifestForPackage UP-TO-DATE
+> Task :app:checkDebugDuplicateClasses
+> Task :app:processDebugResources UP-TO-DATE
 > Task :app:mergeDebugJavaResource
 > Task :app:mergeExtDexDebug
-> Task :app:processDebugManifestForPackage UP-TO-DATE
 > Task :app:mergeLibDexDebug
-> Task :app:processDebugResources UP-TO-DATE
 > Task :app:dexBuilderDebug
 > Task :app:mergeDebugJniLibFolders
 > Task :app:mergeDebugNativeLibs
@@ -38,12 +38,12 @@
 > Task :app:writeDebugAppMetadata
 > Task :app:writeDebugSigningConfigVersions
 > Task :app:preReleaseBuild UP-TO-DATE
+> Task :app:extractReleaseVersionControlInfo
+> Task :app:generateReleaseAssets UP-TO-DATE
 
 > Task :app:stripDebugDebugSymbols
 Unable to strip the following libraries, packaging them as they are: libandroidx.graphics.path.so, libdatastore_shared_counter.so. Run with --info option to learn more.
 
-> Task :app:extractReleaseVersionControlInfo
-> Task :app:generateReleaseAssets UP-TO-DATE
 > Task :app:mergeReleaseAssets
 > Task :app:generateReleaseBuildConfig
 > Task :app:generateReleaseResources FROM-CACHE
@@ -71,11 +71,11 @@ Unable to strip the following libraries, packaging them as they are: libandroidx
 Unable to strip the following libraries, packaging them as they are: libandroidx.graphics.path.so, libdatastore_shared_counter.so. Run with --info option to learn more.
 
 > Task :app:writeReleaseAppMetadata
+> Task :app:mergeReleaseResources
 > Task :app:collectReleaseDependencies
 > Task :app:configureReleaseDependencies
 > Task :app:extractReleaseNativeSymbolTables FROM-CACHE
 > Task :app:parseReleaseIntegrityConfig FROM-CACHE
-> Task :app:mergeReleaseResources
 > Task :app:processReleaseResources
 Exception in thread "AWT-EventQueue-0" java.lang.NullPointerException: Cannot invoke "ksp.com.intellij.openapi.application.Application.getService(java.lang.Class)" because the return value of "ksp.com.intellij.openapi.application.ApplicationManager.getApplication()" is null
 	at ksp.com.intellij.openapi.fileEditor.FileDocumentManager.getInstance(FileDocumentManager.java:35)
@@ -115,9 +115,9 @@ Exception in thread "AWT-EventQueue-0" java.lang.NullPointerException: Cannot in
 > Task :app:produceReleaseBundleIdeListingFile
 > Task :app:createReleaseBundleListingFileRedirect
 > Task :app:bundleRelease
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_2-1795281666500.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_2-1795282437232.json
 
-BUILD SUCCESSFUL in 3m 39s
+BUILD SUCCESSFUL in 2m 12s
 87 actionable tasks: 56 executed, 9 from cache, 22 up-to-date
 > Task :app:preBuild UP-TO-DATE
 > Task :app:preReleaseBuild UP-TO-DATE
@@ -172,7 +172,7 @@ BUILD SUCCESSFUL in 3m 39s
 > Task :app:packageRelease
 > Task :app:createReleaseApkListingFileRedirect
 > Task :app:assembleRelease
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_2-1795281886851.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_2-1795282570257.json
 
-BUILD SUCCESSFUL in 1m 8s
+BUILD SUCCESSFUL in 39s
 48 actionable tasks: 11 executed, 1 from cache, 36 up-to-date

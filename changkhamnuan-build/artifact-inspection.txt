@@ -1,12 +1,8 @@
 package: name='com.sek789102.changkhamnuan' versionCode='1' versionName='1.0.0' platformBuildVersionName='16' platformBuildVersionCode='36' compileSdkVersion='36' compileSdkVersionCodename='16'
 targetSdkVersion:'36'
-uses-permission: name='android.permission.WAKE_LOCK'
-uses-permission: name='android.permission.ACCESS_NETWORK_STATE'
-uses-permission: name='android.permission.RECEIVE_BOOT_COMPLETED'
-uses-permission: name='android.permission.FOREGROUND_SERVICE'
 uses-permission: name='com.sek789102.changkhamnuan.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION'
 application-label:'ช่างคำนวณ'
 
-20378616 /home/runner/work/formulanotes/formulanotes/changkhamnuan-build/ChangKhamnuan-debug.apk
-1895291 /home/runner/work/formulanotes/formulanotes/changkhamnuan-build/ChangKhamnuan-release-testsigned.apk
-4116565 /home/runner/work/formulanotes/formulanotes/changkhamnuan-build/ChangKhamnuan-release-unsigned.aab
+18563296 /home/runner/work/formulanotes/formulanotes/changkhamnuan-build/ChangKhamnuan-debug.apk
+1758602 /home/runner/work/formulanotes/formulanotes/changkhamnuan-build/ChangKhamnuan-release-testsigned.apk
+3854047 /home/runner/work/formulanotes/formulanotes/changkhamnuan-build/ChangKhamnuan-release-unsigned.aab

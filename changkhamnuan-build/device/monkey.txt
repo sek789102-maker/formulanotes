@@ -1,0 +1,27 @@
+  bash arg: -p
+  bash arg: com.sek789102.changkhamnuan
+  bash arg: --pct-syskeys
+  bash arg: 0
+  bash arg: --throttle
+  bash arg: 120
+  bash arg: -s
+  bash arg: 11
+  bash arg: 400
+args: [-p, com.sek789102.changkhamnuan, --pct-syskeys, 0, --throttle, 120, -s, 11, 400]
+ arg: "-p"
+ arg: "com.sek789102.changkhamnuan"
+ arg: "--pct-syskeys"
+ arg: "0"
+ arg: "--throttle"
+ arg: "120"
+ arg: "-s"
+ arg: "11"
+ arg: "400"
+data="com.sek789102.changkhamnuan"
+arg="--pct-syskeys" mCurArgData="null" mNextArg=3 argwas="--pct-syskeys" nextarg="0"
+data="0"
+arg="--throttle" mCurArgData="null" mNextArg=5 argwas="--throttle" nextarg="120"
+data="120"
+data="11"
+Events injected: 400
+## Network stats: elapsed time=11456ms (0ms mobile, 0ms wifi, 11456ms not connected)

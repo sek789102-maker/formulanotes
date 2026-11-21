@@ -1,1 +1,1 @@
-built from commit fc32a6d (CI run), signed locally with the upload key (jarsigner SHA256withRSA)
+built from commit 87821d2 (CI run), versionCode 2, signed locally with the upload key (jarsigner SHA256withRSA)

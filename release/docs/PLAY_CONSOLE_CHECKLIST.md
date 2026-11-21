@@ -41,11 +41,11 @@
 ## D. Release
 | รายการ | สถานะ | หมายเหตุ |
 |---|---|---|
-| Android App Bundle | ✅ | `LIFEKEEP-1.0.0-1-release.aab` เซ็นด้วย Upload key (ตรวจลายเซ็นแล้ว) |
+| Android App Bundle | ✅ | `LIFEKEEP-1.0.0-2-release.aab` เซ็นด้วย Upload key (ตรวจลายเซ็นแล้ว) |
 | Play App Signing | ✍️ | **เลือก "Use Google-generated key" (ค่าเริ่มต้น)** แล้วอัปโหลด AAB ที่เซ็นด้วย upload key |
 | Upload key | ✅ | ส่งให้เจ้าของแล้วแยกต่างหาก (ไม่อยู่ใน GitHub) · SHA-256 ใน `signed/upload-certificate-sha256.txt` |
 | targetSdk | ✅ | 36 (Android 16) — ตรงตามข้อกำหนด Play ปัจจุบัน |
-| versionCode / versionName | ✅ | 1 / 1.0.0 — ครั้งถัดไปต้องเพิ่ม versionCode ใน `pubspec.yaml` (`version: 1.0.1+2`) |
+| versionCode / versionName | ✅ | 2 / 1.0.0 — ครั้งถัดไปต้องเพิ่ม versionCode ใน `pubspec.yaml` (เช่น `version: 1.0.1+3`) |
 | Release notes | ✅ | RELEASE_NOTES.md (th-TH, en-US) |
 | Native debug symbols | ⚠️ | Console อาจเตือนว่าไม่มี debug symbols — ไม่ขวางการเผยแพร่ |
 | Countries / pricing | ✍️ | เลือกประเทศ (เช่น ไทย) · ฟรี |

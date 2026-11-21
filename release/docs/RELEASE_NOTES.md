@@ -1,6 +1,6 @@
 # Release Notes
 
-## 1.0.0 (versionCode 1) — รุ่นแรก
+## 1.0.0 (versionCode 2) — รุ่นแรก
 
 ### สำหรับใส่ใน Play Console ("What's new", ≤ 500 ตัวอักษร)
 

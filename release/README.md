@@ -7,11 +7,11 @@ release/
 ├── README.md                     ← ไฟล์นี้ (วิธีติดตั้ง/Build/อัปโหลด)
 ├── RELEASE_AUDIT_REPORT.md       ← รายงานผลตรวจสอบก่อน Release (อ่านก่อนอัปโหลด)
 ├── signed/
-│   ├── LIFEKEEP-1.0.0-1-release.aab   ← ไฟล์สำหรับอัปโหลด Play Console (เซ็นด้วย Upload key)
+│   ├── LIFEKEEP-1.0.0-2-release.aab   ← ไฟล์สำหรับอัปโหลด Play Console (เซ็นด้วย Upload key)
 │   ├── upload-certificate-sha256.txt  ← ลายนิ้วมือใบรับรอง Upload key (ข้อมูลสาธารณะ)
 │   └── verification/                  ← ผลตรวจลายเซ็น + ติดตั้งบน emulator
 ├── apk/
-│   └── LIFEKEEP-1.0.0-1-test.apk      ← APK สำหรับติดตั้งทดสอบ (release/R8, เซ็นด้วย debug key)
+│   └── LIFEKEEP-1.0.0-2-test.apk      ← APK สำหรับติดตั้งทดสอบ (release/R8, เซ็นด้วย debug key)
 ├── build/                        ← ผลจาก CI: รายงานทดสอบบนอุปกรณ์ ภาพหน้าจอ log
 ├── docs/
 │   ├── PRIVACY_POLICY.md / privacy-policy.html
@@ -26,7 +26,7 @@ release/
 > 🔐 **Upload keystore และรหัสผ่านไม่อยู่ใน repo นี้** — ส่งให้เจ้าของแอปแยกต่างหาก เก็บไว้อย่างน้อย 2 ที่
 
 ## ติดตั้ง APK สำหรับทดสอบ
-1. คัดลอก `apk/LIFEKEEP-1.0.0-1-test.apk` ไปยังมือถือ Android 7.0+
+1. คัดลอก `apk/LIFEKEEP-1.0.0-2-test.apk` ไปยังมือถือ Android 7.0+
 2. เปิดไฟล์ → อนุญาต "ติดตั้งแอปที่ไม่รู้จัก" → ติดตั้ง
 3. ⚠️ APK นี้เซ็นด้วย debug key (เพื่อทดสอบเท่านั้น) — ก่อนติดตั้งเวอร์ชันจาก Google Play ต้องถอนตัวนี้ก่อน (สำรองข้อมูลก่อน)
 4. ⚠️ Package name ใหม่คือ `com.sek789102.lifekeep` จึงเป็นคนละแอปกับ APK ทดสอบรุ่นก่อน (`com.lifekeep.app`) — ข้อมูลไม่ย้ายมาเอง ใช้ สำรอง→กู้คืน เพื่อย้ายข้อมูล
@@ -34,7 +34,7 @@ release/
 ## อัปโหลดขึ้น Google Play
 ดูขั้นตอนเต็มใน `docs/PLAY_CONSOLE_CHECKLIST.md` — โดยย่อ:
 1. สร้างแอปใน Play Console → ภาษาเริ่มต้น ไทย → ประเภท App → ฟรี
-2. Release → Testing → **Internal testing** → Create release → เปิดใช้ **Play App Signing** (Google-generated key) → อัปโหลด `signed/LIFEKEEP-1.0.0-1-release.aab` → ใส่ Release notes จาก `docs/RELEASE_NOTES.md`
+2. Release → Testing → **Internal testing** → Create release → เปิดใช้ **Play App Signing** (Google-generated key) → อัปโหลด `signed/LIFEKEEP-1.0.0-2-release.aab` → ใส่ Release notes จาก `docs/RELEASE_NOTES.md`
 3. กรอก Store listing / App content ตาม Checklist
 4. Closed testing (≥12 คน 14 วัน หากเป็นบัญชีส่วนตัวใหม่) → Apply for production
 

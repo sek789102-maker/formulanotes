@@ -1,0 +1,85 @@
+name: ChangKhamnuan signed release verification
+
+# Verifies the upload-key-signed AAB committed under release-changkhamnuan/signed/:
+# bundle validity, signature, certificate fingerprint, and that the bundle's
+# content installs and launches on Android (APKs generated from the AAB here
+# are signed with a throwaway key, only for this install test).
+# Contains no secrets: only the public certificate fingerprint is compared.
+on:
+  push:
+    branches: [ 'claude/lifekeep-**' ]
+    paths:
+      - 'release-changkhamnuan/signed/*.aab'
+      - '.github/workflows/changkhamnuan-release-verify.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Verify signatures and certificate
+        run: |
+          set -euo pipefail
+          cd release-changkhamnuan/signed
+          OUT=verification; mkdir -p "$OUT"
+          AAB=$(ls *.aab | head -1)
+          EXPECTED=$(tr -d ' :\n' < upload-certificate-sha256.txt | tr 'a-f' 'A-F')
+          curl -sL -o /tmp/bundletool.jar https://github.com/google/bundletool/releases/download/1.18.1/bundletool-all-1.18.1.jar
+          {
+            echo "# Signed release verification"
+            echo; echo "- Commit: ${GITHUB_SHA::7}"
+            echo; echo "## App Bundle ($AAB)"
+            java -jar /tmp/bundletool.jar validate --bundle="$AAB" > /dev/null && echo "- ✅ bundletool validate: OK"
+            # (-strict would flag the self-signed certificate, which is normal for upload keys)
+            jarsigner -verify "$AAB" > /tmp/js.txt 2>&1; grep -q "jar verified" /tmp/js.txt && echo "- ✅ jarsigner -verify: jar verified" || { echo "- ❌ jarsigner verification failed"; exit 1; }
+            AAB_SHA=$(keytool -printcert -jarfile "$AAB" | grep -m1 'SHA256:' | sed 's/.*SHA256: //' | tr -d ' :')
+            [ "$AAB_SHA" = "$EXPECTED" ] && echo "- ✅ signed by the upload certificate (SHA-256 matches upload-certificate-sha256.txt)" || { echo "- ❌ certificate mismatch"; exit 1; }
+            java -jar /tmp/bundletool.jar dump manifest --bundle="$AAB" | grep -oE '(package|android:versionCode|android:versionName)="[^"]*"' | sed 's/^/- /'
+            echo "- INTERNET permission entries: $(java -jar /tmp/bundletool.jar dump manifest --bundle="$AAB" | grep -c 'android.permission.INTERNET' || true)"
+          } | tee "$OUT/verification.md"
+          # Throwaway key, only to install the bundle's content on the emulator.
+          keytool -genkeypair -keystore /tmp/test.jks -storepass testtest -keypass testtest -alias t -keyalg RSA -dname CN=test -validity 2 >/dev/null 2>&1
+          java -jar /tmp/bundletool.jar build-apks --bundle="$AAB" --output=/tmp/app.apks --mode=universal --ks=/tmp/test.jks --ks-pass=pass:testtest --ks-key-alias=t --key-pass=pass:testtest
+          unzip -o -q /tmp/app.apks universal.apk -d /tmp/
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Install & launch signed APK on emulator (API 35)
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          script: |
+            adb install /tmp/universal.apk && echo "- ✅ universal APK built from the signed AAB installed on emulator (API 35)" >> release-changkhamnuan/signed/verification/verification.md
+            adb shell am start -W -n com.sek789102.changkhamnuan/com.sek789102.changkhamnuan.MainActivity > /dev/null; sleep 10
+            [ -n "$(adb shell pidof com.sek789102.changkhamnuan)" ] && echo "- ✅ app running 10 s after launch" >> release-changkhamnuan/signed/verification/verification.md || echo "- ❌ app not running" >> release-changkhamnuan/signed/verification/verification.md
+            adb exec-out screencap -p > release-changkhamnuan/signed/verification/signed_apk_launch.png
+            adb logcat -d | grep -cE "FATAL EXCEPTION" | sed 's/^/- crash\/error lines in logcat: /' >> release-changkhamnuan/signed/verification/verification.md
+
+      - name: Commit verification report
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add release-changkhamnuan/signed/verification
+          git commit -m "Verify ChangKhamnuan signed release (${GITHUB_SHA::7})" || exit 0
+          git pull --rebase -q origin "${GITHUB_REF_NAME}" || true
+          git push

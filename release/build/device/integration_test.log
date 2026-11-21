@@ -7,42 +7,38 @@ Got dependencies!
 3 packages have newer versions incompatible with dependency constraints.
 Try `flutter pub outdated` for more information.
 00:00 +0: loading /home/runner/work/formulanotes/formulanotes/lifekeep/integration_test/app_test.dart
-Running Gradle task 'assembleDebug'...                            136.0s
+Running Gradle task 'assembleDebug'...                            127.5s
 ✓ Built build/app/outputs/flutter-apk/app-debug.apk
-Installing build/app/outputs/flutter-apk/app-debug.apk...        1,378ms
+Installing build/app/outputs/flutter-apk/app-debug.apk...          708ms
 00:00 +0: create, complete, search, persist (real Android storage)
-00:52 +1: local backup from Settings on real storage
+00:50 +1: local backup from Settings on real storage
 ══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
-The following StateError was thrown running a test:
-Bad state: No element
+The following TestFailure was thrown running a test:
+Expected: at least one matching candidate
+  Actual: _TextContainingWidgetFinder:<Found 0 widgets with text containing ด้วยตนเอง: []>
+   Which: means none were found but some were expected
+manual backup listed in history
 
 When the exception was thrown, this was the stack:
-#0      Iterable.first (dart:core/iterable.dart:663:7)
-#1      _FirstFinderMixin.filter (package:flutter_test/src/finders.dart:1383:28)
-#3      Iterable.isEmpty (dart:core/iterable.dart:560:33)
-#4      WidgetController.dragUntilVisible.<anonymous closure> (package:flutter_test/src/controller.dart:2478:52)
-#7      TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
-#8      WidgetController.dragUntilVisible (package:flutter_test/src/controller.dart:2476:27)
-#9      WidgetController.scrollUntilVisible.<anonymous closure> (package:flutter_test/src/controller.dart:2439:13)
-#12     TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
-#13     WidgetController.scrollUntilVisible (package:flutter_test/src/controller.dart:2427:27)
-#14     main.<anonymous closure> (file:///home/runner/work/formulanotes/formulanotes/lifekeep/integration_test/app_test.dart:128:13)
+#4      main.<anonymous closure> (file:///home/runner/work/formulanotes/formulanotes/lifekeep/integration_test/app_test.dart:130:5)
 <asynchronous suspension>
-#15     testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
 <asynchronous suspension>
-#16     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
 <asynchronous suspension>
 <asynchronous suspension>
-(elided 6 frames from dart:async, dart:async-patch, and package:stack_trace)
+(elided one frame from package:stack_trace)
 
+This was caught by the test expectation on the following line:
+  file:///home/runner/work/formulanotes/formulanotes/lifekeep/integration_test/app_test.dart line 130
 The test description was:
   local backup from Settings on real storage
 ════════════════════════════════════════════════════════════════════════════════════════════════════
-01:07 +1 -1: local backup from Settings on real storage [E]
+01:06 +1 -1: local backup from Settings on real storage [E]
   Test failed. See exception logs above.
   The test description was: local backup from Settings on real storage
   
-01:07 +1 -1: (tearDownAll)
+01:06 +1 -1: (tearDownAll)
 01:07 +1 -1: Some tests failed.
 
 Failing tests:

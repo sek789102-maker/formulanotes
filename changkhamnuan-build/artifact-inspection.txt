@@ -3,6 +3,6 @@ targetSdkVersion:'36'
 uses-permission: name='com.sek789102.changkhamnuan.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION'
 application-label:'ช่างคำนวณ'
 
-18573080 /home/runner/work/formulanotes/formulanotes/changkhamnuan-build/ChangKhamnuan-debug.apk
-1768378 /home/runner/work/formulanotes/formulanotes/changkhamnuan-build/ChangKhamnuan-release-testsigned.apk
-3863780 /home/runner/work/formulanotes/formulanotes/changkhamnuan-build/ChangKhamnuan-release-unsigned.aab
+18583452 /home/runner/work/formulanotes/formulanotes/changkhamnuan-build/ChangKhamnuan-debug.apk
+1762362 /home/runner/work/formulanotes/formulanotes/changkhamnuan-build/ChangKhamnuan-release-testsigned.apk
+3869164 /home/runner/work/formulanotes/formulanotes/changkhamnuan-build/ChangKhamnuan-release-unsigned.aab

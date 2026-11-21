@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.sek789102.changkhamnuan.RepositoryTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-11-21T18:02:36.173Z" hostname="runnervm0hi8g" time="7.792">
+<testsuite name="com.sek789102.changkhamnuan.RepositoryTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-11-21T18:37:06.555Z" hostname="runnervm0hi8g" time="8.415">
   <properties/>
-  <testcase name="calculation goes into a project with saved prices and labour" classname="com.sek789102.changkhamnuan.RepositoryTest" time="4.464"/>
-  <testcase name="backup round trip and no duplicates on second restore" classname="com.sek789102.changkhamnuan.RepositoryTest" time="0.217"/>
-  <testcase name="quote numbers increase and duplicates copy items" classname="com.sek789102.changkhamnuan.RepositoryTest" time="0.074"/>
+  <testcase name="calculation goes into a project with saved prices and labour" classname="com.sek789102.changkhamnuan.RepositoryTest" time="4.297"/>
+  <testcase name="backup round trip and no duplicates on second restore" classname="com.sek789102.changkhamnuan.RepositoryTest" time="0.211"/>
+  <testcase name="quote numbers increase and duplicates copy items" classname="com.sek789102.changkhamnuan.RepositoryTest" time="0.069"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

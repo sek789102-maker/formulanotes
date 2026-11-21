@@ -26,7 +26,7 @@ class DebugSeedReceiver : BroadcastReceiver() {
             repo.getProject(id)?.let { repo.updateProject(it.copy(customerPhone = "089-111-2222", siteAddress = "หมู่บ้านสุขสันต์ ซอย 5", overheadPercent = 10.0)) }
             val r = Rates()
             repo.addCalcResult(id, "ผนังครัว", Calculators.bricks.run(mapOf("type" to "aac", "length" to "6", "height" to "2.8", "doors" to "1", "windows" to "1"), r), 200.0)
-            repo.addCalcResult(id, "พื้นครัว", Calculators.concrete.run(mapOf("shape" to "slab", "a" to "3", "b" to "4", "c" to "10", "mix" to "ready"), r), 900.0)
+            repo.addCalcResult(id, "พื้นครัว", Calculators.concrete.run(mapOf("shape" to "slab", "slab_w" to "3", "slab_l" to "4", "slab_t" to "10", "mix" to "ready"), r), 900.0)
             repo.addCalcResult(id, "ปูพื้นครัว", Calculators.tiles.run(mapOf("w" to "3", "l" to "4", "size" to "60x60"), r), 250.0)
             repo.addItem(id, ItemKind.OTHER, "ค่าขนส่งวัสดุ", 1.0, "เที่ยว", 800.0)
         }

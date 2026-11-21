@@ -1,5 +1,6 @@
 package com.sek789102.changkhamnuan.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -70,7 +71,9 @@ import com.sek789102.changkhamnuan.domain.Calculators
 import com.sek789102.changkhamnuan.domain.ChoiceField
 import com.sek789102.changkhamnuan.domain.Fmt
 import com.sek789102.changkhamnuan.domain.NumberField
+import com.sek789102.changkhamnuan.domain.isVisible
 import com.sek789102.changkhamnuan.ui.AppViewModel
+import com.sek789102.changkhamnuan.ui.components.yellowBarColors
 import com.sek789102.changkhamnuan.ui.components.ChoiceInput
 import com.sek789102.changkhamnuan.ui.components.KeyValueRow
 import com.sek789102.changkhamnuan.ui.components.NumberInput
@@ -95,12 +98,6 @@ fun CalcHomeScreen(padding: PaddingValues, onOpen: (String) -> Unit, onConverter
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        item(span = { GridItemSpan(maxLineSpan) }) {
-            Column {
-                Text("คำนวณวัสดุ", style = MaterialTheme.typography.headlineSmall)
-                Text("เลือกงาน ใส่ขนาด แล้วได้จำนวนที่ต้องซื้อทันที", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            }
-        }
         items(Calculators.all, key = { it.id }) { c ->
             CalcCard(calcIcon(c.id), c.title, c.subtitle, "calc_${c.id}") { onOpen(c.id) }
         }
@@ -116,7 +113,10 @@ private fun CalcCard(icon: ImageVector, title: String, subtitle: String, tag: St
         modifier = Modifier.fillMaxWidth().heightIn(min = 128.dp).testTag(tag)
     ) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            Icon(icon, null, Modifier.size(32.dp), tint = MaterialTheme.colorScheme.primary)
+            androidx.compose.foundation.layout.Box(
+                Modifier.size(48.dp).background(MaterialTheme.colorScheme.primary, androidx.compose.foundation.shape.RoundedCornerShape(14.dp)),
+                contentAlignment = Alignment.Center
+            ) { Icon(icon, null, Modifier.size(28.dp), tint = MaterialTheme.colorScheme.onPrimary) }
             Text(title, style = MaterialTheme.typography.titleMedium)
             Text(subtitle, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 2, overflow = TextOverflow.Ellipsis)
         }
@@ -131,7 +131,7 @@ fun CalcScreen(calcId: String, vm: AppViewModel, snackbar: SnackbarHostState, on
     val prices by vm.prices.collectAsStateWithLifecycle()
     val values = rememberSaveable(calcId, saver = mapSaver()) {
         mutableStateMapOf<String, String>().apply {
-            calc.fields.forEach { f ->
+            calc.fields.filter { it.isVisible(values, calc) }.forEach { f ->
                 when (f) {
                     is NumberField -> put(f.key, Fmt.n(f.default, 3).replace(",", ""))
                     is ChoiceField -> put(f.key, f.default)
@@ -147,6 +147,7 @@ fun CalcScreen(calcId: String, vm: AppViewModel, snackbar: SnackbarHostState, on
         snackbarHost = { SnackbarHost(snackbar) },
         topBar = {
             TopAppBar(
+                colors = yellowBarColors(),
                 navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Outlined.ArrowBack, "กลับ") } },
                 title = { Text(calc.title) }
             )
@@ -156,7 +157,7 @@ fun CalcScreen(calcId: String, vm: AppViewModel, snackbar: SnackbarHostState, on
             Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState()).padding(horizontal = 16.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            calc.fields.forEach { f ->
+            calc.fields.filter { it.isVisible(values, calc) }.forEach { f ->
                 when (f) {
                     is NumberField -> NumberInput(values[f.key].orEmpty(), { values[f.key] = it }, f.label, f.unit, help = f.help, tag = "in_${f.key}")
                     is ChoiceField -> ChoiceInput(f.label, f.options, values[f.key] ?: f.default, { values[f.key] = it }, tag = "in_${f.key}")
@@ -208,7 +209,7 @@ fun ResultCard(result: CalcResult, prices: Map<String, Double>) {
             Text("ผลการคำนวณ", style = MaterialTheme.typography.titleMedium)
             result.facts.forEach { (k, v) -> KeyValueRow(k, v) }
             HorizontalDivider(Modifier.padding(vertical = 6.dp))
-            Text("ต้องซื้อ", style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.primary)
+            Text("ต้องซื้อ", style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.secondary)
             var total = 0.0
             var priced = true
             result.materials.filter { it.buyQty > 0 }.forEach { m ->

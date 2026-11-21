@@ -20,9 +20,9 @@ tap_tag in_length; adb shell input keyevent 123; for _ in 1 2 3; do adb shell in
 tap_tag add_to_project; sleep 2; shot 03-add-dialog 1
 tap_tag new_project_name; adb shell input text "Kitchen"; adb shell input keyevent 111
 tap_tag create_and_add; sleep 3; shot 04-project 2
-tap_tag share_image; sleep 4; shot 05-share-image 1
+tap_tag share_image; sleep 2; shot 05a-profile-prompt 1; tap_tag share_anyway; sleep 4; shot 05-share-image 1
 adb shell input keyevent 4; sleep 2
-tap_tag share_pdf; sleep 4; shot 06-share-pdf 1
+tap_tag share_pdf; sleep 2; tap_tag share_anyway; sleep 4; shot 06-share-pdf 1
 adb shell input keyevent 4; sleep 2
 adb shell am start -n $ACT > /dev/null; sleep 2
 

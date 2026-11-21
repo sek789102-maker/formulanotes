@@ -70,6 +70,7 @@ import com.sek789102.changkhamnuan.domain.QuoteLine
 import com.sek789102.changkhamnuan.domain.QuoteMath
 import com.sek789102.changkhamnuan.domain.QuoteOptions
 import com.sek789102.changkhamnuan.ui.AppViewModel
+import com.sek789102.changkhamnuan.ui.components.yellowBarColors
 import com.sek789102.changkhamnuan.ui.components.ConfirmDialog
 import com.sek789102.changkhamnuan.ui.components.KeyValueRow
 import com.sek789102.changkhamnuan.ui.components.NumberInput
@@ -91,15 +92,11 @@ fun ProjectsScreen(padding: PaddingValues, vm: AppViewModel, onOpen: (Long) -> U
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            item {
-                Text("งาน / ใบเสนอราคา", style = MaterialTheme.typography.headlineSmall)
-                Text("รวมรายการวัสดุและค่าแรงของแต่ละงาน แล้วส่งใบเสนอราคาให้ลูกค้า", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            }
             val list = projects
             if (list != null && list.isEmpty()) {
                 item {
                     Column(Modifier.fillMaxWidth().padding(vertical = 48.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(Icons.Outlined.WorkOutline, null, Modifier.size(56.dp), tint = MaterialTheme.colorScheme.primary)
+                        Icon(Icons.Outlined.WorkOutline, null, Modifier.size(56.dp), tint = MaterialTheme.colorScheme.secondary)
                         Text("ยังไม่มีงาน", style = MaterialTheme.typography.titleMedium)
                         Text("คำนวณวัสดุแล้วกด “เพิ่มลงงาน” หรือสร้างงานใหม่", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
@@ -117,7 +114,7 @@ fun ProjectsScreen(padding: PaddingValues, vm: AppViewModel, onOpen: (Long) -> U
                         if (p.customerName.isNotBlank()) Text(p.customerName, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         Row(Modifier.fillMaxWidth().padding(top = 6.dp)) {
                             Text("${s?.count ?: 0} รายการ · แก้ไข ${fmt.format(Date(p.updatedAt))}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.weight(1f))
-                            Text("${Fmt.money(s?.total ?: 0.0)} บาท", style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.primary)
+                            Text("${Fmt.money(s?.total ?: 0.0)} บาท", style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.secondary)
                         }
                     }
                 }
@@ -159,7 +156,14 @@ fun ProjectInfoDialog(p: ProjectEntity?, onDismiss: () -> Unit, onSave: (String,
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProjectScreen(projectId: Long, vm: AppViewModel, snackbar: SnackbarHostState, onBack: () -> Unit, onOpenProject: (Long) -> Unit) {
+fun ProjectScreen(
+    projectId: Long,
+    vm: AppViewModel,
+    snackbar: SnackbarHostState,
+    onBack: () -> Unit,
+    onOpenProject: (Long) -> Unit,
+    onOpenProfile: () -> Unit
+) {
     val project by remember(projectId) { vm.observeProject(projectId) }.collectAsState(initial = null)
     val items by remember(projectId) { vm.observeItems(projectId) }.collectAsState(initial = emptyList())
     val context = LocalContext.current
@@ -171,8 +175,15 @@ fun ProjectScreen(projectId: Long, vm: AppViewModel, snackbar: SnackbarHostState
     var confirmDelete by remember { mutableStateOf(false) }
     var busy by remember { mutableStateOf(false) }
 
+    val settings by vm.settings.collectAsStateWithLifecycle()
+    var askProfile by remember { mutableStateOf<Boolean?>(null) }
     val p = project
-    fun share(asImage: Boolean) {
+    fun share(asImage: Boolean, skipProfileCheck: Boolean = false) {
+        // A quote without the contractor's name looks unprofessional: offer to fill it in first.
+        if (!skipProfileCheck && settings?.profile?.isEmpty != false) {
+            askProfile = asImage
+            return
+        }
         busy = true
         scope.launch {
             vm.quoteShareIntent(projectId, asImage)?.let { intent ->
@@ -190,6 +201,7 @@ fun ProjectScreen(projectId: Long, vm: AppViewModel, snackbar: SnackbarHostState
         snackbarHost = { SnackbarHost(snackbar) },
         topBar = {
             TopAppBar(
+                colors = yellowBarColors(),
                 navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Outlined.ArrowBack, "กลับ") } },
                 title = { Text(p?.name ?: "", maxLines = 1, overflow = TextOverflow.Ellipsis) },
                 actions = {
@@ -294,6 +306,19 @@ fun ProjectScreen(projectId: Long, vm: AppViewModel, snackbar: SnackbarHostState
             vm.addItem(projectId, kind, name, qty, unit, price)
             newItemKind = null
         }
+    }
+    askProfile?.let { asImage ->
+        AlertDialog(
+            onDismissRequest = { askProfile = null },
+            title = { Text("ยังไม่ได้ใส่ข้อมูลร้าน") },
+            text = { Text("ใบเสนอราคาจะไม่มีชื่อร้าน เบอร์โทร และที่อยู่ของคุณ ใส่ข้อมูลก่อนส่งดีไหม?") },
+            confirmButton = {
+                TextButton(onClick = { askProfile = null; onOpenProfile() }, modifier = Modifier.testTag("go_profile")) { Text("ใส่ข้อมูลร้าน") }
+            },
+            dismissButton = {
+                TextButton(onClick = { askProfile = null; share(asImage, skipProfileCheck = true) }, modifier = Modifier.testTag("share_anyway")) { Text("ส่งเลย") }
+            }
+        )
     }
     if (confirmDelete && p != null) {
         ConfirmDialog("ลบงานนี้?", "รายการทั้งหมดในงาน “${p.name}” จะถูกลบ กู้คืนไม่ได้", "ลบ", onDismiss = { confirmDelete = false }) {

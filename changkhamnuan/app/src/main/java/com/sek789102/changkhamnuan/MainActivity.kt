@@ -2,6 +2,7 @@ package com.sek789102.changkhamnuan
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -9,6 +10,7 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Calculate
+import androidx.compose.material.icons.outlined.Engineering
 import androidx.compose.material.icons.outlined.MoreHoriz
 import androidx.compose.material.icons.outlined.Sell
 import androidx.compose.material.icons.outlined.WorkOutline
@@ -36,6 +38,7 @@ import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sek789102.changkhamnuan.ui.AppViewModel
+import com.sek789102.changkhamnuan.ui.components.TabHeader
 import com.sek789102.changkhamnuan.ui.screens.CalcHomeScreen
 import com.sek789102.changkhamnuan.ui.screens.CalcScreen
 import com.sek789102.changkhamnuan.ui.screens.ConverterScreen
@@ -63,7 +66,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        // Headers are yellow in both themes, so status-bar icons are always dark.
+        enableEdgeToEdge(statusBarStyle = SystemBarStyle.light(android.graphics.Color.TRANSPARENT, android.graphics.Color.TRANSPARENT))
         setContent {
             val settings by vm.settings.collectAsStateWithLifecycle()
             val s = settings ?: return@setContent
@@ -100,6 +104,14 @@ class MainActivity : ComponentActivity() {
                 val tab = current.removePrefix("tab:").toIntOrNull() ?: 0
                 Scaffold(
                     snackbarHost = { SnackbarHost(snackbar) },
+                    topBar = {
+                        when (tab) {
+                            0 -> TabHeader("ช่างคำนวณ", "เลือกงาน ใส่ขนาด ได้จำนวนที่ต้องซื้อทันที", Icons.Outlined.Engineering)
+                            1 -> TabHeader("งาน / ใบเสนอราคา", "รวมวัสดุ ค่าแรง แล้วส่งให้ลูกค้าทาง LINE")
+                            2 -> TabHeader("ราคาวัสดุ", "ราคาจากร้านของคุณ ใช้กับทุกงาน")
+                            else -> TabHeader("เพิ่มเติม", "ข้อมูลร้าน · สูตร · สำรองข้อมูล")
+                        }
+                    },
                     bottomBar = {
                         NavigationBar {
                             listOf(
@@ -130,7 +142,7 @@ class MainActivity : ComponentActivity() {
             current.startsWith("calc:") -> CalcScreen(current.removePrefix("calc:"), vm, snackbar, onBack = { pop() }, onOpenProject = { openProject(it) })
             current.startsWith("project:") -> ProjectScreen(
                 current.removePrefix("project:").toLongOrNull() ?: 0L, vm, snackbar,
-                onBack = { pop() }, onOpenProject = { openProject(it) }
+                onBack = { pop() }, onOpenProject = { openProject(it) }, onOpenProfile = { push(Routes.PROFILE) }
             )
             current == Routes.PROFILE -> ProfileScreen(vm, snackbar, onBack = { pop() })
             current == Routes.RATES -> RatesScreen(vm, snackbar, onBack = { pop() })

@@ -39,7 +39,9 @@ class QuoteRenderer(private val context: Context) {
     private val margin = 36f
     private val ink = Color.rgb(28, 32, 40)
     private val muted = Color.rgb(100, 108, 120)
-    private val accent = Color.rgb(31, 78, 121)
+    private val accent = Color.rgb(36, 36, 36)        // charcoal: table header, totals
+    private val gold = Color.rgb(138, 97, 0)          // dark gold: section labels (readable on white)
+    private val yellow = Color.rgb(255, 194, 26)      // brand yellow: bars
     private val line = Color.rgb(210, 216, 224)
 
     private fun paint(size: Float, b: Boolean = false, color: Int = ink) = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -66,10 +68,15 @@ class QuoteRenderer(private val context: Context) {
         var y = margin
         val contentW = w - margin * 2
 
+        // While the item table is being drawn, a new PDF page starts with the table header again.
+        var repeatHeader: ((Canvas, Float) -> Float)? = null
         fun block(height: Float, drawIt: (Canvas, Float) -> Unit) {
             val ny = ensure(height, y)
-            if (ny != y) c = canvasProvider()
-            y = ny
+            if (ny != y) {
+                c = canvasProvider()
+                y = ny
+                repeatHeader?.let { y = it(c, y) }
+            }
             drawIt(c, y)
             y += height
         }
@@ -96,7 +103,7 @@ class QuoteRenderer(private val context: Context) {
             cv.save(); cv.translate(margin, top); shop.draw(cv); cv.translate(0f, shop.height + 4f); contact.draw(cv); cv.restore()
             cv.save(); cv.translate(margin + contentW * 0.6f, top); title.draw(cv); cv.translate(0f, title.height + 4f); meta.draw(cv); cv.restore()
         }
-        block(1f) { cv, top -> cv.drawLine(margin, top, w - margin, top, Paint().apply { color = line; strokeWidth = 1f }) }
+        block(4f) { cv, top -> cv.drawRect(margin, top, w - margin, top + 3f, Paint().apply { color = yellow }) }
 
         // Customer
         val cust = layout(
@@ -129,16 +136,20 @@ class QuoteRenderer(private val context: Context) {
             layout("จำนวนเงิน", headP, colAmt - 8f, Layout.Alignment.ALIGN_OPPOSITE) to colAmt
         )
         val headRowH = headCells.maxOf { it.first.height } + 8f
-        fun tableHeader() = block(headRowH) { cv, top ->
+        fun drawHeader(cv: Canvas, top: Float): Float {
             cv.drawRect(margin, top, w - margin, top + headRowH, Paint().apply { color = accent })
+            cv.drawRect(margin, top + headRowH - 2f, w - margin, top + headRowH, Paint().apply { color = yellow })
             row(cv, top, headCells)
+            return top + headRowH
         }
+        fun tableHeader() = block(headRowH) { cv, top -> drawHeader(cv, top) }
 
         val sections = listOf(ItemKind.MATERIAL to "ค่าวัสดุ", ItemKind.LABOR to "ค่าแรง", ItemKind.OTHER to "ค่าใช้จ่ายอื่น")
         var n = 0
         val bodyP = paint(9.5f)
-        val secP = paint(10f, true, accent)
+        val secP = paint(10f, true, gold)
         tableHeader()
+        repeatHeader = { cv, top -> drawHeader(cv, top) }
         sections.forEach { (kind, label) ->
             val rows = items.filter { it.kind == kind }
             if (rows.isEmpty()) return@forEach
@@ -161,6 +172,8 @@ class QuoteRenderer(private val context: Context) {
                 }
             }
         }
+
+        repeatHeader = null
 
         // Totals
         val t = QuoteMath.totals(
@@ -192,7 +205,7 @@ class QuoteRenderer(private val context: Context) {
         val grandV = layout(Fmt.money(t.total), paint(12f, true, accent), colAmt + 40f, Layout.Alignment.ALIGN_OPPOSITE)
         val words = layout("(" + QuoteMath.bahtText(t.total) + ")", paint(9.5f, color = muted), contentW, Layout.Alignment.ALIGN_OPPOSITE)
         block(grandL.height + words.height + 14f) { cv, top ->
-            cv.drawLine(w - margin - 260f, top + 2f, w - margin, top + 2f, Paint().apply { color = ink; strokeWidth = 1f })
+            cv.drawRect(w - margin - 260f, top + 1f, w - margin, top + 3.5f, Paint().apply { color = yellow })
             cv.save(); cv.translate(w - margin - colAmt - 208f, top + 6f); grandL.draw(cv); cv.restore()
             cv.save(); cv.translate(w - margin - 4f - (colAmt + 40f), top + 6f); grandV.draw(cv); cv.restore()
             cv.save(); cv.translate(margin, top + 8f + grandL.height); words.draw(cv); cv.restore()

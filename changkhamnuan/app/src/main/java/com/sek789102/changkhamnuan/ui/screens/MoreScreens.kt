@@ -66,6 +66,7 @@ import com.sek789102.changkhamnuan.domain.RateDef
 import com.sek789102.changkhamnuan.domain.RateDefs
 import com.sek789102.changkhamnuan.domain.Units
 import com.sek789102.changkhamnuan.ui.AppViewModel
+import com.sek789102.changkhamnuan.ui.components.yellowBarColors
 import com.sek789102.changkhamnuan.ui.components.ChoiceInput
 import com.sek789102.changkhamnuan.ui.components.ConfirmDialog
 import com.sek789102.changkhamnuan.ui.components.NumberInput
@@ -84,13 +85,18 @@ fun PricesScreen(padding: PaddingValues, vm: AppViewModel) {
     val prices by vm.prices.collectAsStateWithLifecycle()
     var editing by remember { mutableStateOf<CatalogItem?>(null) }
     LazyColumn(Modifier.fillMaxSize().padding(padding).testTag("price_list"), contentPadding = PaddingValues(16.dp)) {
-        item {
-            Text("ราคาวัสดุ", style = MaterialTheme.typography.headlineSmall)
-            Text(
-                "ใส่ราคาจากร้านที่คุณซื้อจริง แอปจะใช้คำนวณค่าวัสดุและใส่ในใบเสนอราคาให้อัตโนมัติ",
-                style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
+        if (prices.isEmpty()) {
+            item {
+                androidx.compose.material3.Card(
+                    colors = androidx.compose.material3.CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                ) {
+                    Text(
+                        "ใส่ราคาจากร้านที่คุณซื้อจริงครั้งเดียว แล้วแอปจะคิดค่าวัสดุและเติมราคาในใบเสนอราคาให้ทุกงาน",
+                        style = MaterialTheme.typography.bodyMedium, modifier = Modifier.padding(14.dp)
+                    )
+                }
+            }
         }
         items(Catalog.items, key = { it.key }) { c ->
             val p = prices[c.key]
@@ -101,7 +107,7 @@ fun PricesScreen(padding: PaddingValues, vm: AppViewModel) {
                     Text(
                         if (p != null) "${Fmt.money(p)} บาท" else "ใส่ราคา",
                         style = MaterialTheme.typography.titleSmall,
-                        color = if (p != null) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.primary
+                        color = if (p != null) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.secondary
                     )
                 },
                 modifier = Modifier.clickable { editing = c }.testTag("price_${c.key}")
@@ -145,7 +151,6 @@ fun MoreScreen(padding: PaddingValues, vm: AppViewModel, onProfile: () -> Unit, 
         }
     }
     Column(Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState()).padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Text("เพิ่มเติม", style = MaterialTheme.typography.headlineSmall)
         NavRow(Icons.Outlined.Storefront, "ข้อมูลร้าน / ช่าง", if (s.profile.isEmpty) "ยังไม่ได้ตั้ง — แสดงบนใบเสนอราคา" else s.profile.shopName.ifBlank { s.profile.ownerName }, "nav_profile", onProfile)
         NavRow(Icons.Outlined.Tune, "อัตราการใช้วัสดุ", "ปรับสูตร เช่น อิฐต่อ ตร.ม. ปูนต่อถุง สีต่อแกลลอน", "nav_rates", onRates)
         NavRow(Icons.Outlined.SquareFoot, "แปลงหน่วย", "ตร.ม. ↔ ตร.วา · ไร่ · ฟุต · คิว", "nav_converter", onConverter)
@@ -164,7 +169,7 @@ fun MoreScreen(padding: PaddingValues, vm: AppViewModel, onProfile: () -> Unit, 
         )
         Text(
             if (s.lastBackupAt > 0) "สำรองล่าสุด " + SimpleDateFormat("d MMM yyyy HH:mm", Locale.forLanguageTag("th-TH")).format(Date(s.lastBackupAt)) else "ยังไม่เคยสำรองข้อมูล",
-            style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary
+            style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.secondary
         )
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.padding(vertical = 6.dp)) {
             FilledTonalButton(onClick = {
@@ -190,7 +195,7 @@ private fun NavRow(icon: ImageVector, title: String, sub: String, tag: String, o
     ListItem(
         headlineContent = { Text(title) },
         supportingContent = { Text(sub) },
-        leadingContent = { Icon(icon, null, tint = MaterialTheme.colorScheme.primary) },
+        leadingContent = { Icon(icon, null, tint = MaterialTheme.colorScheme.secondary) },
         trailingContent = { Icon(Icons.AutoMirrored.Outlined.KeyboardArrowRight, null) },
         modifier = Modifier.clickable(onClick = onClick).testTag(tag)
     )
@@ -214,6 +219,7 @@ fun ProfileScreen(vm: AppViewModel, snackbar: SnackbarHostState, onBack: () -> U
         snackbarHost = { SnackbarHost(snackbar) },
         topBar = {
             TopAppBar(
+                colors = yellowBarColors(),
                 navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Outlined.ArrowBack, "กลับ") } },
                 title = { Text("ข้อมูลร้าน / ช่าง") },
                 actions = {
@@ -251,6 +257,7 @@ fun RatesScreen(vm: AppViewModel, snackbar: SnackbarHostState, onBack: () -> Uni
         snackbarHost = { SnackbarHost(snackbar) },
         topBar = {
             TopAppBar(
+                colors = yellowBarColors(),
                 navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Outlined.ArrowBack, "กลับ") } },
                 title = { Text("อัตราการใช้วัสดุ") },
                 actions = { TextButton(onClick = { confirmReset = true }) { Text("คืนค่าทั้งหมด") } }
@@ -325,6 +332,7 @@ fun ConverterScreen(onBack: () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
+                colors = yellowBarColors(),
                 navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Outlined.ArrowBack, "กลับ") } },
                 title = { Text("แปลงหน่วย") }
             )
@@ -345,7 +353,7 @@ fun ConverterScreen(onBack: () -> Unit) {
             }
             if (groupId == "area") {
                 HorizontalDivider()
-                Text("= " + Units.thaiLand(Units.convert(v, from, group.units[0])), style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
+                Text("= " + Units.thaiLand(Units.convert(v, from, group.units[0])), style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.secondary)
             }
         }
     }

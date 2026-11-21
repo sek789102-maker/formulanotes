@@ -9,6 +9,7 @@ import com.sek789102.changkhamnuan.domain.QuoteOptions
 import com.sek789102.changkhamnuan.domain.Rates
 import com.sek789102.changkhamnuan.domain.Units
 import com.sek789102.changkhamnuan.domain.ceilTo
+import com.sek789102.changkhamnuan.domain.isVisible
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -42,7 +43,7 @@ class CalculatorsTest {
 
     @Test fun `concrete 1-2-4 matches about 6_3 bags per cubic metre`() {
         val noWaste = Rates(mapOf("concrete_waste" to 0.0))
-        val res = Calculators.concrete.run(mapOf("shape" to "slab", "a" to "10", "b" to "1", "c" to "10", "mix" to "124"), noWaste) // 1 m³
+        val res = Calculators.concrete.run(mapOf("shape" to "slab", "slab_w" to "10", "slab_l" to "1", "slab_t" to "10", "mix" to "124"), noWaste) // 1 m³
         val cement = res.materials.first { it.priceKey == "cement_bag" }
         assertEquals(6.3, cement.qty / 50, 0.05)
         assertEquals(7.0, cement.buyQty, 0.0)
@@ -51,10 +52,10 @@ class CalculatorsTest {
     }
 
     @Test fun `ready-mix is ordered by half cubic metre with waste`() {
-        val res = Calculators.concrete.run(mapOf("shape" to "slab", "a" to "4", "b" to "5", "c" to "10", "mix" to "ready"), r)
+        val res = Calculators.concrete.run(mapOf("shape" to "slab", "slab_w" to "4", "slab_l" to "5", "slab_t" to "10", "mix" to "ready"), r)
         assertEquals(2.0, res.laborBase, 1e-9) // 4 × 5 × 0.10
         assertEquals(2.5, buy(res, "ready_mix"), 0.0) // 2.1 → 2.5
-        val beams = Calculators.concrete.run(mapOf("shape" to "member", "a" to "20", "b" to "40", "c" to "5", "count" to "3", "mix" to "ready"), r)
+        val beams = Calculators.concrete.run(mapOf("shape" to "member", "mem_w" to "20", "mem_d" to "40", "mem_len" to "5", "count" to "3", "mix" to "ready"), r)
         assertEquals(0.2 * 0.4 * 5 * 3, beams.laborBase, 1e-9)
     }
 
@@ -85,9 +86,23 @@ class CalculatorsTest {
         assertEquals(4.0, buy(res, "rebar_DB12"), 0.0) // 32 m × 1.1 = 35.2 m → 4 bars of 10 m
     }
 
-    @Test fun `bad input falls back to defaults instead of crashing`() {
+    @Test fun `empty or bad boxes count as zero, untouched fields use defaults`() {
         val res = Calculators.tiles.run(mapOf("w" to "abc", "l" to "", "size" to "nope"), r)
-        assertEquals(12.0, res.laborBase, 1e-9) // defaults 3 × 4, size 60x60
+        assertEquals(0.0, res.laborBase, 1e-9)
+        assertEquals(0.0, buy(res, "tile_box"), 0.0)
+        val untouched = Calculators.tiles.run(emptyMap(), r)
+        assertEquals(12.0, untouched.laborBase, 1e-9) // defaults 3 × 4
+    }
+
+    @Test fun `fields show only for the matching choice`() {
+        val c = Calculators.concrete
+        val slab = c.fields.filter { it.isVisible(mapOf("shape" to "slab"), c) }.map { it.key }
+        assertTrue("slab_t" in slab && "mem_w" !in slab)
+        val member = c.fields.filter { it.isVisible(mapOf("shape" to "member"), c) }.map { it.key }
+        assertTrue("mem_w" in member && "slab_t" !in member)
+        val t = Calculators.tiles
+        assertTrue(t.fields.none { it.key == "tw" && it.isVisible(mapOf("size" to "60x60"), t) })
+        assertTrue(t.fields.any { it.key == "tw" && it.isVisible(mapOf("size" to "custom"), t) })
     }
 
     @Test fun `quote totals with overhead, discount, VAT and withholding`() {

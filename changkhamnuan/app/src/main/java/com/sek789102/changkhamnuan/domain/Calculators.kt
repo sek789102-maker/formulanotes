@@ -31,12 +31,21 @@ sealed interface Field {
     val label: String
 }
 
+/** Whether a field applies to the current choices (e.g. custom tile size only for "กำหนดเอง"). */
+fun Field.isVisible(values: Map<String, String>, calc: Calculator): Boolean {
+    val rule = (this as? NumberField)?.showIf ?: return true
+    val choice = calc.fields.firstOrNull { it.key == rule.first } as? ChoiceField ?: return true
+    return (values[rule.first]?.takeIf { v -> choice.options.any { it.first == v } } ?: choice.default) == rule.second
+}
+
 data class NumberField(
     override val key: String,
     override val label: String,
     val unit: String,
     val default: Double,
-    val help: String? = null
+    val help: String? = null,
+    /** Shown only when choice field `first` has value `second`. */
+    val showIf: Pair<String, String>? = null
 ) : Field
 
 data class ChoiceField(
@@ -48,9 +57,11 @@ data class ChoiceField(
 
 /** Values typed on the form. Missing or unparsable numbers fall back to the field default. */
 class Inputs(private val calc: Calculator, private val raw: Map<String, String>) {
+    /** A value typed by the user; an empty box counts as 0. Keys never typed use the field default. */
     fun num(key: String): Double {
         val f = calc.fields.first { it.key == key } as NumberField
-        return raw[key]?.replace(",", "")?.trim()?.toDoubleOrNull()?.takeIf { it.isFinite() } ?: f.default
+        val r = raw[key] ?: return f.default
+        return r.replace(",", "").trim().toDoubleOrNull()?.takeIf { it.isFinite() } ?: 0.0
     }
 
     fun choice(key: String): String {
@@ -208,9 +219,12 @@ object Calculators {
                 listOf("slab" to "พื้น / ลาน (กว้าง × ยาว × หนา)", "member" to "คาน / เสา / ฐานราก (หน้าตัด × ยาว × จำนวน)"),
                 "slab"
             ),
-            NumberField("a", "กว้าง (พื้น: ม. / คาน-เสา: ซม.)", "", 4.0),
-            NumberField("b", "ยาว (พื้น: ม. / คาน-เสา: ลึก ซม.)", "", 5.0),
-            NumberField("c", "หนา (พื้น: ซม. / คาน-เสา: ยาว ม.)", "", 10.0),
+            NumberField("slab_w", "กว้าง", "ม.", 4.0, showIf = "shape" to "slab"),
+            NumberField("slab_l", "ยาว", "ม.", 5.0, showIf = "shape" to "slab"),
+            NumberField("slab_t", "หนา", "ซม.", 10.0, showIf = "shape" to "slab"),
+            NumberField("mem_w", "กว้าง (หน้าตัด)", "ซม.", 20.0, showIf = "shape" to "member"),
+            NumberField("mem_d", "ลึก / สูง (หน้าตัด)", "ซม.", 40.0, showIf = "shape" to "member"),
+            NumberField("mem_len", "ความยาว", "ม.", 4.0, showIf = "shape" to "member"),
             NumberField("count", "จำนวน", "ชิ้น", 1.0),
             ChoiceField(
                 "mix", "ส่วนผสม",
@@ -226,9 +240,9 @@ object Calculators {
         compute = { i, r ->
             val count = max(0.0, i.num("count"))
             val volume = if (i.choice("shape") == "slab") {
-                i.num("a") * i.num("b") * i.num("c") / 100.0 * count
+                i.num("slab_w") * i.num("slab_l") * i.num("slab_t") / 100.0 * count
             } else {
-                i.num("a") / 100.0 * i.num("b") / 100.0 * i.num("c") * count
+                i.num("mem_w") / 100.0 * i.num("mem_d") / 100.0 * i.num("mem_len") * count
             }.coerceAtLeast(0.0)
             val withWaste = volume * (1 + r["concrete_waste"] / 100)
             val mix = i.choice("mix")
@@ -278,9 +292,9 @@ object Calculators {
                 tileSizes.keys.map { it to it.replace("x", " × ") + " ซม." } + ("custom" to "กำหนดเอง"),
                 "60x60"
             ),
-            NumberField("tw", "กว้าง (กำหนดเอง)", "ซม.", 30.0),
-            NumberField("th", "ยาว (กำหนดเอง)", "ซม.", 30.0),
-            NumberField("per_box", "จำนวนต่อกล่อง (0 = ตามขนาด)", "แผ่น", 0.0)
+            NumberField("tw", "กระเบื้องกว้าง", "ซม.", 30.0, showIf = "size" to "custom"),
+            NumberField("th", "กระเบื้องยาว", "ซม.", 30.0, showIf = "size" to "custom"),
+            NumberField("per_box", "จำนวนต่อกล่อง (0 = ค่าทั่วไปของขนาดนี้)", "แผ่น", 0.0, help = "ดูข้างกล่องกระเบื้อง")
         ),
         compute = { i, r ->
             val area = max(0.0, i.num("w") * i.num("l") - i.num("minus"))

@@ -1,6 +1,9 @@
 package com.sek789102.changkhamnuan.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -102,7 +105,7 @@ fun ConfirmDialog(title: String, message: String, confirm: String, onDismiss: ()
 
 @Composable
 fun SectionTitle(text: String, modifier: Modifier = Modifier) {
-    Text(text, style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.primary, modifier = modifier.padding(top = 8.dp, bottom = 4.dp))
+    Text(text, style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.secondary, modifier = modifier.padding(top = 8.dp, bottom = 4.dp))
 }
 
 @Composable
@@ -114,3 +117,41 @@ fun KeyValueRow(key: String, value: String, bold: Boolean = false) {
 }
 
 fun Modifier.clickableIf(enabled: Boolean, onClick: () -> Unit) = if (enabled) clickable(onClick = onClick) else this
+
+/** Yellow app bar used on every inner screen. */
+@androidx.compose.material3.ExperimentalMaterial3Api
+@Composable
+fun yellowBarColors() = androidx.compose.material3.TopAppBarDefaults.topAppBarColors(
+    containerColor = MaterialTheme.colorScheme.primary,
+    titleContentColor = MaterialTheme.colorScheme.onPrimary,
+    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
+    actionIconContentColor = MaterialTheme.colorScheme.onPrimary
+)
+
+/** Big yellow header for the four main tabs. */
+@Composable
+fun TabHeader(title: String, subtitle: String, icon: androidx.compose.ui.graphics.vector.ImageVector? = null) {
+    Surface(
+        color = MaterialTheme.colorScheme.primary,
+        contentColor = MaterialTheme.colorScheme.onPrimary,
+        shape = androidx.compose.foundation.shape.RoundedCornerShape(bottomStart = 28.dp, bottomEnd = 28.dp),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Row(
+            Modifier.statusBarsPadding().padding(start = 20.dp, end = 20.dp, top = 14.dp, bottom = 20.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(Modifier.weight(1f)) {
+                Text(title, style = MaterialTheme.typography.headlineSmall)
+                Text(subtitle, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.75f))
+            }
+            if (icon != null) {
+                androidx.compose.foundation.layout.Box(
+                    Modifier.size(52.dp).background(MaterialTheme.colorScheme.onPrimary, androidx.compose.foundation.shape.CircleShape),
+                    contentAlignment = Alignment.Center
+                ) { Icon(icon, null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(30.dp)) }
+            }
+        }
+    }
+}
+

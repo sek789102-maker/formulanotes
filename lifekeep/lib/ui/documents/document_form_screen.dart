@@ -16,6 +16,7 @@ import '../../state/app_controller.dart';
 import '../design/design.dart';
 import '../lock/lock_gate.dart';
 import '../widgets/form_widgets.dart';
+import '../widgets/reminder_permission.dart';
 import '../widgets/item_tiles.dart';
 import 'image_viewer_screen.dart';
 
@@ -192,7 +193,7 @@ class _DocumentFormScreenState extends State<DocumentFormScreen> {
       attachmentPaths: List.of(_attachments),
       isPinned: _pinned,
     );
-    if (reminder.isEnabled) await c.ensureNotificationPermission();
+    if (reminder.isEnabled) await ensureReminderReady(context);
     if (!mounted) return;
     var reminderOk = true;
     final ok = await runAction(context, () async {

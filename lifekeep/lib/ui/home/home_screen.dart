@@ -13,6 +13,7 @@ import '../design/design.dart';
 import '../documents/document_detail_screen.dart';
 import '../documents/document_form_screen.dart';
 import '../search/search_screen.dart';
+import '../settings/notification_settings_screen.dart';
 import '../settings/settings_screen.dart';
 import '../shell/main_shell.dart';
 import '../tasks/task_form_screen.dart';
@@ -28,6 +29,7 @@ class _HomeData {
     required this.laterDocs,
     required this.events,
     required this.totalItems,
+    this.remindersAtRisk = false,
   });
   final int docCount;
   final int pendingTasks;
@@ -41,6 +43,9 @@ class _HomeData {
   final List<DocumentItem> laterDocs;
   final List<EventItem> events;
   final int totalItems;
+
+  /// Reminders exist but Android may not deliver them on time.
+  final bool remindersAtRisk;
 
   int get expiringCount => urgentDocs.length + laterDocs.length;
 }
@@ -65,6 +70,13 @@ class HomeScreen extends StatelessWidget {
     final docCount = await c.s.documents.count();
     final allTasks = (await c.s.tasks.all()).length;
     final allEvents = (await c.s.events.all()).length;
+    var atRisk = false;
+    try {
+      if (c.reminderPrefs.enabled && await c.s.scheduler.pendingCount() > 0) {
+        final p = await c.s.gateway.permissionState();
+        atRisk = p.notificationsAllowed == false || p.exactAlarmsAllowed == false;
+      }
+    } catch (_) {}
     return _HomeData(
       docCount: docCount,
       pendingTasks: await c.s.tasks.pendingCount(),
@@ -74,6 +86,7 @@ class HomeScreen extends StatelessWidget {
       laterDocs: later,
       events: await c.s.events.between(Dates.startOfDay(now), Dates.endOfDay(now.add(const Duration(days: 7)))),
       totalItems: docCount + allTasks + allEvents,
+      remindersAtRisk: atRisk,
     );
   }
 
@@ -178,6 +191,26 @@ class HomeScreen extends StatelessWidget {
                       ],
                     ),
                   ),
+                  if (d.remindersAtRisk) ...[
+                    const SizedBox(height: Space.md),
+                    animated(
+                      InkWell(
+                        borderRadius: Radii.brMd,
+                        onTap: () => _open(context, const NotificationSettingsScreen()),
+                        child: LkBanner(
+                          icon: Icons.notifications_paused_outlined,
+                          color: context.status.warning,
+                          background: context.status.warningContainer,
+                          title: context.tr('การแจ้งเตือนอาจไม่ตรงเวลา', 'Reminders may be late'),
+                          message: context.tr(
+                            'ยังไม่ได้อนุญาตการแจ้งเตือนหรือการปลุกและการช่วยเตือน แตะเพื่อแก้ไข',
+                            'Notifications or "Alarms & reminders" are not allowed. Tap to fix.',
+                          ),
+                          action: Icon(Icons.chevron_right_rounded, color: context.status.warning),
+                        ),
+                      ),
+                    ),
+                  ],
                   if (d.totalItems == 0)
                     animated(const _Welcome())
                   else ...[

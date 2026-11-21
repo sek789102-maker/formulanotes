@@ -11,6 +11,7 @@ import '../../data/models/task_item.dart';
 import '../../state/app_controller.dart';
 import '../design/design.dart';
 import '../widgets/form_widgets.dart';
+import '../widgets/reminder_permission.dart';
 
 class TaskFormScreen extends StatefulWidget {
   const TaskFormScreen({super.key, this.task, this.initialDate});
@@ -91,7 +92,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
       updatedAt: now,
     );
     setState(() => _saving = true);
-    if (reminder.isEnabled && !_completed) await c.ensureNotificationPermission();
+    if (reminder.isEnabled && !_completed) await ensureReminderReady(context);
     if (!mounted) return;
     var reminderOk = true;
     final ok = await runAction(context, () async => reminderOk = await c.saveTask(task));

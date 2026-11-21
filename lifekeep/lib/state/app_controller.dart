@@ -153,7 +153,30 @@ class AppController extends ChangeNotifier {
     } catch (e) {
       if (kDebugMode) debugPrint('reminder sync failed: $e');
     }
+    await refreshPermissions();
+    // Screens loaded during the re-sync may have seen a partial state.
+    _changed();
     await runAutoBackupIfDue();
+  }
+
+  /// Last known notification permission snapshot (see [refreshPermissions]).
+  NotificationPermissionState? permissions;
+
+  /// Re-reads notification/exact-alarm permissions. When they changed (e.g.
+  /// the user just granted "Alarms & reminders"), every reminder is
+  /// re-scheduled so existing ones switch from inexact to exact alarms.
+  Future<void> refreshPermissions() async {
+    try {
+      final now = await s.gateway.permissionState();
+      final before = permissions;
+      permissions = now;
+      if (before != null &&
+          (before.exactAlarmsAllowed != now.exactAlarmsAllowed ||
+              before.notificationsAllowed != now.notificationsAllowed)) {
+        await s.scheduler.rescheduleAll();
+      }
+      notifyListeners();
+    } catch (_) {}
   }
 
   Future<void> onResume() async {
@@ -166,6 +189,7 @@ class AppController extends ChangeNotifier {
         await s.scheduler.rescheduleAll();
       }
     } catch (_) {}
+    await refreshPermissions();
     await runAutoBackupIfDue();
     _changed(); // refresh "today" based views
   }

@@ -54,6 +54,7 @@ class SettingKeys {
   /// UI preferences (no schema change: stored in the key/value table).
   static const documentsView = 'documents_view';
   static const recentSearches = 'recent_searches';
+  static const exactAlarmPrompted = 'exact_alarm_prompted';
 
   static const backupable = {
     themeMode,

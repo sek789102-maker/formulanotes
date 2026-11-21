@@ -281,8 +281,20 @@ class _SegmentRow<T> extends StatelessWidget {
         builder: (context, box) {
           // Side by side when it fits; otherwise stack the selector under the
           // title (narrow phones / large system text) instead of overflowing.
-          final textScale = MediaQuery.textScalerOf(context).scale(1);
-          final needed = 150 + options.length * 64 * textScale;
+          // Measure the real text widths (not an estimate) to decide.
+          double textW(String txt, TextStyle? st) {
+            final tp = TextPainter(
+              text: TextSpan(text: txt, style: st),
+              textDirection: TextDirection.ltr,
+              textScaler: MediaQuery.textScalerOf(context),
+              maxLines: 1,
+            )..layout();
+            return tp.width;
+          }
+
+          final selectorW = 6 + options.values.fold<double>(0, (w, o) => w + 20 + textW(o, t.labelMedium));
+          final titleW = textW(title, t.bodyLarge?.copyWith(fontWeight: FontWeight.w500));
+          final needed = 32 + Space.md + titleW + Space.md + selectorW;
           if (box.maxWidth >= needed) {
             return Row(
               children: [

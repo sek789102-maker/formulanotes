@@ -13,6 +13,8 @@ class FakeGateway implements NotificationGateway {
   final List<int> cancelled = [];
   final List<String> shown = [];
   bool failSchedule = false;
+  bool? notificationsAllowed = true;
+  bool? exactAlarmsAllowed = true;
 
   @override
   Future<void> init() async {}
@@ -44,7 +46,7 @@ class FakeGateway implements NotificationGateway {
 
   @override
   Future<NotificationPermissionState> permissionState() async =>
-      const NotificationPermissionState(notificationsAllowed: true, exactAlarmsAllowed: true);
+      NotificationPermissionState(notificationsAllowed: notificationsAllowed, exactAlarmsAllowed: exactAlarmsAllowed);
 
   @override
   Future<bool> requestExactAlarmPermission() async => true;

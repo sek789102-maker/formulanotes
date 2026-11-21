@@ -21,7 +21,7 @@ adb wait-for-device
   echo "## 1. Integration tests (debug build, real Android storage/plugins)"
 } > "$REPORT"
 
-( cd lifekeep && flutter test integration_test -d emulator-5554 --reporter expanded ) > "$OUT/integration_test.log" 2>&1
+( cd lifekeep && timeout 900 flutter test integration_test -d emulator-5554 --reporter expanded ) > "$OUT/integration_test.log" 2>&1 || echo "integration_test exited with $? (124 = timed out after 15 min)" >> "$OUT/integration_test.log"
 if grep -q "All tests passed" "$OUT/integration_test.log"; then ok "integration_test: $(grep -oE '\+[0-9]+' "$OUT/integration_test.log" | tail -1 | tr -d '+') tests passed"; else bad "integration_test failed (see integration_test.log)"; fi
 adb uninstall "$PKG" >/dev/null 2>&1 || true
 

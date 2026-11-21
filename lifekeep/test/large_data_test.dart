@@ -29,32 +29,41 @@ void main() {
     final future = DateTime(now.year + 1, 1, 1);
     await a.db.transaction((txn) async {
       for (var i = 0; i < 1000; i++) {
-        await txn.insert('documents', DocumentItem(
-          id: 'd$i',
-          title: 'เอกสารหมายเลข $i',
-          categoryId: i.isEven ? 'cat_personal' : 'cat_finance',
-          notes: i % 100 == 0 ? 'มีคำว่าพิเศษ' : '',
-          createdAt: now,
-          updatedAt: now,
-          expiryDate: future.add(Duration(days: i % 365)),
-          reminder: const ReminderConfig([1440, 10080]),
-        ).toMap());
-        await txn.insert('tasks', TaskItem(
-          id: 't$i',
-          title: 'งานที่ $i',
-          dueAt: future.add(Duration(days: i % 200)),
-          reminder: const ReminderConfig([0]),
-          isCompleted: i % 3 == 0,
-          createdAt: now,
-          updatedAt: now,
-        ).toMap());
-        await txn.insert('events', EventItem(
-          id: 'e$i',
-          title: 'กิจกรรม $i',
-          startAt: future.add(Duration(days: i % 300, hours: 10)),
-          createdAt: now,
-          updatedAt: now,
-        ).toMap());
+        await txn.insert(
+          'documents',
+          DocumentItem(
+            id: 'd$i',
+            title: 'เอกสารหมายเลข $i',
+            categoryId: i.isEven ? 'cat_personal' : 'cat_finance',
+            notes: i % 100 == 0 ? 'มีคำว่าพิเศษ' : '',
+            createdAt: now,
+            updatedAt: now,
+            expiryDate: future.add(Duration(days: i % 365)),
+            reminder: const ReminderConfig([1440, 10080]),
+          ).toMap(),
+        );
+        await txn.insert(
+          'tasks',
+          TaskItem(
+            id: 't$i',
+            title: 'งานที่ $i',
+            dueAt: future.add(Duration(days: i % 200)),
+            reminder: const ReminderConfig([0]),
+            isCompleted: i % 3 == 0,
+            createdAt: now,
+            updatedAt: now,
+          ).toMap(),
+        );
+        await txn.insert(
+          'events',
+          EventItem(
+            id: 'e$i',
+            title: 'กิจกรรม $i',
+            startAt: future.add(Duration(days: i % 300, hours: 10)),
+            createdAt: now,
+            updatedAt: now,
+          ).toMap(),
+        );
       }
     });
 

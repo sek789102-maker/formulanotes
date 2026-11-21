@@ -11,6 +11,7 @@ import '../../data/models/reminder_config.dart';
 import '../../state/app_controller.dart';
 import '../design/design.dart';
 import '../widgets/form_widgets.dart';
+import '../widgets/reminder_permission.dart';
 
 class EventFormScreen extends StatefulWidget {
   const EventFormScreen({super.key, this.event, this.initialDate});
@@ -123,7 +124,7 @@ class _EventFormScreenState extends State<EventFormScreen> {
       updatedAt: now,
     );
     setState(() => _saving = true);
-    if (_reminder.isEnabled) await c.ensureNotificationPermission();
+    if (_reminder.isEnabled) await ensureReminderReady(context);
     if (!mounted) return;
     var reminderOk = true;
     final ok = await runAction(context, () async => reminderOk = await c.saveEvent(e));

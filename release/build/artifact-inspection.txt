@@ -101,5 +101,5 @@ native-code: 'arm64-v8a' 'armeabi-v7a' 'x86_64'
 64801773 /home/runner/work/formulanotes/formulanotes/release/build/LIFEKEEP-ci-debug-key.apk
 
 ## SHA-256
-5ba10f22e88d6bb71eb8e72336b72c9eb2c4489cea73e442543dc4e2aff16eec  LIFEKEEP-ci-debug-key.aab
-131ba274ca7d586515665b01f78fc065ea5bc5afc0a575f152b20b88d3f49c51  LIFEKEEP-ci-debug-key.apk
+2e38ccf336bf12a5d15b697acfce980238c532882421571d040f10a426c02ea5  LIFEKEEP-ci-debug-key.aab
+a8109b3ba42dea73ca1898f138eba2bcc75414dc3f9c709ef4a729278edc22fb  LIFEKEEP-ci-debug-key.apk

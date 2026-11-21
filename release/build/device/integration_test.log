@@ -7,39 +7,8 @@ Got dependencies!
 3 packages have newer versions incompatible with dependency constraints.
 Try `flutter pub outdated` for more information.
 00:00 +0: loading /home/runner/work/formulanotes/formulanotes/lifekeep/integration_test/app_test.dart
-Running Gradle task 'assembleDebug'...                            109.4s
+Running Gradle task 'assembleDebug'...                             75.7s
 ✓ Built build/app/outputs/flutter-apk/app-debug.apk
-Installing build/app/outputs/flutter-apk/app-debug.apk...        1,101ms
-00:00 +0: create, complete, search, persist (real Android storage)
-00:50 +1: local backup from Settings on real storage
-══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
-The following TestFailure was thrown running a test:
-Expected: exactly one matching candidate
-  Actual: _TextContainingWidgetFinder:<Found 0 widgets with text containing สำรองข้อมูลแล้ว: []>
-   Which: means none were found but one was expected
-
-When the exception was thrown, this was the stack:
-#4      main.<anonymous closure> (file:///home/runner/work/formulanotes/formulanotes/lifekeep/integration_test/app_test.dart:126:5)
-<asynchronous suspension>
-#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
-<asynchronous suspension>
-#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
-<asynchronous suspension>
-<asynchronous suspension>
-(elided one frame from package:stack_trace)
-
-This was caught by the test expectation on the following line:
-  file:///home/runner/work/formulanotes/formulanotes/lifekeep/integration_test/app_test.dart line 126
-The test description was:
-  local backup from Settings on real storage
-════════════════════════════════════════════════════════════════════════════════════════════════════
-01:04 +1 -1: local backup from Settings on real storage [E]
-  Test failed. See exception logs above.
-  The test description was: local backup from Settings on real storage
-  
-01:04 +1 -1: (tearDownAll)
-01:05 +1 -1: Some tests failed.
-
-Failing tests:
-  /home/runner/work/formulanotes/formulanotes/lifekeep/integration_test/app_test.dart: local backup from Settings on real storage
-integration_test exited with 1 (124 = timed out after 15 min)
+Installing build/app/outputs/flutter-apk/app-debug.apk...          740ms
+No tests ran.
+integration_test exited with 124 (124 = timed out after 15 min)

@@ -8,7 +8,7 @@
 - minSdk 24, targetSdk 36
 
 ## การ build
-ต้องใช้ JDK 17 และ Android SDK (Android Studio เปิดโฟลเดอร์นี้ได้เลย) โปรเจคไม่มีไฟล์ `gradlew`
+ต้องใช้ JDK 21 (Robolectric กับ SDK 36 ต้องการ Java 21) และ Android SDK (Android Studio เปิดโฟลเดอร์นี้ได้เลย) โปรเจคไม่มีไฟล์ `gradlew`
 ให้ใช้ Gradle 9.3.1 หรือให้ Android Studio สร้าง wrapper ให้
 
 ```

@@ -30,7 +30,7 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: '21'
 
       # The project ships no gradlew script, so use the Gradle version from the wrapper properties.
       - uses: gradle/actions/setup-gradle@v4
@@ -68,7 +68,7 @@ jobs:
           APK="$OUT/FormulaBook-debug.apk"
           if [ -f "$APK" ]; then
             AAPT=$(ls $ANDROID_HOME/build-tools/*/aapt2 | sort -V | tail -1)
-            { "$AAPT" dump badging "$APK" | grep -E "^(package|sdkVersion|targetSdkVersion|application-label|uses-permission)";
+            { "$AAPT" dump badging "$APK" | grep -E "^(package|sdkVersion|targetSdkVersion|application-label:|uses-permission)";
               echo; ls -l "$OUT"/*.apk "$OUT"/*.aab 2>/dev/null | awk '{print $5, $9}'; } > "$OUT/artifact-inspection.txt"
           fi
           cat "$OUT/TEST_SUMMARY.txt" || true

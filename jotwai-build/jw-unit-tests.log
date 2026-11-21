@@ -7,9 +7,9 @@ Starting a Gradle Daemon (subsequent builds will be faster)
 > Task :app:processDebugNavigationResources
 > Task :app:parseDebugLocalResources
 > Task :app:javaPreCompileDebug FROM-CACHE
+> Task :app:generateDebugRFile
 > Task :app:checkDebugAarMetadata
 > Task :app:mapDebugSourceSetPaths
-> Task :app:generateDebugRFile
 > Task :app:compileDebugNavigationResources FROM-CACHE
 > Task :app:createDebugCompatibleScreenManifests
 > Task :app:extractDeepLinksDebug
@@ -17,12 +17,12 @@ Starting a Gradle Daemon (subsequent builds will be faster)
 > Task :app:mergeDebugResources
 > Task :app:processDebugManifest
 > Task :app:preDebugUnitTestBuild UP-TO-DATE
-> Task :app:processDebugManifestForPackage
-> Task :app:javaPreCompileDebugUnitTest
 > Task :app:generateDebugAssets UP-TO-DATE
+> Task :app:javaPreCompileDebugUnitTest
 > Task :app:mergeDebugAssets
-> Task :app:processDebugResources
 > Task :app:processDebugUnitTestManifest
+> Task :app:processDebugManifestForPackage
+> Task :app:processDebugResources
 > Task :app:packageDebugUnitTestForUnitTest
 > Task :app:generateDebugUnitTestConfig
 > Task :app:kspDebugKotlin
@@ -41,7 +41,7 @@ w: file:///home/runner/work/formulanotes/formulanotes/jotwai/app/src/main/java/c
 > Task :app:compileDebugUnitTestJavaWithJavac NO-SOURCE
 > Task :app:processDebugUnitTestJavaRes
 > Task :app:testDebugUnitTest
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run-1795241924029.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run-1795242636210.json
 
-BUILD SUCCESSFUL in 1m 27s
+BUILD SUCCESSFUL in 1m 28s
 32 actionable tasks: 30 executed, 2 from cache

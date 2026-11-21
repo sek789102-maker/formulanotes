@@ -13,8 +13,8 @@ Starting a Gradle Daemon (subsequent builds will be faster)
 > Task :app:compileDebugNavigationResources FROM-CACHE
 > Task :app:createDebugCompatibleScreenManifests
 > Task :app:extractDeepLinksDebug
-> Task :app:mergeDebugResources
 > Task :app:processDebugMainManifest
+> Task :app:mergeDebugResources
 > Task :app:processDebugManifest
 > Task :app:preDebugUnitTestBuild UP-TO-DATE
 > Task :app:generateDebugAssets UP-TO-DATE
@@ -36,7 +36,7 @@ Starting a Gradle Daemon (subsequent builds will be faster)
 > Task :app:compileDebugUnitTestJavaWithJavac NO-SOURCE
 > Task :app:processDebugUnitTestJavaRes
 > Task :app:testDebugUnitTest
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run-1795283213806.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run-1795284073075.json
 
-BUILD SUCCESSFUL in 1m 15s
+BUILD SUCCESSFUL in 1m 35s
 32 actionable tasks: 30 executed, 2 from cache

@@ -1,6 +1,6 @@
 # Signed release verification
 
-- Commit: f885be7
+- Commit: fea10cd
 
 ## App Bundle (ChangKhamnuan-1.0.0-1-release.aab)
 - ✅ bundletool validate: OK

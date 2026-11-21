@@ -1,13 +1,13 @@
-11-21 00:41:37.308  4648  4648 I flutter : LKSMOKE PHASE 1
-11-21 00:41:37.311  4648  4648 I flutter : LKSMOKE PASS attachment imported
-11-21 00:41:37.462  4648  4648 I flutter : LKSMOKE PASS document saved + reminders scheduled (Gson/R8 path)
-11-21 00:41:37.491  4648  4648 I flutter : LKSMOKE PASS task saved + reminders scheduled
-11-21 00:41:37.517  4648  4648 I flutter : LKSMOKE PASS event saved + reminder scheduled
-11-21 00:41:37.518  4648  4648 I flutter : LKSMOKE PASS search
-11-21 00:41:37.520  4648  4648 I flutter : LKSMOKE PASS pending notifications (6)
-11-21 00:41:37.521  4648  4648 I flutter : LKSMOKE INFO notificationsAllowed=true exact=true tz=Etc/UTC
-11-21 00:41:37.526  4648  4648 I flutter : LKSMOKE PASS backup verified with checksum
-11-21 00:41:37.578  4648  4648 I flutter : LKSMOKE PASS merge restore skips duplicates
-11-21 00:41:37.778  4648  4648 I flutter : LKSMOKE PASS PIN verify (secure storage)
-11-21 00:41:37.874  4648  4648 I flutter : LKSMOKE PASS wrong PIN rejected
-11-21 00:41:37.876  4648  4648 I flutter : LKSMOKE DONE PHASE 1
+11-21 03:52:27.765  4517  4517 I flutter : LKSMOKE PHASE 1
+11-21 03:52:27.797  4517  4517 I flutter : LKSMOKE PASS attachment imported
+11-21 03:52:27.850  4517  4517 I flutter : LKSMOKE PASS document saved + reminders scheduled (Gson/R8 path)
+11-21 03:52:27.868  4517  4517 I flutter : LKSMOKE PASS task saved + reminders scheduled
+11-21 03:52:27.878  4517  4517 I flutter : LKSMOKE PASS event saved + reminder scheduled
+11-21 03:52:27.878  4517  4517 I flutter : LKSMOKE PASS search
+11-21 03:52:27.883  4517  4517 I flutter : LKSMOKE PASS pending notifications (6)
+11-21 03:52:27.884  4517  4517 I flutter : LKSMOKE INFO notificationsAllowed=true exact=true tz=Etc/UTC
+11-21 03:52:27.894  4517  4517 I flutter : LKSMOKE PASS backup verified with checksum
+11-21 03:52:27.978  4517  4517 I flutter : LKSMOKE PASS merge restore skips duplicates
+11-21 03:52:28.365  4517  4517 I flutter : LKSMOKE PASS PIN verify (secure storage)
+11-21 03:52:28.551  4517  4517 I flutter : LKSMOKE PASS wrong PIN rejected
+11-21 03:52:28.553  4517  4517 I flutter : LKSMOKE DONE PHASE 1

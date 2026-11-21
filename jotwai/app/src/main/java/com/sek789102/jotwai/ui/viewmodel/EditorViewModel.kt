@@ -87,6 +87,8 @@ class EditorViewModel(application: Application, val noteId: Long) : AndroidViewM
             checklist = n.checklist
             images = n.imagePaths
             history = UndoHistory(snapshot())
+            // A brand-new checklist starts with the cursor in its first item.
+            if (n.type == NoteType.CHECKLIST && n.isBlank) focusItemId = n.checklist.firstOrNull()?.id
             loaded = true
         }
     }

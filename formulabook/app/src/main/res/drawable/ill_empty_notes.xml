@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="160dp"
+    android:height="130dp"
+    android:viewportWidth="160"
+    android:viewportHeight="130">
+    <!-- Soft sky backdrop blob -->
+    <path
+        android:fillColor="#E3F6FD"
+        android:pathData="M34,68 C34,36 58,20 84,22 C112,24 134,44 132,74 C130,104 106,114 78,112 C48,110 34,96 34,68 Z" />
+    <!-- Back page shadow -->
+    <path
+        android:fillColor="#DCEBFF"
+        android:pathData="M50,24 L112,24 C116.4,24 120,27.6 120,32 L120,104 C120,108.4 116.4,112 112,112 L50,112 C45.6,112 42,108.4 42,104 L42,32 C42,27.6 45.6,24 50,24 Z" />
+    <!-- Main white notebook page -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:strokeColor="#2F80ED"
+        android:strokeWidth="2.5"
+        android:pathData="M45,20 L107,20 C111.4,20 115,23.6 115,28 L115,100 C115,104.4 111.4,108 107,108 L45,108 C40.6,108 37,104.4 37,100 L37,28 C37,23.6 40.6,20 45,20 Z" />
+    <!-- Blue spine rings -->
+    <path
+        android:fillColor="#2F80ED"
+        android:pathData="M31,34 L41,34 C42.7,34 44,35.3 44,37 C44,38.7 42.7,40 41,40 L31,40 C29.3,40 28,38.7 28,37 C28,35.3 29.3,34 31,34 Z" />
+    <path
+        android:fillColor="#2F80ED"
+        android:pathData="M31,58 L41,58 C42.7,58 44,59.3 44,61 C44,62.7 42.7,64 41,64 L31,64 C29.3,64 28,62.7 28,61 C28,59.3 29.3,58 31,58 Z" />
+    <path
+        android:fillColor="#2F80ED"
+        android:pathData="M31,82 L41,82 C42.7,82 44,83.3 44,85 C44,86.7 42.7,88 41,88 L31,88 C29.3,88 28,86.7 28,85 C28,83.3 29.3,82 31,82 Z" />
+    <!-- Ruled blue paper lines -->
+    <path
+        android:strokeColor="#D6E6FA"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:pathData="M52,44 L102,44 M52,58 L102,58 M52,72 L90,72 M52,86 L82,86" />
+    <!-- Highlighted formula pill inside notebook -->
+    <path
+        android:fillColor="#DCEBFF"
+        android:pathData="M54,29 L88,29 C90.2,29 92,30.8 92,33 C92,35.2 90.2,37 88,37 L54,37 C51.8,37 50,35.2 50,33 C50,30.8 51.8,29 54,29 Z" />
+    <!-- Blue ribbon bookmark -->
+    <path
+        android:fillColor="#56CCF2"
+        android:pathData="M95,20 L105,20 L105,40 L100,35 L95,40 Z" />
+    <!-- Pencil floating on right -->
+    <path
+        android:fillColor="#2F80ED"
+        android:pathData="M116,74 L132,58 L138,64 L122,80 L114,82 Z" />
+    <path
+        android:fillColor="#7C9CFF"
+        android:pathData="M132,58 L136,54 C137.1,52.9 138.9,52.9 140,54 L142,56 C143.1,57.1 143.1,58.9 142,60 L138,64 Z" />
+    <!-- Sparkles -->
+    <path
+        android:fillColor="#56CCF2"
+        android:pathData="M24,20 L26,25 L31,27 L26,29 L24,34 L22,29 L17,27 L22,25 Z" />
+    <path
+        android:fillColor="#7C9CFF"
+        android:pathData="M136,30 L137.5,33.5 L141,35 L137.5,36.5 L136,40 L134.5,36.5 L131,35 L134.5,33.5 Z" />
+</vector>

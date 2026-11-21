@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="160dp"
+    android:height="130dp"
+    android:viewportWidth="160"
+    android:viewportHeight="130">
+    <path
+        android:fillColor="#E3F6FD"
+        android:pathData="M32,68 C32,40 54,20 82,22 C112,24 134,42 132,72 C130,102 104,114 74,110 C46,106 32,92 32,68 Z" />
+    <!-- Back tag -->
+    <path
+        android:fillColor="#DCEBFF"
+        android:strokeColor="#7C9CFF"
+        android:strokeWidth="2"
+        android:pathData="M56,28 L94,28 L124,58 C127,61 127,66 124,69 L102,91 C99,94 94,94 91,91 L61,61 L61,33 C61,30.2 58.8,28 56,28 Z" />
+    <!-- Front white-blue tag -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:strokeColor="#2F80ED"
+        android:strokeWidth="2.5"
+        android:pathData="M42,36 L78,36 L112,70 C115.2,73.2 115.2,78.4 112,81.6 L87.6,106 C84.4,109.2 79.2,109.2 76,106 L42,72 Z" />
+    <!-- Tag hole -->
+    <path
+        android:fillColor="#56CCF2"
+        android:pathData="M57,46 A5,5 0 1,0 57,56 A5,5 0 1,0 57,46 Z" />
+    <!-- Hashtag symbol inside front tag -->
+    <path
+        android:strokeColor="#2F80ED"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:pathData="M73,65 L69,85 M85,65 L81,85 M64,71 L89,71 M62,79 L87,79" />
+    <!-- Sparkles -->
+    <path
+        android:fillColor="#56CCF2"
+        android:pathData="M126,28 L128,33 L133,35 L128,37 L126,42 L124,37 L119,35 L124,33 Z" />
+</vector>

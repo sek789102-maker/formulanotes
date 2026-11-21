@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="160dp"
+    android:height="130dp"
+    android:viewportWidth="160"
+    android:viewportHeight="130">
+    <path
+        android:fillColor="#E3F6FD"
+        android:pathData="M30,66 C30,38 56,22 86,24 C116,26 134,48 130,76 C126,102 100,114 72,110 C44,106 30,90 30,66 Z" />
+    <!-- Note card behind -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:strokeColor="#C9D6EA"
+        android:strokeWidth="2"
+        android:pathData="M42,26 L98,26 C102.4,26 106,29.6 106,34 L106,96 C106,100.4 102.4,104 98,104 L42,104 C37.6,104 34,100.4 34,96 L34,34 C34,29.6 37.6,26 42,26 Z" />
+    <path
+        android:strokeColor="#D6E6FA"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:pathData="M46,42 L92,42 M46,54 L82,54 M46,66 L76,66" />
+    <!-- Magnifying glass lens -->
+    <path
+        android:fillColor="#DCEBFF"
+        android:strokeColor="#2F80ED"
+        android:strokeWidth="3.5"
+        android:pathData="M94,48 A22,22 0 1,0 94,92 A22,22 0 1,0 94,48 Z" />
+    <!-- Lens highlight arc -->
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:pathData="M82,62 C85,57 90,55 95,56" />
+    <!-- Handle -->
+    <path
+        android:strokeColor="#2F80ED"
+        android:strokeWidth="6"
+        android:strokeLineCap="round"
+        android:pathData="M110,86 L128,104" />
+    <!-- Sparkle -->
+    <path
+        android:fillColor="#56CCF2"
+        android:pathData="M122,26 L124,31 L129,33 L124,35 L122,40 L120,35 L115,33 L120,31 Z" />
+</vector>

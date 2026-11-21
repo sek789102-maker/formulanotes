@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Notes stay on the device: nothing is uploaded to Google cloud backup.
+     A direct phone-to-phone transfer (cable / local Wi-Fi) is still allowed so users
+     can move to a new phone. The in-app backup file is the main backup method. -->
+<data-extraction-rules>
+    <cloud-backup>
+        <exclude domain="root" />
+        <exclude domain="file" />
+        <exclude domain="database" />
+        <exclude domain="sharedpref" />
+        <exclude domain="external" />
+    </cloud-backup>
+</data-extraction-rules>

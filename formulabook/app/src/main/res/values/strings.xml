@@ -1,0 +1,527 @@
+<resources>
+    <string name="app_name">สมุดโน้ตสูตร</string>
+
+    <!-- Navigation -->
+    <string name="nav_notes">โน้ต</string>
+    <string name="nav_vault">คลังวิชา</string>
+    <string name="nav_study">ทบทวน</string>
+    <string name="nav_planner">วางแผน</string>
+    <string name="nav_calculator">เครื่องมือ</string>
+
+    <!-- Common Actions -->
+    <string name="action_new_note">จดโน้ตใหม่</string>
+    <string name="action_save">บันทึก</string>
+    <string name="action_discard">ทิ้ง</string>
+    <string name="action_cancel">ยกเลิก</string>
+    <string name="action_delete">ลบ</string>
+    <string name="action_edit">แก้ไข</string>
+    <string name="action_share">แชร์</string>
+    <string name="action_copy">คัดลอก</string>
+    <string name="action_back">ย้อนกลับ</string>
+    <string name="action_close">ปิด</string>
+    <string name="action_choose">เลือก</string>
+    <string name="action_undo">เลิกทำ</string>
+
+    <!-- Subjects -->
+    <string name="subject_math">คณิตศาสตร์</string>
+    <string name="subject_physics">ฟิสิกส์</string>
+    <string name="subject_chemistry">เคมี</string>
+    <string name="subject_biology">ชีววิทยา</string>
+    <string name="subject_thai">ภาษาไทย</string>
+    <string name="subject_english">ภาษาอังกฤษ</string>
+    <string name="subject_social">สังคมศึกษา</string>
+    <string name="subject_history">ประวัติศาสตร์</string>
+    <string name="subject_computer">คอมพิวเตอร์</string>
+    <string name="subject_art">ศิลปะและดนตรี</string>
+    <string name="subject_general">ทั่วไป / อื่นๆ</string>
+
+
+    <!-- Paper Styles -->
+    <string name="paper_style_lined">มีเส้น</string>
+    <string name="paper_style_grid">ตารางจุด</string>
+    <string name="paper_style_plain">เรียบ</string>
+
+    <!-- Home Screen -->
+    <string name="search_notes_hint">ค้นหาชื่อเรื่อง เนื้อหา คำศัพท์ หรือสูตร…</string>
+    <string name="search_clear_desc">ล้างคำค้นหา</string>
+    <string name="settings_backup_desc">ตั้งค่าและสำรองข้อมูล</string>
+    <string name="mascot_speech_empty">สวัสดีเพื่อน! มาเริ่มจดโน้ตทุกวิชา คำศัพท์ หรือสูตรสำคัญกันเลยนะ</string>
+    <string name="mascot_speech_no_formula">เยี่ยมเลย! มี %1$d โน้ตแล้ว ลองเพิ่มการ์ดจำหรือสูตรดูสิ!</string>
+    <string name="mascot_speech_active">สุดยอด! สะสม %1$d โน้ต กับ %2$d การ์ด/สูตรแล้ว สู้ๆ!</string>
+    <string name="mascot_avatar_desc">ตัวการ์ตูนนักเรียนผู้ช่วยเรียน</string>
+    <string name="mascot_study_desc">ตัวการ์ตูนนักเรียนกำลังทบทวนแฟลชการ์ดทุกวิชา</string>
+    <string name="mascot_focus_desc">ตัวการ์ตูนนักเรียนกำลังตั้งใจอ่านหนังสือจับเวลา</string>
+    <string name="mascot_math_desc">ตัวการ์ตูนนักเรียนถือเครื่องคิดเลขและไม้บรรทัด</string>
+    <string name="mascot_tags_desc">ตัวการ์ตูนนักเรียนกอดกองสมุดโน้ตแบ่งหมวดหมู่</string>
+    <string name="mascot_science_desc">ตัวการ์ตูนนักเรียนสายวิทย์ถือขวดทดลองและสมุดชีวะ</string>
+    <string name="mascot_humanities_desc">ตัวการ์ตูนเพื่อนนักเรียนถือลูกโลกและหนังสือไทย-สังคม</string>
+    <string name="mascot_english_desc">ตัวการ์ตูนนักเรียนใส่หูฟังถือการ์ดคำศัพท์และพู่กันศิลปะ</string>
+    <string name="mascot_trophy_desc">ตัวการ์ตูนนักเรียนชูถ้วยรางวัลแห่งความสำเร็จ</string>
+    <string name="hero_stat_notes">%1$d โน้ต</string>
+    <string name="hero_stat_formulas">%1$d การ์ด/สูตร</string>
+    <string name="hero_stat_tasks">%1$d งานค้าง</string>
+    <string name="shortcut_new_note">จดโน้ตใหม่</string>
+    <string name="shortcut_quiz">ควิซทบทวน</string>
+    <string name="shortcut_graph">กราฟ f(x)</string>
+    <string name="filter_pinned">ปักหมุด</string>
+    <string name="filter_with_formulas">มีการ์ด/สูตร</string>
+    <string name="filter_needs_review">รอทบทวน</string>
+    <string name="filter_found_count">พบ %1$d รายการ</string>
+    <string name="filter_clear">ล้างตัวกรอง</string>
+    <string name="filter_clear_all">ล้างตัวกรองทั้งหมด</string>
+    <string name="empty_filtered_title">ไม่พบโน้ตที่ตรงเงื่อนไข</string>
+    <string name="empty_filtered_subtitle">ลองเปลี่ยนคำค้นหาหรือรายวิชาที่เลือกไว้</string>
+    <string name="badge_needs_review">ต้องทบทวน</string>
+    <string name="pin_action_pin">ปักหมุด</string>
+    <string name="pin_action_unpin">เลิกปักหมุด</string>
+    <string name="note_untitled_paren">(ไม่มีหัวข้อ)</string>
+    <string name="note_extra_formulas">+%1$d รายการ</string>
+    <string name="note_updated_prefix">อัปเดต %1$s</string>
+    <string name="snackbar_note_deleted">ลบแล้ว</string>
+
+    <!-- Empty States -->
+    <string name="empty_notes_title">ยังไม่มีโน้ตในสมุดของคุณ</string>
+    <string name="empty_notes_subtitle">จดสรุปทุกวิชา คำศัพท์ หรือสูตรสำคัญได้ในที่เดียว กดปุ่ม + จดโน้ตใหม่ ด้านล่างเพื่อเริ่มต้น</string>
+    <string name="empty_study_title">ยังไม่มีการ์ดหรือสูตรสำหรับทบทวน</string>
+    <string name="empty_study_subtitle">เพิ่มการ์ดจำ/คำศัพท์ หรือกล่องสูตรในโน้ตวิชาใดก็ได้ แล้วมารวมฝึกแฟลชการ์ดและควิซที่นี่อัตโนมัติ</string>
+    <string name="empty_exams_title">ยังไม่มีตารางนับถอยหลังวันสอบ</string>
+    <string name="empty_exams_subtitle">เพิ่มวันสอบหรือกำหนดส่งงาน เพื่อดูจำนวนวันคงเหลือและวางแผนอ่านหนังสือได้ทันเวลา</string>
+
+    <!-- Note Detail Screen -->
+    <string name="detail_note_not_found">ไม่พบโน้ตนี้</string>
+    <string name="detail_share_note">แชร์โน้ต</string>
+    <string name="detail_delete_note">ลบโน้ต</string>
+    <string name="detail_edit_note">แก้ไขโน้ต</string>
+    <string name="detail_formulas_section">การ์ดจำและสูตรในโน้ตนี้ (%1$d)</string>
+    <string name="toast_formula_copied">คัดลอกเรียบร้อยแล้ว</string>
+    <string name="dialog_delete_note_title">ลบโน้ตนี้หรือไม่?</string>
+    <string name="dialog_delete_note_message">โน้ต \"%1$s\" และข้อมูลภายในจะถูกลบ (สามารถกดเลิกทำได้ทันที)</string>
+    <string name="share_formulas_header">📌 การ์ดจำและสูตรสำคัญ:</string>
+    <string name="share_formula_fallback">รายการ</string>
+
+    <!-- Note Editor Screen -->
+    <string name="editor_title_new">จดโน้ตใหม่</string>
+    <string name="editor_title_edit">แก้ไขโน้ต</string>
+    <string name="editor_toggle_math_toolbar">สลับแถบเครื่องมือช่วยพิมพ์</string>
+    <string name="editor_validation_empty">กรุณาพิมพ์หัวข้อ เนื้อหา หรือการ์ดจำอย่างน้อย 1 อย่างก่อนบันทึก</string>
+    <string name="editor_untitled_note">โน้ตไม่มีชื่อ</string>
+    <string name="editor_title_label">หัวข้อโน้ต / ชื่อบทเรียน</string>
+    <string name="editor_title_placeholder">เช่น คำศัพท์อังกฤษ บทที่ 1, ประวัติศาสตร์ไทย, แคลคูลัส</string>
+    <string name="editor_subject_label">วิชา</string>
+    <string name="editor_paper_style_label">ลายกระดาษ:</string>
+    <string name="editor_body_label">เนื้อหาบันทึก</string>
+    <string name="editor_body_placeholder">จดสรุปใจความสำคัญ คำศัพท์ ตัวอย่างโจทย์ หรือใช้ ==ไฮไลต์คำ== เพื่อฝึกซ่อนคำตอบทีหลังได้…</string>
+    <string name="editor_formulas_header">การ์ดจำ / คำศัพท์ / กล่องสูตร (%1$d)</string>
+    <string name="editor_add_formula">เพิ่มสูตร</string>
+    <string name="editor_add_flashcard">เพิ่มการ์ดจำ</string>
+    <string name="editor_formula_item_title">กล่องสูตรที่ %1$d</string>
+    <string name="editor_flashcard_item_title">การ์ดจำที่ %1$d</string>
+    <string name="editor_test_eval_formula">ทดสอบคำนวณสูตร</string>
+    <string name="editor_remove_formula_box">ลบรายการนี้</string>
+    <string name="editor_formula_name_label">ชื่อสูตร / ใช้หาอะไร</string>
+    <string name="editor_formula_name_placeholder">เช่น พลังงานจลน์, ทฤษฎีบทพีทาโกรัส</string>
+    <string name="editor_formula_expr_label">สมการ / สูตร</string>
+    <string name="editor_formula_expr_placeholder">เช่น E = 0.5 × m × v² หรือ a² + b²</string>
+    <string name="editor_formula_vars_label">คำอธิบายตัวแปร / หน่วย</string>
+    <string name="editor_formula_vars_placeholder">เช่น m = มวล (kg), v = ความเร็ว (m/s)</string>
+    <string name="editor_flashcard_term_label">คำถาม / คำศัพท์ / หัวข้อ</string>
+    <string name="editor_flashcard_term_placeholder">เช่น Resilient, สมัยสุโขทัยตอนต้น, คำราชาศัพท์</string>
+    <string name="editor_flashcard_answer_label">คำตอบ / ความหมาย / ใจความสำคัญ</string>
+    <string name="editor_flashcard_answer_placeholder">เช่น ปรับตัวและฟื้นตัวได้เร็ว, พ่อขุนศรีอินทราทิตย์</string>
+    <string name="editor_flashcard_hint_label">คำใบ้ / ตัวอย่างประโยค (ไม่บังคับ)</string>
+    <string name="editor_flashcard_hint_placeholder">เช่น She is remarkably resilient.</string>
+    <string name="editor_templates_dialog_title">แทรกโครงสร้างสมการ</string>
+    <string name="editor_unsaved_title">ยังไม่ได้บันทึก</string>
+    <string name="editor_unsaved_message">คุณมีการแก้ไขที่ยังไม่ได้บันทึก ต้องการบันทึกก่อนออกจากหน้านี้หรือไม่?</string>
+
+
+    <!-- Formula Card & Evaluator Dialog & Symbol Toolbar -->
+    <string name="formula_default_title">สูตรสำคัญ</string>
+    <string name="formula_mastered">จำได้แล้ว</string>
+    <string name="formula_mark_mastered">ทำเครื่องหมายว่าจำได้แล้ว</string>
+    <string name="formula_copy_desc">คัดลอกสูตร</string>
+    <string name="formula_view_graph">ดูกราฟ</string>
+    <string name="formula_evaluate_btn">แทนค่าคำนวณ</string>
+    <string name="eval_dialog_title_fallback">คำนวณจากสูตร</string>
+    <string name="eval_constant_expr">นิพจน์คงที่</string>
+    <string name="eval_fill_variables">กรอกค่าตัวแปร (%1$d ตัว)</string>
+    <string name="eval_mode_deg">โหมด DEG</string>
+    <string name="eval_mode_rad">โหมด RAD</string>
+    <string name="eval_var_label">ค่า %1$s</string>
+    <string name="eval_result_prefix">ผลลัพธ์ = </string>
+    <string name="eval_fill_all_prompt">กรอกตัวแปรให้ครบเพื่อดูคำตอบ</string>
+    <string name="eval_answer_label">คำตอบ</string>
+    <string name="toolbar_structures_btn">โครงสร้างสูตร</string>
+
+    <!-- Symbol Palette Groups & Structures -->
+    <string name="sym_group_basic">พื้นฐาน</string>
+    <string name="sym_group_calculus">แคลคูลัส</string>
+    <string name="sym_group_physics_chem">ฟิสิกส์/เคมี</string>
+    <string name="sym_group_set_geom">เซต/เรขา</string>
+    <string name="sym_group_sup_sub">ยก/ห้อย</string>
+    <string name="struct_fraction">เศษส่วน</string>
+    <string name="struct_sqrt">รากที่สอง</string>
+    <string name="struct_power">ยกกำลัง</string>
+    <string name="struct_quadratic">พหุนามกำลังสอง</string>
+    <string name="struct_integral">อินทิกรัล</string>
+    <string name="struct_sigma">ซิกมาผลรวม</string>
+    <string name="struct_limit">ลิมิต</string>
+    <string name="struct_chem_eq">สมการเคมีสมดุล</string>
+
+    <!-- Formula Study & Quiz Screen -->
+    <string name="study_mastered_progress">จำได้แล้ว %1$d / %2$d รายการ</string>
+    <string name="study_mode_cards">การ์ด</string>
+    <string name="study_mode_quiz">ควิซ</string>
+    <string name="quiz_score">คะแนน: %1$d</string>
+    <string name="quiz_streak">สถิติถูกติดกัน: %1$d</string>
+    <string name="quiz_question_prompt">ข้อใดคือคำตอบ / สูตรของ:</string>
+    <string name="quiz_hint_prefix">คำใบ้: %1$s</string>
+    <string name="quiz_need_more_formulas">เพิ่มการ์ดจำหรือสูตรอย่างน้อย 2 รายการในโน้ต เพื่อเล่นควิซแบบหลายตัวเลือก</string>
+    <string name="quiz_next_question">ข้อถัดไป</string>
+    <string name="study_filter_unmastered">เฉพาะที่ยังไม่แม่น</string>
+    <string name="study_all_reviewed_title">เยี่ยมมาก! ทบทวนครบหมดแล้ว</string>
+    <string name="study_all_reviewed_subtitle">ไม่มีการ์ดค้างในตัวกรองนี้ กดปุ่มเพื่อดูรายการทั้งหมดอีกครั้ง</string>
+    <string name="study_show_all_formulas">แสดงทั้งหมด</string>
+    <string name="study_card_counter">การ์ดที่ %1$d จาก %2$d</string>
+    <string name="study_card_fallback_title">การ์ดจากโน้ต: %1$s</string>
+    <string name="study_card_from_note">จากโน้ต: %1$s</string>
+    <string name="study_tap_to_flip">แตะการ์ดเพื่อดูเฉลย</string>
+    <string name="study_try_evaluate">ลองคำนวณ</string>
+    <string name="study_open_note">เปิดโน้ต</string>
+    <string name="study_prev_card">การ์ดก่อนหน้า</string>
+    <string name="study_review_again">ทบทวนอีก</string>
+    <string name="study_next_card">การ์ดถัดไป</string>
+
+    <!-- Exam Countdown & Student Planner Screen -->
+    <string name="exam_section_title">นับถอยหลังวันสอบ / ส่งงาน</string>
+    <string name="exam_total_count">ทั้งหมด %1$d รายการ</string>
+    <string name="exam_add_button">เพิ่มวันสอบ</string>
+    <string name="exam_add_first">เพิ่มกำหนดการแรก</string>
+    <string name="exam_days_past">ผ่านมา %1$d วัน</string>
+    <string name="exam_days_today">วันนี้!</string>
+    <string name="exam_days_left">อีก %1$d วัน</string>
+    <string name="exam_delete_desc">ลบกำหนดการ</string>
+    <string name="exam_dialog_title">เพิ่มวันสอบ / กำหนดส่งงาน</string>
+    <string name="exam_dialog_name_label">หัวข้อการสอบ / งาน</string>
+    <string name="exam_dialog_name_placeholder">เช่น สอบกลางภาค คณิต</string>
+    <string name="exam_dialog_date_label">วันที่: %1$s</string>
+    <string name="exam_dialog_note_label">รายละเอียดเพิ่มเติม (ไม่บังคับ)</string>
+    <string name="exam_dialog_note_placeholder">เช่น อ่านบทที่ 1-3, เตรียมดินสอ 2B</string>
+
+    <!-- Calculator, Graph, Unit Converter & GPA -->
+    <string name="math_tool_calculator">เครื่องคิดเลข</string>
+    <string name="math_tool_graph">กราฟ f(x)</string>
+    <string name="math_tool_converter">แปลงหน่วย</string>
+    <string name="math_tool_gpa">คำนวณเกรด GPA</string>
+    <string name="math_lab_title">เครื่องมือช่วยเรียน</string>
+    <string name="calc_history_title">ประวัติการคำนวณ</string>
+    <string name="calc_clear_history">ล้างประวัติ</string>
+    <string name="graph_func_label">สมการฟังก์ชัน f(x)</string>
+    <string name="graph_func_placeholder">พิมพ์เช่น x² - 4, sin(x)*5, 2*x + 1</string>
+    <string name="graph_axis_range">ช่วงแกน X/Y: ±%1$d</string>
+    <string name="graph_empty_prompt">พิมพ์สมการ f(x) ด้านบนเพื่อวาดกราฟ</string>
+    <string name="graph_invalid_expr">ไม่สามารถพล็อตสมการนี้ได้ ลองตรวจสอบวงเล็บหรือตัวแปร x</string>
+    <string name="graph_inspect_x">ตรวจจุดบนกราฟ: x = %1$s</string>
+    <string name="converter_value_label">ค่าที่ต้องการแปลง (%1$s)</string>
+    <string name="converter_value_placeholder">กรอกตัวเลข เช่น 100</string>
+    <string name="converter_from_label">จาก:</string>
+    <string name="converter_swap_desc">สลับหน่วย</string>
+    <string name="converter_to_label">เป็น:</string>
+    <string name="converter_result_label">ผลลัพธ์ (%1$s)</string>
+    <string name="converter_constants_header">ค่าคงที่ฟิสิกส์-เคมี (แตะเพื่อส่งไปเครื่องคิดเลข)</string>
+    <string name="toast_constant_copied">คัดลอกค่า %1$s แล้ว</string>
+    <string name="converter_copy_constant_desc">คัดลอกค่าคงที่</string>
+    <string name="calc_toggle_sign_desc">สลับเครื่องหมายบวก/ลบ</string>
+
+    <!-- Unit Categories & Units -->
+    <string name="unit_cat_length">ความยาว</string>
+    <string name="unit_cat_mass">มวล</string>
+    <string name="unit_cat_temperature">อุณหภูมิ</string>
+    <string name="unit_cat_speed">ความเร็ว</string>
+    <string name="unit_cat_energy">พลังงาน</string>
+    <string name="unit_cat_angle">มุม</string>
+    <string name="unit_mm">มิลลิเมตร</string>
+    <string name="unit_cm">เซนติเมตร</string>
+    <string name="unit_m">เมตร</string>
+    <string name="unit_km">กิโลเมตร</string>
+    <string name="unit_in">นิ้ว</string>
+    <string name="unit_ft">ฟุต</string>
+    <string name="unit_mg">มิลลิกรัม</string>
+    <string name="unit_g">กรัม</string>
+    <string name="unit_kg">กิโลกรัม</string>
+    <string name="unit_lb">ปอนด์</string>
+    <string name="unit_c">เซลเซียส</string>
+    <string name="unit_f">ฟาเรนไฮต์</string>
+    <string name="unit_k">เคลวิน</string>
+    <string name="unit_mps">เมตร/วินาที</string>
+    <string name="unit_kmh">กิโลเมตร/ชม.</string>
+    <string name="unit_mph">ไมล์/ชม.</string>
+    <string name="unit_j">จูล</string>
+    <string name="unit_kj">กิโลจูล</string>
+    <string name="unit_cal">แคลอรี</string>
+    <string name="unit_kcal">กิโลแคลอรี</string>
+    <string name="unit_deg">องศา</string>
+    <string name="unit_rad">เรเดียน</string>
+    <string name="const_gravity">ความเร่งโน้มถ่วงโลก</string>
+    <string name="const_light_speed">ความเร็วแสงในสุญญากาศ</string>
+    <string name="const_avogadro">เลขอาโวกาโดร</string>
+    <string name="const_gas">ค่าคงที่แก๊สอุดมคติ</string>
+    <string name="const_planck">ค่าคงที่ของพลังค์</string>
+    <string name="const_gravitation">ค่าคงที่โน้มถ่วงสากล</string>
+
+    <!-- Math Evaluator Error Messages -->
+    <string name="math_err_empty">กรุณากรอกนิพจน์คณิตศาสตร์</string>
+    <string name="math_err_unsupported_chars">พบรูปแบบตัวอักษรที่ไม่รองรับ</string>
+    <string name="math_err_no_expr">ไม่มีนิพจน์ให้คำนวณ</string>
+    <string name="math_err_incomplete">รูปแบบสมการไม่สมบูรณ์</string>
+    <string name="math_err_undefined">ไม่สามารถคำนวณได้ (ค่าไม่นิยาม หรือหารด้วยศูนย์)</string>
+    <string name="math_err_div_zero">หารด้วยศูนย์ไม่ได้</string>
+    <string name="math_err_missing_paren">วงเล็บปิดไม่ครบ</string>
+    <string name="math_err_missing_fn_paren">วงเล็บฟังก์ชันไม่ครบ</string>
+    <string name="math_err_missing_var">ยังไม่ได้ใส่ค่าตัวแปร \'%1$s\'</string>
+    <string name="math_err_invalid_syntax">รูปแบบสมการไม่ถูกต้อง</string>
+    <string name="math_err_negative_sqrt">รากที่สองของค่าติดลบไม่ได้</string>
+    <string name="math_err_log_domain">log ต้องมากกว่า 0</string>
+    <string name="math_err_ln_domain">ln ต้องมากกว่า 0</string>
+    <string name="math_err_factorial_domain">แฟกทอเรียล (!) ใช้ได้กับจำนวนเต็มไม่ติดลบเท่านั้น</string>
+    <string name="math_err_overflow">ค่าผลลัพธ์เกินขอบเขตที่คำนวณได้</string>
+    <string name="math_err_unknown_fn">ไม่รู้จักฟังก์ชัน %1$s</string>
+    <string name="math_err_generic">ไม่สามารถคำนวณนิพจน์นี้ได้</string>
+
+    <!-- Settings, Backup & About App -->
+    <string name="settings_title">ตั้งค่าและสำรองข้อมูล</string>
+    <string name="settings_vault_summary">คลังของคุณ: %1$d โน้ต · %2$d การ์ด/สูตร</string>
+    <string name="settings_theme_title">โหมดสีธีม</string>
+    <string name="settings_theme_subtitle">เลือกโหมดสว่าง มืด หรือเปลี่ยนอัตโนมัติตามระบบ</string>
+    <string name="theme_mode_light">สว่าง</string>
+    <string name="theme_mode_dark">มืด</string>
+    <string name="theme_mode_system">ตามระบบ</string>
+    <string name="settings_dynamic_color_title">สีไดนามิกจากวอลเปเปอร์</string>
+    <string name="settings_dynamic_color_subtitle">ใช้โทนสีตามวอลเปเปอร์ของเครื่องอัตโนมัติ (Android 12+)</string>
+    <string name="settings_dark_mode_title">โหมดกลางคืน (มิดไนท์บลู)</string>
+    <string name="settings_dark_mode_subtitle">ถนอมสายตาเวลาอ่านทบทวนตอนกลางคืน</string>
+    <string name="settings_default_paper_title">ลายกระดาษเริ่มต้นสำหรับโน้ตใหม่</string>
+    <string name="settings_backup_title">สำรองและกู้คืนข้อมูล (.zip)</string>
+    <string name="settings_export">ส่งออก</string>
+    <string name="settings_import">นำเข้า</string>
+    <string name="toast_export_success">ส่งออกไฟล์สำรองข้อมูลสำเร็จ</string>
+    <string name="toast_export_error">ไม่สามารถส่งออกไฟล์ได้</string>
+    <string name="toast_import_result">นำเข้าโน้ต %1$d, วันสอบ %2$d (ข้ามข้อมูลซ้ำ %3$d)</string>
+    <string name="toast_import_notes_only">นำเข้าโน้ตสำเร็จ %1$d รายการ (ข้ามโน้ตซ้ำ %2$d รายการ)</string>
+    <string name="toast_import_invalid">ไฟล์สำรองข้อมูลไม่ถูกต้อง</string>
+    <string name="toast_import_too_large">ไฟล์สำรองข้อมูลมีขนาดใหญ่เกินไป</string>
+    <string name="toast_import_read_error">ไม่สามารถอ่านไฟล์ได้</string>
+    <string name="toast_no_app_to_handle">ไม่พบแอปสำหรับเปิดหรือแชร์ไฟล์นี้</string>
+
+    <!-- Feature 1: Note Image Attachments -->
+    <string name="editor_images_header">รูปภาพประกอบ (%1$d)</string>
+    <string name="editor_pick_gallery">เลือกรูป</string>
+    <string name="editor_take_photo">ถ่ายรูป</string>
+    <string name="editor_remove_image_desc">ลบรูปภาพ</string>
+    <string name="editor_image_error">ไม่สามารถบันทึกรูปภาพได้</string>
+    <string name="detail_images_section">รูปภาพประกอบ (%1$d)</string>
+    <string name="image_viewer_desc">ดูรูปภาพเต็มจอและซูม</string>
+    <string name="image_viewer_zoom_hint">ถ่างนิ้วเพื่อซูม หรือแตะสองครั้ง</string>
+
+    <!-- Feature 2: Trash -->
+    <string name="trash_title">ถังขยะ</string>
+    <string name="trash_subtitle">โน้ตในถังขยะจะถูกลบถาวรอัตโนมัติใน 30 วัน</string>
+    <string name="trash_empty_action">ล้างถังขยะ</string>
+    <string name="trash_empty_title">ถังขยะว่างเปล่า</string>
+    <string name="trash_empty_subtitle">โน้ตที่คุณลบจะมาอยู่ที่นี่ 30 วันก่อนลบถาวร</string>
+    <string name="trash_days_remaining">เหลืออีก %1$d วัน</string>
+    <string name="trash_restore">กู้คืน</string>
+    <string name="trash_delete_forever">ลบถาวร</string>
+    <string name="trash_confirm_empty_title">ล้างถังขยะทั้งหมด?</string>
+    <string name="trash_confirm_empty_msg">โน้ตทั้งหมดในถังขยะจะถูกลบถาวรและไม่สามารถกู้คืนได้</string>
+    <string name="trash_confirm_delete_one_title">ลบถาวรเลยหรือไม่?</string>
+    <string name="trash_confirm_delete_one_msg">โน้ต \"%1$s\" จะถูกลบถาวรทันที</string>
+    <string name="trash_open_desc">เปิดถังขยะ</string>
+    <string name="trash_count_badge">ถังขยะ (%1$d)</string>
+    <string name="snackbar_moved_to_trash">ย้ายไปถังขยะแล้ว</string>
+    <string name="dialog_delete_to_trash_message">โน้ต \"%1$s\" จะถูกย้ายไปถังขยะเป็นเวลา 30 วัน (กู้คืนได้ภายหลัง)</string>
+
+    <!-- Feature 3: Auto-save -->
+    <string name="editor_autosave_saving">กำลังบันทึก…</string>
+    <string name="editor_autosave_saved">บันทึกแล้ว</string>
+
+    <!-- Feature 4: Exam Notifications & Boot -->
+    <string name="settings_exam_notif_title">แจ้งเตือนก่อนวันสอบ</string>
+    <string name="settings_exam_notif_subtitle">แจ้งเตือนล่วงหน้า 7 วัน, 3 วัน, 1 วัน และเช้าวันสอบ</string>
+    <string name="settings_exam_notif_permission_denied">กรุณาอนุญาตการแจ้งเตือนในการตั้งค่าเครื่องเพื่อรับแจ้งเตือนวันสอบ</string>
+    <string name="settings_trash_title">ถังขยะ</string>
+    <string name="settings_trash_subtitle_count">มี %1$d รายการ · ลบอัตโนมัติเมื่อครบ 30 วัน</string>
+    <string name="settings_trash_subtitle_empty">ว่างเปล่า · เก็บโน้ตที่ลบไว้ 30 วัน</string>
+    <string name="notification_channel_exam_name">แจ้งเตือนวันสอบ</string>
+    <string name="notification_channel_exam_desc">แจ้งเตือนกำหนดสอบล่วงหน้า 7 วัน, 3 วัน, 1 วัน และเช้าวันสอบ</string>
+    <string name="notification_exam_today_title">วันนี้สอบแล้ว! %1$s</string>
+    <string name="notification_exam_today_body">วิชา %1$s — ตั้งสติ ทบทวนสูตรสำคัญ แล้วทำให้เต็มที่นะ!</string>
+    <string name="notification_exam_upcoming_title">อีก %1$d วันสอบ: %2$s</string>
+    <string name="notification_exam_upcoming_body">วิชา %1$s เหลืออีก %2$d วัน อย่าลืมเปิดทบทวนสูตรนะ</string>
+
+    <!-- Feature 5: Glance Widget -->
+    <string name="widget_exam_description">แสดงวันสอบที่ใกล้ที่สุดและจำนวนวันที่เหลือ</string>
+    <string name="widget_exam_header">วันสอบที่ใกล้ที่สุด</string>
+    <string name="widget_exam_empty_title">ยังไม่มีตารางสอบเร็วๆ นี้</string>
+    <string name="widget_exam_empty_subtitle">แตะเพื่อเพิ่มวันสอบในแอป</string>
+    <string name="widget_exam_days_value">อีก %1$d</string>
+    <string name="widget_exam_days_unit">วัน</string>
+
+    <!-- Feature 6: Sort Order -->
+    <string name="sort_label">เรียง: %1$s</string>
+    <string name="sort_updated_desc">แก้ไขล่าสุด</string>
+    <string name="sort_created_desc">สร้างล่าสุด</string>
+    <string name="sort_title_asc">ชื่อ ก-ฮ</string>
+    <string name="sort_subject_asc">วิชา</string>
+
+    <!-- Feature 7: Simple Markdown & Checklist -->
+    <string name="md_bar_bold">ตัวหนา</string>
+    <string name="md_bar_highlight">ไฮไลต์</string>
+    <string name="md_bar_heading">หัวข้อ</string>
+    <string name="md_bar_bullet">รายการ</string>
+    <string name="md_bar_checklist">เช็กลิสต์</string>
+    <string name="editor_toolbar_math">คณิต</string>
+    <string name="editor_toolbar_markdown">จัดรูปแบบ</string>
+
+    <!-- Feature 8: SM-2 Spaced Repetition -->
+    <string name="study_due_today_banner">วันนี้ต้องทบทวน %1$d รายการ</string>
+    <string name="study_due_today_done">ทบทวนครบตามกำหนดวันนี้แล้ว!</string>
+    <string name="study_filter_due_today">ถึงกำหนดวันนี้ (%1$d)</string>
+    <string name="study_sm2_hard">ยาก</string>
+    <string name="study_sm2_good">พอได้</string>
+    <string name="study_sm2_easy">ง่าย</string>
+    <string name="study_sm2_interval_days">%1$d วัน</string>
+    <string name="study_sm2_next_review">ทบทวนถัดไปในอีก %1$d วัน</string>
+
+    <!-- Feature 9: Custom Subjects -->
+    <string name="subject_add_button">เพิ่มวิชา</string>
+    <string name="subject_dialog_add_title">เพิ่มวิชาใหม่</string>
+    <string name="subject_dialog_edit_title">แก้ไขรายวิชา</string>
+    <string name="subject_dialog_name_label">ชื่อวิชา</string>
+    <string name="subject_dialog_name_placeholder">เช่น สังคมศึกษา, แคลคูลัส 2</string>
+    <string name="subject_dialog_color_label">เลือกสีประจำวิชา</string>
+    <string name="settings_subjects_title">จัดการรายวิชา</string>
+    <string name="settings_subjects_custom_count">วิชาที่เพิ่มเอง %1$d วิชา</string>
+    <string name="subject_delete_confirm_title">ลบรายวิชานี้?</string>
+    <string name="subject_delete_confirm_msg">โน้ตและข้อมูลในวิชา \"%1$s\" จะถูกย้ายไปยัง \"ทั่วไป / อื่นๆ\"</string>
+
+    <!-- Feature 10: Reading Stats & Streak -->
+    <string name="stats_card_title">สถิติการอ่าน 7 วันล่าสุด</string>
+    <string name="stats_streak_days">อ่านต่อเนื่อง %1$d วัน</string>
+    <string name="stats_streak_zero">เริ่มโฟกัสวันนี้เพื่อสะสมสถิติ</string>
+    <string name="stats_weekly_total">รวมสัปดาห์นี้ %1$d นาที</string>
+    <string name="stats_minutes_unit">น.</string>
+    <string name="stats_empty_chart">ยังไม่มีบันทึกเวลาอ่านใน 7 วันล่าสุด</string>
+
+    <!-- Feature 11: PDF Export -->
+    <string name="detail_export_pdf">ส่งออก PDF</string>
+    <string name="toast_pdf_error">ไม่สามารถสร้างไฟล์ PDF ได้</string>
+
+    <!-- Feature 12: 14-day Backup Reminder -->
+    <string name="backup_reminder_title">อย่าลืมสำรองข้อมูลโน้ตของคุณ</string>
+    <string name="backup_reminder_subtitle">ยังไม่ได้ส่งออกไฟล์สำรองข้อมูลมานานเกิน 14 วันแล้ว</string>
+    <string name="backup_reminder_now">สำรองเลย</string>
+    <string name="backup_reminder_later">ไว้ทีหลัง</string>
+    <string name="toast_import_with_subjects">นำเข้าโน้ต %1$d, วิชา %2$d, วันสอบ %3$d (ข้ามซ้ำ %4$d)</string>
+
+    <!-- New Student Features: Active Recall, Templates, Daily Goal & GPA -->
+
+    <string name="detail_recall_mode">โหมดฝึกจำ (ซ่อนคำตอบ)</string>
+    <string name="detail_recall_hint">แตะตรงข้อความที่ซ่อนหรือการ์ดคำตอบเพื่อเฉลย</string>
+    <string name="detail_recall_tap_reveal">แตะเพื่อดูคำตอบ</string>
+    <string name="formula_flashcard_badge">การ์ดจำ</string>
+
+    <string name="editor_note_templates_btn">เทมเพลตโน้ต</string>
+    <string name="editor_note_templates_title">เลือกเทมเพลตสรุปบทเรียน</string>
+    <string name="template_cornell_title">สรุปบทเรียน (Cornell Notes)</string>
+    <string name="template_cornell_desc">เหมาะกับทุกวิชา: แบ่งประเด็นหลัก รายละเอียด และสรุปท้ายบท</string>
+    <string name="template_cornell_body"># ประเด็นสำคัญ / คำถาม\n- \n\n# เนื้อหาและรายละเอียด\n- \n- ใช้ ==ไฮไลต์คำ== เพื่อทดสอบความจำ\n\n# สรุปใจความสำคัญ (3 บรรทัด)\n- </string>
+    <string name="template_vocab_title">คลังคำศัพท์และสำนวน (ไทย / อังกฤษ)</string>
+    <string name="template_vocab_desc">เหมาะกับภาษาไทย-อังกฤษ: คำศัพท์ ความหมาย และตัวอย่างประโยค</string>
+    <string name="template_vocab_body"># คำศัพท์ประจำบท\n- **คำศัพท์ 1:** ==ความหมาย / คำแปล==\n  ตัวอย่างประโยค: \n- **คำศัพท์ 2:** ==ความหมาย / คำแปล==\n  ตัวอย่างประโยค: \n\n# เช็กลิสต์ท่องจำ\n[ ] ทบทวนรอบที่ 1\n[ ] ทดสอบสะกดคำ</string>
+    <string name="template_history_title">ไทม์ไลน์ประวัติศาสตร์ / สังคมศึกษา</string>
+    <string name="template_history_desc">เหมาะกับประวัติศาสตร์-สังคม: ช่วงเวลา บุคคล สาเหตุ และผลลัพธ์</string>
+    <string name="template_history_body"># ยุคสมัย / เหตุการณ์\n- ช่วงเวลา: ==พ.ศ. / ค.ศ.==\n- บุคคลสำคัญ: \n\n# สาเหตุสำคัญ\n- \n\n# ผลลัพธ์และบทเรียน\n- </string>
+    <string name="template_stem_title">ใบสรุปสูตรและซ้อมทำโจทย์</string>
+    <string name="template_stem_desc">เหมาะกับคณิต-ฟิสิกส์-เคมี: นิยาม เงื่อนไข และเช็กลิสต์โจทย์</string>
+    <string name="template_stem_body"># นิยามและหลักการ\n- \n\n# เงื่อนไขที่ต้องระวัง\n- ==ระวังหน่วยและการเปลี่ยนหน่วย==\n\n# เช็กลิสต์ซ้อมโจทย์\n[ ] โจทย์พื้นฐาน\n[ ] โจทย์ประยุกต์</string>
+
+    <!-- Student Planner: Weekly Timetable & Pending Note Tasks -->
+    <string name="planner_header_title">ตารางเรียน &amp; วางแผนสอบ</string>
+    <string name="planner_header_subtitle">วันนี้ %1$d คาบ · งานค้าง %2$d · สอบ %3$d</string>
+    <string name="planner_timetable_title">ตารางเรียนประจำสัปดาห์</string>
+    <string name="planner_add_class">เพิ่มคาบเรียน</string>
+    <string name="planner_empty_day">ยังไม่มีคาบเรียนในวันนี้</string>
+    <string name="planner_empty_day_hint">กด \"เพิ่มคาบเรียน\" เพื่อจัดตารางเรียนประจำสัปดาห์ของคุณ</string>
+    <string name="planner_day_mon">จ.</string>
+    <string name="planner_day_tue">อ.</string>
+    <string name="planner_day_wed">พ.</string>
+    <string name="planner_day_thu">พฤ.</string>
+    <string name="planner_day_fri">ศ.</string>
+    <string name="planner_day_sat">ส.</string>
+    <string name="planner_day_sun">อา.</string>
+    <string name="planner_dialog_title">เพิ่มคาบเรียนใหม่</string>
+    <string name="planner_dialog_day_label">วันเรียน:</string>
+    <string name="planner_dialog_start_label">เวลาเริ่ม (เช่น 08:30)</string>
+    <string name="planner_dialog_end_label">เวลาเลิก (เช่น 09:30)</string>
+    <string name="planner_dialog_room_label">ห้องเรียน / ครูผู้สอน (ไม่บังคับ)</string>
+    <string name="planner_dialog_room_placeholder">เช่น ห้อง 402, อ.สมชาย</string>
+    <string name="planner_delete_class_desc">ลบคาบเรียน</string>
+    <string name="planner_open_subject_note">จดโน้ตวิชานี้</string>
+    <string name="planner_tasks_title">งานค้างจากเช็กลิสต์ในโน้ต (%1$d)</string>
+    <string name="planner_tasks_subtitle">รวมรายการ [ ] จากโน้ตทุกวิชามาให้ติ๊กเช็กได้ทันที</string>
+    <string name="planner_tasks_empty">เยี่ยมเลย! เคลียร์งานค้างในโน้ตครบหมดแล้ว</string>
+    <string name="planner_task_check_desc">ทำเครื่องหมายว่าเสร็จแล้ว</string>
+    <string name="planner_invalid_time_error">กรุณากรอกเวลาเป็นรูปแบบ HH:mm (เช่น 08:30)</string>
+
+    <string name="gpa_header_title">เกรดเฉลี่ยสะสม (GPA)</string>
+    <string name="gpa_total_credits">หน่วยกิตรวม %1$s · %2$d วิชา</string>
+    <string name="gpa_course_name_label">ชื่อวิชา (เช่น ภาษาไทย, คณิต)</string>
+    <string name="gpa_course_name_placeholder">กรอกชื่อวิชา</string>
+    <string name="gpa_credits_label">หน่วยกิต:</string>
+    <string name="gpa_grade_label">เกรดที่ได้:</string>
+    <string name="gpa_add_course">เพิ่มรายวิชา</string>
+    <string name="gpa_clear_all">ล้างทั้งหมด</string>
+    <string name="gpa_empty_hint">เพิ่มรายวิชาและเกรดของคุณ เพื่อคำนวณ GPA เตรียมลุ้นเกรดสวยๆ!</string>
+    <string name="gpa_cheer_top">สุดยอดเลย! เกรดระดับท็อป รักษาความสม่ำเสมอนี้นะ!</string>
+    <string name="gpa_cheer_good">เก่งมาก! ผลการเรียนดีเลย ลุยต่ออีกนิด!</string>
+    <string name="gpa_cheer_keep_going">สู้ๆ นะ! มาวางแผนทบทวนกับสมุดโน้ตเพิ่มเกรดกัน!</string>
+    <string name="gpa_course_meta">%1$s หน่วยกิต · เกรด %2$s</string>
+    <string name="quiz_streak_cheer">กำลังมาแรง! ตอบถูก %1$d ข้อรวด!</string>
+
+    <!-- Speed Match Recall Arena -->
+    <string name="study_mode_match">จับคู่</string>
+    <string name="match_timer_label">เวลา %1$s</string>
+    <string name="match_mistakes_label">พลาด %1$d</string>
+    <string name="match_pairs_progress">จับคู่แล้ว %1$d/%2$d</string>
+    <string name="match_instruction_hint">แตะคำถามฝั่งซ้าย แล้วแตะคำตอบหรือสูตรที่ตรงกันทางขวา</string>
+    <string name="match_need_more_items">เพิ่มการ์ดจำหรือสูตรอย่างน้อย 2 รายการในโน้ต เพื่อเล่นเกมจับคู่ความเร็ว</string>
+    <string name="match_win_title">สุดยอด! จับคู่ครบแล้ว!</string>
+    <string name="match_win_subtitle">ใช้เวลา %1$s · แม่นยำ %2$d%%</string>
+    <string name="match_best_time">สถิติเร็วสุดในรอบนี้: %1$s</string>
+    <string name="match_play_again">เล่นรอบใหม่</string>
+
+    <!-- Subject Vault & Quick Cheat Sheets -->
+    <string name="vault_header_title">คลังวิชา &amp; ชีทสรุปลัด</string>
+    <string name="vault_header_subtitle">%1$d ชีทสรุปออฟไลน์ · ครอบคลุม %2$d รายวิชา</string>
+    <string name="vault_tab_cheat_sheets">ชีทสรุปลัด</string>
+    <string name="vault_tab_subjects">สมุดรายวิชา</string>
+    <string name="vault_search_hint">ค้นหาสูตร นิยาม ไวยากรณ์ หรือวิชา…</string>
+    <string name="vault_filter_all">ทุกวิชา</string>
+    <string name="vault_type_formula">สูตรคำนวณ</string>
+    <string name="vault_type_summary">สรุปหลักจำ</string>
+    <string name="vault_save_to_note">บันทึกเข้าโน้ต</string>
+    <string name="vault_saved_to_note_toast">บันทึกชีทสรุปลงสมุดโน้ตแล้ว!</string>
+    <string name="vault_empty_search_title">ไม่พบชีทสรุปที่ค้นหา</string>
+    <string name="vault_empty_search_subtitle">ลองเปลี่ยนคำค้นหาหรือเลือกดูทุกวิชา</string>
+    <string name="vault_subject_empty">ยังไม่มีโน้ตในวิชานี้ · กด \"จดใหม่\" เพื่อเริ่มต้น</string>
+    <string name="vault_subject_stats">%1$d โน้ต · %2$d การ์ด/สูตร (แม่นแล้ว %3$d)</string>
+    <string name="vault_browse_notes">ดูโน้ต</string>
+    <string name="vault_new_in_subject">จดใหม่</string>
+    <string name="reminder_reliability_title">ทำให้แจ้งเตือนวันสอบตรงเวลา</string>
+    <string name="reminder_reliability_exact">อนุญาต “การปลุกและการช่วยเตือน” เพื่อให้แจ้งเตือนตรงเวลา ถ้าไม่อนุญาต Android อาจแจ้งเตือนช้าไป</string>
+    <string name="reminder_reliability_battery">ตั้งแบตเตอรี่ของแอปเป็น “ไม่จำกัด” เพื่อไม่ให้ระบบหน่วงการแจ้งเตือน</string>
+    <string name="reminder_reliability_oem">มือถือยี่ห้อนี้อาจปิดแอปเบื้องหลังเอง ให้เปิด “เริ่มอัตโนมัติ (Autostart)” ในหน้าข้อมูลแอป</string>
+    <string name="reminder_reliability_allow">อนุญาต</string>
+    <string name="reminder_reliability_open">เปิด</string>
+</resources>

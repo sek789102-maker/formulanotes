@@ -75,16 +75,12 @@ object TextEditing {
     fun toggleLinePrefix(value: TextFieldValue, prefix: String): TextFieldValue {
         val t = value.text
         val min = value.selection.min
-        val start = if (min == 0) 0 else t.lastIndexOf('
-', min - 1) + 1
-        var end = t.indexOf('
-', value.selection.max)
+        val start = if (min == 0) 0 else t.lastIndexOf('\n', min - 1) + 1
+        var end = t.indexOf('\n', value.selection.max)
         if (end < 0) end = t.length
-        val lines = t.substring(start, end).split('
-')
+        val lines = t.substring(start, end).split('\n')
         val allHave = lines.all { it.startsWith(prefix) }
-        val changed = lines.joinToString("
-") { line ->
+        val changed = lines.joinToString("\n") { line ->
             if (allHave) line.removePrefix(prefix) else prefix + stripKnownPrefix(line)
         }
         val text = t.substring(0, start) + changed + t.substring(end)

@@ -389,12 +389,15 @@ object Calculators {
 }
 
 object PaintPack {
-    /** Cheapest usual buy: full buckets, and gallons for the rest (a nearly full bucket's worth → one more bucket). */
+    /**
+     * Usual cheapest buy: full buckets, then gallons for the rest. If the rest would need
+     * almost a bucket's worth of gallons, one more bucket is bought instead.
+     */
     fun split(needGallons: Double, bucketGallons: Double): Pair<Int, Int> {
         if (needGallons <= 0) return 0 to 0
-        val n = ceilTo(needGallons)
-        var buckets = floor(n / bucketGallons).toInt()
-        var gallons = ceilTo(n - buckets * bucketGallons).toInt()
+        var buckets = floor(needGallons / bucketGallons + 1e-9).toInt()
+        val rest = needGallons - buckets * bucketGallons
+        var gallons = ceilTo(rest).toInt()
         if (gallons >= bucketGallons - 0.5) {
             buckets += 1
             gallons = 0

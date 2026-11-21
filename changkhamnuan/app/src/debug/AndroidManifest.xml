@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Debug builds only: sample data for screenshots. -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application>
+        <receiver android:name=".DebugSeedReceiver" android:exported="true">
+            <intent-filter><action android:name="com.sek789102.changkhamnuan.DEBUG_SEED" /></intent-filter>
+        </receiver>
+    </application>
+</manifest>

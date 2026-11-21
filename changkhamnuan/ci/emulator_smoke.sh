@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# Installs the (test-signed, minified) release APK, uses each calculator, adds a result to a
+# new job, opens the quote share sheet, runs a random-tap test, and fails on any crash.
+set -u
+APK="$1"; OUT="$2"; PKG=com.sek789102.changkhamnuan; ACT="$PKG/.MainActivity"
+mkdir -p "$OUT"
+source "$(dirname "$0")/ui_helpers.sh"
+adb wait-for-device
+adb install -r "$APK" > "$OUT/install.txt" 2>&1 || { cat "$OUT/install.txt"; exit 1; }
+adb logcat -c
+adb shell am start -n $ACT > /dev/null; sleep 8; shot 01-home
+
+for c in bricks plaster concrete tiles paint rebar; do
+  tap_tag "calc_$c" && sleep 2 && shot "02-calc-$c" 1
+  adb shell input keyevent 4; sleep 1
+done
+
+tap_tag calc_bricks; sleep 2
+tap_tag in_length; adb shell input keyevent 123; for _ in 1 2 3; do adb shell input keyevent 67; done; adb shell input text "6"; adb shell input keyevent 111
+tap_tag add_to_project; sleep 2; shot 03-add-dialog 1
+tap_tag new_project_name; adb shell input text "Kitchen"; adb shell input keyevent 111
+tap_tag create_and_add; sleep 3; shot 04-project 2
+tap_tag share_image; sleep 4; shot 05-share-image 1
+adb shell input keyevent 4; sleep 2
+tap_tag share_pdf; sleep 4; shot 06-share-pdf 1
+adb shell input keyevent 4; sleep 2
+adb shell am start -n $ACT > /dev/null; sleep 2
+
+adb shell monkey -p $PKG --pct-syskeys 0 --throttle 120 -s 11 400 > "$OUT/monkey.txt" 2>&1 || true
+sleep 2; adb shell am start -n $ACT > /dev/null; shot 07-after-monkey 3
+adb logcat -d > "$OUT/logcat.txt"
+if grep -E "FATAL EXCEPTION|ANR in $PKG" "$OUT/logcat.txt" | tee "$OUT/crashes.txt" | grep -q .; then
+  grep -A40 "FATAL EXCEPTION" "$OUT/logcat.txt" | head -120
+  exit 1
+fi
+adb shell pidof $PKG > /dev/null || { echo "app not running"; exit 1; }
+ls "$OUT"/*.png | wc -l
+echo "OK"

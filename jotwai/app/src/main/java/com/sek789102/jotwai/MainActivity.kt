@@ -12,6 +12,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.semantics.semantics
@@ -182,7 +183,15 @@ class MainActivity : ComponentActivity() {
         // One place shows snackbar messages, whichever screen is open.
         LaunchedEffect(Unit) {
             appVm.messages.collect { m ->
-                val r = snackbar.showSnackbar(m.text, actionLabel = m.undoLabel, withDismissAction = m.undoLabel == null)
+                // A new message replaces the one on screen; each closes by itself after ~4 seconds
+                // (with an "undo" button the default would be to stay until tapped).
+                snackbar.currentSnackbarData?.dismiss()
+                val r = snackbar.showSnackbar(
+                    m.text,
+                    actionLabel = m.undoLabel,
+                    withDismissAction = m.undoLabel == null,
+                    duration = SnackbarDuration.Short
+                )
                 if (r == SnackbarResult.ActionPerformed) m.onUndo?.invoke()
             }
         }

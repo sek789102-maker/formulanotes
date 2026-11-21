@@ -30,27 +30,29 @@ PY
 shot() { sleep "${2:-2}"; adb exec-out screencap -p > "$OUT/$1.png"; }
 open_note() { adb shell am start -n $ACT -a com.sek789102.jotwai.OPEN_NOTE -d "jotwai://note/$1" --el note_id "$1" > /dev/null; }
 
+home() { adb shell input keyevent 4; sleep 1; adb shell am start -n $ACT > /dev/null; sleep 2; }
 adb shell cmd uimode night no
 adb shell am start -n $ACT > /dev/null; sleep 6
 adb shell am broadcast -n "$PKG/.DebugSeedReceiver" -a com.sek789102.jotwai.DEBUG_SEED > /dev/null; sleep 3
-adb shell am force-stop $PKG; adb shell am start -n $ACT > /dev/null
+adb shell am force-stop $PKG; adb shell cmd statusbar collapse; adb shell am start -n $ACT > /dev/null
 shot 1-home 6
 
 open_note 2; sleep 3; adb shell input keyevent 111; tap_tag editor_format; shot 2-formatted-note 2
 tap_tag editor_reminder; shot 5-reminder 2; adb shell input keyevent 4; sleep 1
 tap_tag editor_color; shot 6-colors 2; adb shell input keyevent 4; sleep 1
-adb shell input keyevent 4; sleep 2
+home
 
 open_note 1; sleep 3; adb shell input keyevent 111; shot 3-checklist 2
-adb shell input keyevent 4; adb shell input keyevent 4; sleep 2
+home
 
 tap_tag open_drawer; shot 4-drawer 2; adb shell input keyevent 4; sleep 1
+adb shell am start -n $ACT > /dev/null; sleep 1
 
-tap_tag search_input; adb shell input text "tom"; adb shell input keyevent 111; shot 7-search 2
+tap_tag search_input; adb shell input text "tom"; sleep 1; adb shell input keyevent 111; shot 7-search 2
 tap_tag search_clear; sleep 1
 
 adb shell cmd uimode night yes; sleep 3
-adb shell am force-stop $PKG; adb shell am start -n $ACT > /dev/null
+adb shell am force-stop $PKG; adb shell cmd statusbar collapse; adb shell am start -n $ACT > /dev/null
 shot 8-home-dark 6
 adb shell cmd uimode night no
 echo "screenshots done"

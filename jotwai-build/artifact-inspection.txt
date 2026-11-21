@@ -1,0 +1,15 @@
+package: name='com.sek789102.jotwai' versionCode='1' versionName='1.0.0' platformBuildVersionName='16' platformBuildVersionCode='36' compileSdkVersion='36' compileSdkVersionCodename='16'
+targetSdkVersion:'36'
+uses-permission: name='android.permission.POST_NOTIFICATIONS'
+uses-permission: name='android.permission.RECEIVE_BOOT_COMPLETED'
+uses-permission: name='android.permission.SCHEDULE_EXACT_ALARM'
+uses-permission: name='android.permission.USE_BIOMETRIC'
+uses-permission: name='android.permission.WAKE_LOCK'
+uses-permission: name='android.permission.ACCESS_NETWORK_STATE'
+uses-permission: name='android.permission.FOREGROUND_SERVICE'
+uses-permission: name='com.sek789102.jotwai.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION'
+application-label:'จดไว้'
+
+20747907 /home/runner/work/formulanotes/formulanotes/jotwai-build/Jotwai-debug.apk
+6321196 /home/runner/work/formulanotes/formulanotes/jotwai-build/Jotwai-release-unsigned.aab
+3287786 /home/runner/work/formulanotes/formulanotes/jotwai-build/Jotwai-release-unsigned.apk

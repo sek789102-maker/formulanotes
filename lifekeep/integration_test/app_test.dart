@@ -125,8 +125,8 @@ void main() {
     await settle(t, 6);
     // (The success snackbar is transient; check the lasting state instead.)
     expect(find.text('ข้อมูลได้รับการสำรองแล้ว'), findsOneWidget);
-    await t.scrollUntilVisible(find.text('ด้วยตนเอง', findRichText: true).first, 300,
-        scrollable: find.byType(Scrollable).first);
+    await t.drag(find.byType(Scrollable).first, const Offset(0, -600));
+    await settle(t, 1);
     expect(find.textContaining('ด้วยตนเอง'), findsWidgets, reason: 'manual backup listed in history');
   });
 }

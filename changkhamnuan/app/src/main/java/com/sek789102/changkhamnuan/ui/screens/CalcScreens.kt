@@ -131,7 +131,7 @@ fun CalcScreen(calcId: String, vm: AppViewModel, snackbar: SnackbarHostState, on
     val prices by vm.prices.collectAsStateWithLifecycle()
     val values = rememberSaveable(calcId, saver = mapSaver()) {
         mutableStateMapOf<String, String>().apply {
-            calc.fields.filter { it.isVisible(values, calc) }.forEach { f ->
+            calc.fields.forEach { f ->
                 when (f) {
                     is NumberField -> put(f.key, Fmt.n(f.default, 3).replace(",", ""))
                     is ChoiceField -> put(f.key, f.default)
@@ -157,7 +157,8 @@ fun CalcScreen(calcId: String, vm: AppViewModel, snackbar: SnackbarHostState, on
             Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState()).padding(horizontal = 16.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            calc.fields.filter { it.isVisible(values, calc) }.forEach { f ->
+            val current = values.toMap()
+            calc.fields.filter { it.isVisible(current, calc) }.forEach { f ->
                 when (f) {
                     is NumberField -> NumberInput(values[f.key].orEmpty(), { values[f.key] = it }, f.label, f.unit, help = f.help, tag = "in_${f.key}")
                     is ChoiceField -> ChoiceInput(f.label, f.options, values[f.key] ?: f.default, { values[f.key] = it }, tag = "in_${f.key}")

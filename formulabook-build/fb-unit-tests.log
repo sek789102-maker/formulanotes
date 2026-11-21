@@ -9,16 +9,16 @@ Starting a Gradle Daemon (subsequent builds will be faster)
 > Task :app:javaPreCompileDebug FROM-CACHE
 > Task :app:generateDebugRFile
 > Task :app:mapDebugSourceSetPaths
-> Task :app:compileDebugNavigationResources FROM-CACHE
 > Task :app:checkDebugAarMetadata
+> Task :app:compileDebugNavigationResources FROM-CACHE
 > Task :app:createDebugCompatibleScreenManifests
 > Task :app:extractDeepLinksDebug
-> Task :app:processDebugMainManifest
 > Task :app:mergeDebugResources
+> Task :app:processDebugMainManifest
 > Task :app:processDebugManifest
 > Task :app:preDebugUnitTestBuild UP-TO-DATE
-> Task :app:processDebugManifestForPackage
 > Task :app:javaPreCompileDebugUnitTest
+> Task :app:processDebugManifestForPackage
 > Task :app:generateDebugAssets UP-TO-DATE
 > Task :app:mergeDebugAssets
 > Task :app:processDebugResources
@@ -26,6 +26,7 @@ Starting a Gradle Daemon (subsequent builds will be faster)
 > Task :app:packageDebugUnitTestForUnitTest
 > Task :app:generateDebugUnitTestConfig
 > Task :app:kspDebugKotlin
+
 > Task :app:compileDebugKotlin
 w: file:///home/runner/work/formulanotes/formulanotes/formulabook/app/src/main/java/com/sek789102/formulabook/ui/components/FormulaCard.kt:206:69 'val Icons.Rounded.ShowChart: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Rounded.ShowChart.
 w: file:///home/runner/work/formulanotes/formulanotes/formulabook/app/src/main/java/com/sek789102/formulabook/ui/screens/CalculatorScreen.kt:206:56 'val Icons.Rounded.ShowChart: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Rounded.ShowChart.
@@ -34,15 +35,15 @@ w: file:///home/runner/work/formulanotes/formulanotes/formulabook/app/src/main/j
 w: file:///home/runner/work/formulanotes/formulanotes/formulabook/app/src/main/java/com/sek789102/formulabook/ui/screens/SubjectVaultScreen.kt:106:21 'val LocalClipboardManager: ProvidableCompositionLocal<ClipboardManager>' is deprecated. Use LocalClipboard instead which supports suspend functions.
 
 > Task :app:compileDebugJavaWithJavac
-> Task :app:processDebugJavaRes
 > Task :app:bundleDebugClassesToRuntimeJar
 > Task :app:bundleDebugClassesToCompileJar
+> Task :app:processDebugJavaRes
 > Task :app:kspDebugUnitTestKotlin
 > Task :app:compileDebugUnitTestKotlin
 > Task :app:compileDebugUnitTestJavaWithJavac NO-SOURCE
 > Task :app:processDebugUnitTestJavaRes
 > Task :app:testDebugUnitTest
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run-1795235635645.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run-1795236244224.json
 
-BUILD SUCCESSFUL in 2m
+BUILD SUCCESSFUL in 1m 32s
 32 actionable tasks: 30 executed, 2 from cache

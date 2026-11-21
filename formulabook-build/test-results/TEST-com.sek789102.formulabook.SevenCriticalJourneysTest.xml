@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.sek789102.formulabook.SevenCriticalJourneysTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-11-21T04:35:49.452Z" hostname="runnervm0hi8g" time="0.879">
+<testsuite name="com.sek789102.formulabook.SevenCriticalJourneysTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-11-21T04:45:32.785Z" hostname="ip-10-0-139-64" time="0.658">
   <properties/>
-  <testcase name="1_create_note_close_app_and_reopen_preserves_note_on_disk" classname="com.sek789102.formulabook.SevenCriticalJourneysTest" time="0.071"/>
-  <testcase name="5_export_and_import_restores_notes_formulas_subjects_and_attached_images" classname="com.sek789102.formulabook.SevenCriticalJourneysTest" time="0.295"/>
-  <testcase name="7_simulated_device_reboot_preserves_disk_notes_and_runs_boot_receiver_safely" classname="com.sek789102.formulabook.SevenCriticalJourneysTest" time="0.062"/>
-  <testcase name="2_autosave_edits_update_existing_note_without_duplication_across_reopen" classname="com.sek789102.formulabook.SevenCriticalJourneysTest" time="0.154"/>
-  <testcase name="3_attach_image_close_and_reopen_keeps_image_file_and_decodes_cleanly" classname="com.sek789102.formulabook.SevenCriticalJourneysTest" time="0.106"/>
-  <testcase name="6_search_pin_ordering_and_subject_change_work_accurately_in_viewmodel" classname="com.sek789102.formulabook.SevenCriticalJourneysTest" time="0.132"/>
-  <testcase name="4_soft_delete_moves_to_trash_and_restore_brings_note_and_image_back" classname="com.sek789102.formulabook.SevenCriticalJourneysTest" time="0.055"/>
+  <testcase name="1_create_note_close_app_and_reopen_preserves_note_on_disk" classname="com.sek789102.formulabook.SevenCriticalJourneysTest" time="0.048"/>
+  <testcase name="5_export_and_import_restores_notes_formulas_subjects_and_attached_images" classname="com.sek789102.formulabook.SevenCriticalJourneysTest" time="0.13"/>
+  <testcase name="7_simulated_device_reboot_preserves_disk_notes_and_runs_boot_receiver_safely" classname="com.sek789102.formulabook.SevenCriticalJourneysTest" time="0.044"/>
+  <testcase name="2_autosave_edits_update_existing_note_without_duplication_across_reopen" classname="com.sek789102.formulabook.SevenCriticalJourneysTest" time="0.14"/>
+  <testcase name="3_attach_image_close_and_reopen_keeps_image_file_and_decodes_cleanly" classname="com.sek789102.formulabook.SevenCriticalJourneysTest" time="0.12"/>
+  <testcase name="6_search_pin_ordering_and_subject_change_work_accurately_in_viewmodel" classname="com.sek789102.formulabook.SevenCriticalJourneysTest" time="0.13"/>
+  <testcase name="4_soft_delete_moves_to_trash_and_restore_brings_note_and_image_back" classname="com.sek789102.formulabook.SevenCriticalJourneysTest" time="0.041"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

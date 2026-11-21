@@ -1,4 +1,1 @@
-FAILED: com.sek789102.formulabook.ExampleRobolectricTest > classMethod
-FAILED: com.sek789102.formulabook.BackupZipAndImageCleanupTest > classMethod
-FAILED: com.sek789102.formulabook.SevenCriticalJourneysTest > classMethod
-tests=22 failures=3 errors=0 skipped=0
+tests=44 failures=0 errors=0 skipped=0

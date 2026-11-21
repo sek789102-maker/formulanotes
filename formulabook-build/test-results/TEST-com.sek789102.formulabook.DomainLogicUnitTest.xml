@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.sek789102.formulabook.DomainLogicUnitTest" tests="11" skipped="0" failures="0" errors="0" timestamp="2026-11-21T04:26:45.428Z" hostname="runnervm0hi8g" time="0.097">
+<testsuite name="com.sek789102.formulabook.DomainLogicUnitTest" tests="11" skipped="0" failures="0" errors="0" timestamp="2026-11-21T04:35:47.500Z" hostname="runnervm0hi8g" time="0.067">
   <properties/>
-  <testcase name="quick reference catalog filters subjects, summarizes notes, and converts items to notes" classname="com.sek789102.formulabook.DomainLogicUnitTest" time="0.043"/>
-  <testcase name="backup reminder triggers after 14 days unless recently exported or snoozed" classname="com.sek789102.formulabook.DomainLogicUnitTest" time="0.001"/>
+  <testcase name="quick reference catalog filters subjects, summarizes notes, and converts items to notes" classname="com.sek789102.formulabook.DomainLogicUnitTest" time="0.022"/>
+  <testcase name="backup reminder triggers after 14 days unless recently exported or snoozed" classname="com.sek789102.formulabook.DomainLogicUnitTest" time="0.0"/>
   <testcase name="sm2 due check recognizes unreviewed, due, and future cards" classname="com.sek789102.formulabook.DomainLogicUnitTest" time="0.002"/>
-  <testcase name="sm2 scheduler increases intervals on good and easy and resets on hard" classname="com.sek789102.formulabook.DomainLogicUnitTest" time="0.001"/>
-  <testcase name="study stats calculator computes consecutive streak and breaks on missed day" classname="com.sek789102.formulabook.DomainLogicUnitTest" time="0.005"/>
-  <testcase name="planner helper validates HH mm times and maps UTC picker dates to local midnight across timezones" classname="com.sek789102.formulabook.DomainLogicUnitTest" time="0.011"/>
-  <testcase name="blue white light and dark color schemes and dimens match design tokens" classname="com.sek789102.formulabook.DomainLogicUnitTest" time="0.008"/>
-  <testcase name="simple markdown parses blocks and toggles checklist lines accurately" classname="com.sek789102.formulabook.DomainLogicUnitTest" time="0.004"/>
+  <testcase name="sm2 scheduler increases intervals on good and easy and resets on hard" classname="com.sek789102.formulabook.DomainLogicUnitTest" time="0.002"/>
+  <testcase name="study stats calculator computes consecutive streak and breaks on missed day" classname="com.sek789102.formulabook.DomainLogicUnitTest" time="0.003"/>
+  <testcase name="planner helper validates HH mm times and maps UTC picker dates to local midnight across timezones" classname="com.sek789102.formulabook.DomainLogicUnitTest" time="0.01"/>
+  <testcase name="blue white light and dark color schemes and dimens match design tokens" classname="com.sek789102.formulabook.DomainLogicUnitTest" time="0.011"/>
+  <testcase name="simple markdown parses blocks and toggles checklist lines accurately" classname="com.sek789102.formulabook.DomainLogicUnitTest" time="0.003"/>
   <testcase name="planner helper sorts daily timetable, serializes JSON, and extracts unchecked checklist tasks" classname="com.sek789102.formulabook.DomainLogicUnitTest" time="0.002"/>
-  <testcase name="match game engine handles pairing, mismatch tracking, and round completion" classname="com.sek789102.formulabook.DomainLogicUnitTest" time="0.015"/>
+  <testcase name="match game engine handles pairing, mismatch tracking, and round completion" classname="com.sek789102.formulabook.DomainLogicUnitTest" time="0.009"/>
   <testcase name="theme mode parser handles valid values and falls back to SYSTEM" classname="com.sek789102.formulabook.DomainLogicUnitTest" time="0.001"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>

@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.sek789102.jotwai.RepositoryTest" tests="9" skipped="0" failures="0" errors="0" timestamp="2026-11-21T05:37:55.993Z" hostname="ip-10-0-137-96" time="0.568">
+<testsuite name="com.sek789102.jotwai.RepositoryTest" tests="9" skipped="0" failures="0" errors="0" timestamp="2026-11-21T05:47:34.518Z" hostname="runnervm0hi8g" time="0.772">
   <properties/>
-  <testcase name="duplicate copies text, labels and image files but not the reminder" classname="com.sek789102.jotwai.RepositoryTest" time="0.059"/>
-  <testcase name="create, edit content, pin, archive, trash, restore, delete forever" classname="com.sek789102.jotwai.RepositoryTest" time="0.059"/>
-  <testcase name="labels and folders" classname="com.sek789102.jotwai.RepositoryTest" time="0.071"/>
-  <testcase name="trash older than 30 days is purged" classname="com.sek789102.jotwai.RepositoryTest" time="0.042"/>
-  <testcase name="one-off reminder clears after firing, repeating one moves forward" classname="com.sek789102.jotwai.RepositoryTest" time="0.042"/>
-  <testcase name="blank notes are discarded, others kept" classname="com.sek789102.jotwai.RepositoryTest" time="0.045"/>
-  <testcase name="orphaned images are purged, used ones kept (also by versions)" classname="com.sek789102.jotwai.RepositoryTest" time="0.035"/>
-  <testcase name="saving content never overwrites a reminder set meanwhile" classname="com.sek789102.jotwai.RepositoryTest" time="0.032"/>
-  <testcase name="versions are deduplicated, capped and restorable" classname="com.sek789102.jotwai.RepositoryTest" time="0.179"/>
+  <testcase name="duplicate copies text, labels and image files but not the reminder" classname="com.sek789102.jotwai.RepositoryTest" time="0.069"/>
+  <testcase name="create, edit content, pin, archive, trash, restore, delete forever" classname="com.sek789102.jotwai.RepositoryTest" time="0.083"/>
+  <testcase name="labels and folders" classname="com.sek789102.jotwai.RepositoryTest" time="0.087"/>
+  <testcase name="trash older than 30 days is purged" classname="com.sek789102.jotwai.RepositoryTest" time="0.062"/>
+  <testcase name="one-off reminder clears after firing, repeating one moves forward" classname="com.sek789102.jotwai.RepositoryTest" time="0.071"/>
+  <testcase name="blank notes are discarded, others kept" classname="com.sek789102.jotwai.RepositoryTest" time="0.051"/>
+  <testcase name="orphaned images are purged, used ones kept (also by versions)" classname="com.sek789102.jotwai.RepositoryTest" time="0.055"/>
+  <testcase name="saving content never overwrites a reminder set meanwhile" classname="com.sek789102.jotwai.RepositoryTest" time="0.047"/>
+  <testcase name="versions are deduplicated, capped and restorable" classname="com.sek789102.jotwai.RepositoryTest" time="0.239"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

@@ -11,5 +11,5 @@ uses-permission: name='com.sek789102.jotwai.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMIS
 application-label:'จดไว้'
 
 20747907 /home/runner/work/formulanotes/formulanotes/jotwai-build/Jotwai-debug.apk
-6321196 /home/runner/work/formulanotes/formulanotes/jotwai-build/Jotwai-release-unsigned.aab
+6321390 /home/runner/work/formulanotes/formulanotes/jotwai-build/Jotwai-release-unsigned.aab
 3287786 /home/runner/work/formulanotes/formulanotes/jotwai-build/Jotwai-release-unsigned.apk

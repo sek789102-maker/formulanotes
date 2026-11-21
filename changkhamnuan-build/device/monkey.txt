@@ -24,4 +24,4 @@ arg="--throttle" mCurArgData="null" mNextArg=5 argwas="--throttle" nextarg="120"
 data="120"
 data="11"
 Events injected: 400
-## Network stats: elapsed time=10402ms (0ms mobile, 0ms wifi, 10402ms not connected)
+## Network stats: elapsed time=11396ms (0ms mobile, 0ms wifi, 11396ms not connected)

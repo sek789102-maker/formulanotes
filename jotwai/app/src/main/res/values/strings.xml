@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">จดไว้</string>
+
+    <!-- Actions -->
+    <string name="action_add">เพิ่ม</string>
+    <string name="action_add_label">ติดป้ายกำกับ</string>
+    <string name="action_archive">เก็บถาวร</string>
+    <string name="action_unarchive">เลิกเก็บถาวร</string>
+    <string name="action_back">กลับ</string>
+    <string name="action_backup">สำรองข้อมูล</string>
+    <string name="action_restore_backup">กู้คืน</string>
+    <string name="action_cancel">ยกเลิก</string>
+    <string name="action_clear">ล้าง</string>
+    <string name="action_close">ปิด</string>
+    <string name="action_color">สีพื้นหลัง</string>
+    <string name="action_create">สร้าง</string>
+    <string name="action_delete">ลบ</string>
+    <string name="action_delete_forever">ลบถาวร</string>
+    <string name="action_done">เสร็จ</string>
+    <string name="action_duplicate">ทำสำเนา</string>
+    <string name="action_empty_trash">ล้างถังขยะ</string>
+    <string name="action_format">จัดรูปแบบข้อความ</string>
+    <string name="action_history">ประวัติการแก้ไข</string>
+    <string name="action_labels">ป้ายกำกับ</string>
+    <string name="action_lock">ล็อกโน้ต</string>
+    <string name="action_unlock">ปลดล็อกโน้ต</string>
+    <string name="action_menu">เมนู</string>
+    <string name="action_more">ตัวเลือกเพิ่มเติม</string>
+    <string name="action_move_to_folder">ย้ายไปโฟลเดอร์</string>
+    <string name="action_ok">ตกลง</string>
+    <string name="action_pin">ปักหมุด</string>
+    <string name="action_unpin">เลิกปักหมุด</string>
+    <string name="action_undo">เลิกทำ</string>
+    <string name="action_redo">ทำซ้ำ</string>
+    <string name="action_remove">เอาออก</string>
+    <string name="action_rename">เปลี่ยนชื่อ</string>
+    <string name="action_restore">กู้คืน</string>
+    <string name="action_save">บันทึก</string>
+    <string name="action_select_all">เลือกทั้งหมด</string>
+    <string name="action_share">ส่ง / แชร์</string>
+    <string name="action_to_checklist">เปลี่ยนเป็นรายการ</string>
+    <string name="action_to_text">เปลี่ยนเป็นข้อความ</string>
+
+    <!-- Navigation -->
+    <string name="nav_notes">โน้ต</string>
+    <string name="nav_reminders">การเตือน</string>
+    <string name="nav_folders">โฟลเดอร์</string>
+    <string name="nav_labels">ป้ายกำกับ</string>
+    <string name="nav_archive">เก็บถาวร</string>
+    <string name="nav_trash">ถังขยะ</string>
+    <string name="nav_settings">การตั้งค่า</string>
+    <string name="new_note">จดโน้ต</string>
+    <string name="new_checklist">รายการใหม่</string>
+    <string name="search_hint">ค้นหาโน้ต</string>
+    <string name="group_pinned">ปักหมุด</string>
+    <string name="group_others">อื่นๆ</string>
+    <string name="selected_count">เลือก %d</string>
+    <string name="view_list">มุมมองรายการ</string>
+    <string name="view_grid">มุมมองตาราง</string>
+    <string name="sort_title">เรียงลำดับ</string>
+    <string name="sort_updated">แก้ไขล่าสุด</string>
+    <string name="sort_created">สร้างล่าสุด</string>
+    <string name="sort_title_az">ชื่อ ก–ฮ / A–Z</string>
+    <string name="filter_checklists">รายการ</string>
+    <string name="filter_images">มีรูป</string>
+    <string name="filter_reminders">มีการเตือน</string>
+
+    <!-- Empty states -->
+    <string name="empty_notes_title">ยังไม่มีโน้ต</string>
+    <string name="empty_notes_message">แตะ “จดโน้ต” เพื่อเริ่ม ทุกอย่างบันทึกอัตโนมัติและอยู่ในเครื่องนี้เท่านั้น</string>
+    <string name="empty_reminders_title">ไม่มีโน้ตที่ตั้งเตือนไว้</string>
+    <string name="empty_reminders_message">เปิดโน้ตแล้วแตะรูปกระดิ่งเพื่อตั้งเวลาเตือน</string>
+    <string name="empty_archive_title">ไม่มีโน้ตที่เก็บถาวร</string>
+    <string name="empty_archive_message">โน้ตที่เก็บถาวรจะหายจากหน้าหลักแต่ยังค้นหาได้</string>
+    <string name="empty_trash_title">ถังขยะว่าง</string>
+    <string name="empty_trash_message">โน้ตที่ลบจะอยู่ที่นี่ 30 วันก่อนถูกลบถาวร</string>
+    <string name="empty_folder_title">โฟลเดอร์นี้ยังว่าง</string>
+    <string name="empty_folder_message">โน้ตที่สร้างขณะเปิดโฟลเดอร์นี้จะอยู่ในโฟลเดอร์นี้</string>
+    <string name="empty_label_title">ยังไม่มีโน้ตที่ติดป้ายนี้</string>
+    <string name="empty_label_message">เปิดโน้ต แล้วเลือก “ป้ายกำกับ” จากเมนู</string>
+    <string name="empty_search_title">ไม่พบโน้ต</string>
+    <string name="empty_search_message">ลองคำอื่น หรือเอาตัวกรองออก ระบบค้นทั้งหัวเรื่อง เนื้อหา รายการ และป้ายกำกับ</string>
+    <string name="empty_note">โน้ตว่าง</string>
+
+    <!-- Editor -->
+    <string name="hint_title">หัวเรื่อง</string>
+    <string name="hint_body">จดโน้ต…</string>
+    <string name="add_photo_camera">ถ่ายรูป</string>
+    <string name="add_photo_gallery">เลือกรูป</string>
+    <string name="add_drawing">วาดรูป</string>
+    <string name="checklist_add_item">เพิ่มรายการ</string>
+    <string name="checklist_item_hint">รายการ</string>
+    <string name="checklist_done_count">เสร็จแล้ว %d รายการ</string>
+    <string name="checklist_uncheck_all">ยกเลิกเครื่องหมายทั้งหมด</string>
+    <string name="checklist_delete_done">ลบรายการที่เสร็จแล้ว</string>
+    <string name="checklist_drag">กดค้างแล้วลากเพื่อจัดลำดับ</string>
+    <string name="format_bold">ตัวหนา</string>
+    <string name="format_italic">ตัวเอียง</string>
+    <string name="format_strike">ขีดฆ่า</string>
+    <string name="format_highlight">ไฮไลต์</string>
+    <string name="format_heading">หัวข้อ</string>
+    <string name="format_bullets">รายการแบบจุด</string>
+    <string name="format_numbers">รายการแบบตัวเลข</string>
+    <string name="format_checkbox">ช่องติ๊ก</string>
+    <string name="edited_at">แก้ไข %s</string>
+    <string name="created_at">สร้างเมื่อ %s</string>
+    <string name="image_desc">รูปในโน้ต</string>
+    <string name="image_viewer_desc">รูปภาพขนาดเต็ม</string>
+    <string name="image_viewer_zoom_hint">จีบนิ้วเพื่อซูม · แตะสองครั้งเพื่อรีเซ็ต</string>
+    <string name="image_remove_title">เอารูปนี้ออก?</string>
+    <string name="image_remove_message">กด “เลิกทำ” ได้ถ้าเปลี่ยนใจ</string>
+    <string name="drawing_title">วาดรูป</string>
+    <string name="drawing_clear">ล้างทั้งหมด</string>
+    <string name="drawing_eraser">ยางลบ</string>
+    <string name="drawing_pen">ปากกา</string>
+    <string name="trash_note_banner">โน้ตนี้อยู่ในถังขยะ แก้ไขไม่ได้จนกว่าจะกู้คืน</string>
+    <string name="locked_note_hidden">โน้ตที่ล็อกไว้</string>
+    <string name="locked_chip">ล็อกอยู่</string>
+    <string name="unlock_title">ปลดล็อกเพื่อเปิดโน้ต</string>
+
+    <!-- Folders and labels -->
+    <string name="folder_new">โฟลเดอร์ใหม่</string>
+    <string name="folder_none">ไม่อยู่ในโฟลเดอร์</string>
+    <string name="folder_rename">เปลี่ยนชื่อโฟลเดอร์</string>
+    <string name="folder_delete_title">ลบโฟลเดอร์</string>
+    <string name="folder_delete_message">ลบโฟลเดอร์ “%s”? โน้ตข้างในจะไม่ถูกลบ แต่จะย้ายออกมาไว้นอกโฟลเดอร์</string>
+    <string name="labels_manage">แก้ไขป้ายกำกับ</string>
+    <string name="labels_empty_message">ป้ายกำกับช่วยจัดกลุ่มโน้ตได้หลายแบบในเวลาเดียวกัน</string>
+    <string name="label_new">ป้ายกำกับใหม่</string>
+    <string name="label_rename">เปลี่ยนชื่อป้ายกำกับ</string>
+    <string name="label_delete_title">ลบป้ายกำกับ</string>
+    <string name="label_delete_message">ลบป้าย “%s”? โน้ตจะไม่ถูกลบ</string>
+    <string name="label_none_yet">ยังไม่มีป้ายกำกับ</string>
+    <string name="label_search_or_create">ค้นหาหรือพิมพ์ชื่อป้ายใหม่</string>
+    <string name="label_create_named">สร้างป้าย “%s”</string>
+
+    <!-- Reminders -->
+    <string name="reminder_title">ตั้งการเตือน</string>
+    <string name="reminder_quick_today">เย็นนี้</string>
+    <string name="reminder_quick_tomorrow">พรุ่งนี้เช้า</string>
+    <string name="reminder_quick_next_week">สัปดาห์หน้า</string>
+    <string name="reminder_custom">เลือกวันและเวลาเอง</string>
+    <string name="reminder_in_past">เวลานี้ผ่านไปแล้ว เลือกเวลาในอนาคต</string>
+    <string name="reminder_remove">ลบการเตือน</string>
+    <string name="reminder_notification_title">การเตือนจากโน้ต</string>
+    <string name="reminder_action_done">เสร็จแล้ว</string>
+    <string name="reminder_action_snooze">เลื่อน 10 นาที</string>
+    <string name="repeat_none">ไม่ทำซ้ำ</string>
+    <string name="repeat_daily">ทุกวัน</string>
+    <string name="repeat_weekly">ทุกสัปดาห์</string>
+    <string name="repeat_monthly">ทุกเดือน</string>
+    <string name="repeat_yearly">ทุกปี</string>
+    <string name="channel_reminders">การเตือนจากโน้ต</string>
+    <string name="channel_reminders_desc">แจ้งเตือนตามเวลาที่ตั้งไว้ในโน้ต</string>
+    <string name="reminder_reliability_title">ทำให้การเตือนตรงเวลา</string>
+    <string name="reminder_reliability_exact">อนุญาต “การปลุกและการช่วยเตือน” ไม่อย่างนั้น Android อาจแจ้งเตือนช้ากว่าเวลาที่ตั้งไว้</string>
+    <string name="reminder_reliability_battery">ตั้งแบตเตอรี่ของแอปเป็น “ไม่จำกัด” เพื่อไม่ให้ระบบหน่วงการแจ้งเตือน</string>
+    <string name="reminder_reliability_oem">มือถือยี่ห้อนี้อาจปิดแอปเบื้องหลังเอง ให้เปิด “เริ่มอัตโนมัติ (Autostart)” ในหน้าข้อมูลแอป</string>
+    <string name="reminder_reliability_allow">อนุญาต</string>
+    <string name="reminder_reliability_open">เปิด</string>
+
+    <!-- Dates -->
+    <string name="date_today">วันนี้ %s</string>
+    <string name="date_tomorrow">พรุ่งนี้ %s</string>
+    <string name="date_yesterday">เมื่อวาน %s</string>
+
+    <!-- Colours -->
+    <string name="color_default">ไม่มีสี</string>
+    <string name="color_red">แดง</string>
+    <string name="color_orange">ส้ม</string>
+    <string name="color_yellow">เหลือง</string>
+    <string name="color_green">เขียว</string>
+    <string name="color_teal">เขียวอมฟ้า</string>
+    <string name="color_blue">ฟ้า</string>
+    <string name="color_indigo">คราม</string>
+    <string name="color_purple">ม่วง</string>
+    <string name="color_pink">ชมพู</string>
+    <string name="color_brown">น้ำตาล</string>
+    <string name="color_gray">เทา</string>
+
+    <!-- History -->
+    <string name="history_title">ประวัติการแก้ไข</string>
+    <string name="history_info">ระบบเก็บเวอร์ชันก่อนหน้าให้อัตโนมัติทุกครั้งที่แก้โน้ต (สูงสุด %d เวอร์ชันต่อโน้ต) แตะเพื่อดูและกู้คืน</string>
+    <string name="history_empty_title">ยังไม่มีเวอร์ชันเก่า</string>
+    <string name="history_empty_message">เมื่อแก้ไขโน้ตนี้ เวอร์ชันก่อนหน้าจะถูกเก็บไว้ที่นี่</string>
+    <string name="history_restore">กู้คืนเวอร์ชันนี้</string>
+    <string name="history_images">มีรูป %d รูป</string>
+
+    <!-- Trash / delete -->
+    <string name="trash_info">โน้ตในถังขยะจะถูกลบถาวรอัตโนมัติหลัง %d วัน</string>
+    <string name="empty_trash_confirm_title">ล้างถังขยะ?</string>
+    <string name="empty_trash_confirm_message">โน้ตทั้งหมดในถังขยะจะถูกลบถาวร กู้คืนไม่ได้</string>
+    <string name="delete_forever_title">ลบถาวร?</string>
+    <string name="delete_forever_message_one">โน้ตนี้จะถูกลบถาวร กู้คืนไม่ได้</string>
+    <string name="delete_forever_message_many">โน้ต %d รายการจะถูกลบถาวร กู้คืนไม่ได้</string>
+
+    <!-- Messages -->
+    <string name="msg_archived">เก็บถาวรแล้ว %d โน้ต</string>
+    <string name="msg_unarchived">นำออกจากที่เก็บถาวรแล้ว %d โน้ต</string>
+    <string name="msg_trashed">ย้ายไปถังขยะแล้ว %d โน้ต</string>
+    <string name="msg_restored">กู้คืนแล้ว %d โน้ต</string>
+    <string name="msg_deleted_forever">ลบถาวรแล้ว %d โน้ต</string>
+    <string name="msg_trash_emptied">ล้างถังขยะแล้ว</string>
+    <string name="msg_moved">ย้ายแล้ว %d โน้ต</string>
+    <string name="msg_duplicated">ทำสำเนาแล้ว</string>
+    <string name="msg_label_exists">มีป้ายกำกับชื่อนี้แล้ว</string>
+    <string name="msg_image_failed">เพิ่มรูปไม่สำเร็จ</string>
+    <string name="msg_no_camera">ไม่พบแอปกล้อง</string>
+    <string name="msg_no_share_app">ไม่พบแอปที่ใช้ส่งได้</string>
+    <string name="msg_need_screen_lock">ตั้งล็อกหน้าจอของโทรศัพท์ก่อน (PIN, รูปแบบ หรือลายนิ้วมือ) จึงจะล็อกโน้ตได้</string>
+    <string name="msg_notif_denied">ยังไม่ได้อนุญาตการแจ้งเตือน การเตือนจะไม่แสดง เปิดได้ที่การตั้งค่า</string>
+    <string name="msg_backup_done">สำรองข้อมูลแล้ว</string>
+    <string name="msg_backup_failed">สำรองข้อมูลไม่สำเร็จ</string>
+    <string name="msg_restore_done">กู้คืนแล้ว %1$d โน้ต (ข้ามที่มีอยู่แล้ว %2$d)</string>
+    <string name="msg_restore_failed">อ่านไฟล์ไม่สำเร็จ</string>
+    <string name="msg_restore_invalid">ไฟล์นี้ไม่ใช่ไฟล์สำรองของแอป</string>
+    <string name="msg_restore_too_large">ไฟล์ใหญ่เกินไป</string>
+
+    <!-- Settings -->
+    <string name="settings_display">การแสดงผล</string>
+    <string name="settings_theme">ธีม</string>
+    <string name="theme_system">ตามระบบ</string>
+    <string name="theme_light">สว่าง</string>
+    <string name="theme_dark">มืด</string>
+    <string name="settings_dynamic_color">สีตามวอลเปเปอร์</string>
+    <string name="settings_dynamic_color_desc">ใช้สีจากวอลเปเปอร์ของเครื่อง (Android 12 ขึ้นไป)</string>
+    <string name="settings_text_size">ขนาดตัวอักษร</string>
+    <string name="text_small">เล็ก</string>
+    <string name="text_normal">ปกติ</string>
+    <string name="text_large">ใหญ่</string>
+    <string name="text_xlarge">ใหญ่มาก</string>
+    <string name="settings_checklists">รายการ (Checklist)</string>
+    <string name="settings_add_bottom">เพิ่มรายการใหม่ไว้ด้านล่าง</string>
+    <string name="settings_add_bottom_desc">ปิดเพื่อเพิ่มไว้ด้านบนสุด</string>
+    <string name="settings_move_checked">ย้ายรายการที่ติ๊กแล้วลงล่าง</string>
+    <string name="settings_move_checked_desc">รวมไว้ในหมวด “เสร็จแล้ว” ที่ยุบได้</string>
+    <string name="settings_reminders">การเตือน</string>
+    <string name="settings_notif_on">อนุญาตการแจ้งเตือนแล้ว</string>
+    <string name="settings_notif_off">ยังไม่ได้อนุญาตการแจ้งเตือน</string>
+    <string name="settings_backup">สำรองและกู้คืน</string>
+    <string name="settings_backup_desc">สร้างไฟล์ .zip ที่มีโน้ต รูป โฟลเดอร์ และป้ายกำกับทั้งหมด เก็บไว้ใน Google Drive หรือที่อื่นที่ปลอดภัย ใช้ย้ายเครื่องหรือกันข้อมูลหาย</string>
+    <string name="settings_last_backup">สำรองล่าสุด %s</string>
+    <string name="settings_never_backed_up">ยังไม่เคยสำรองข้อมูล</string>
+    <string name="settings_restore_note">การกู้คืนจะเพิ่มโน้ตจากไฟล์ โดยไม่ลบโน้ตที่มีอยู่ และข้ามโน้ตที่ซ้ำ รองรับไฟล์จากแอป “สมุดโน้ตสูตร” เดิมด้วย</string>
+    <string name="settings_privacy">ความเป็นส่วนตัว</string>
+    <string name="privacy_offline">• แอปทำงานออฟไลน์ทั้งหมด ไม่มีบัญชี ไม่มีโฆษณา และไม่ขอสิทธิ์ใช้อินเทอร์เน็ต โน้ตอยู่ในเครื่องนี้เท่านั้น</string>
+    <string name="privacy_lock_note">• โน้ตที่ล็อกจะซ่อนไว้หลังล็อกหน้าจอของโทรศัพท์ แต่ไม่ได้เข้ารหัสข้อมูล</string>
+    <string name="privacy_backup_note">• ไฟล์สำรองไม่ได้เข้ารหัส อ่านได้โดยใครก็ตามที่มีไฟล์ ควรเก็บไว้ในที่ปลอดภัย</string>
+    <string name="settings_version">เวอร์ชัน %s</string>
+
+    <!-- Widget -->
+    <string name="widget_name">โน้ต</string>
+    <string name="widget_description">โน้ตที่ปักหมุดและแก้ไขล่าสุด พร้อมปุ่มจดโน้ตใหม่</string>
+    <string name="widget_empty">ยังไม่มีโน้ต แตะ + เพื่อจดโน้ตแรก</string>
+</resources>

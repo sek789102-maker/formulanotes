@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_note"
+        android:shortcutId="new_note"
+        android:shortcutShortLabel="@string/new_note">
+        <intent
+            android:action="com.sek789102.jotwai.NEW_NOTE"
+            android:targetClass="com.sek789102.jotwai.MainActivity"
+            android:targetPackage="com.sek789102.jotwai" />
+    </shortcut>
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_checklist"
+        android:shortcutId="new_checklist"
+        android:shortcutShortLabel="@string/new_checklist">
+        <intent
+            android:action="com.sek789102.jotwai.NEW_CHECKLIST"
+            android:targetClass="com.sek789102.jotwai.MainActivity"
+            android:targetPackage="com.sek789102.jotwai" />
+    </shortcut>
+</shortcuts>

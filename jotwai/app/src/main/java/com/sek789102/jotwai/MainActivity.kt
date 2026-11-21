@@ -13,6 +13,9 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -71,6 +74,7 @@ sealed interface Route {
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 class MainActivity : ComponentActivity() {
     private val appVm: AppViewModel by viewModels()
     private val incoming = MutableStateFlow<Intent?>(null)
@@ -92,7 +96,10 @@ class MainActivity : ComponentActivity() {
             val p = prefs ?: return@setContent // wait for settings to avoid a theme flash
             val dark = isDarkTheme(p.themeMode)
             JotwaiTheme(themeMode = p.themeMode, dynamicColor = p.dynamicColor, textScale = p.textSize.scale) {
-                AppRoot(dark)
+                // Lets automated UI checks find elements by their test tags.
+                androidx.compose.foundation.layout.Box(
+                    androidx.compose.ui.Modifier.semantics { testTagsAsResourceId = true }
+                ) { AppRoot(dark) }
             }
         }
     }

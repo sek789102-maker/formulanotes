@@ -42,7 +42,14 @@ jobs:
 
       - name: Build debug APK + release APK/AAB (unsigned)
         if: always()
-        run: gradle :app:assembleDebug :app:assembleRelease :app:bundleRelease --stacktrace --no-configuration-cache 2>&1 | tee ../jw-build.log
+        run: |
+          set -o pipefail
+          {
+            # 1) store bundle, unsigned (signed later with the private upload key, outside CI)
+            gradle :app:assembleDebug :app:bundleRelease --stacktrace --no-configuration-cache
+            # 2) the same minified release build, signed with the debug key, only to test it on the emulator
+            RELEASE_TEST_SIGN=1 gradle :app:assembleRelease --stacktrace --no-configuration-cache
+          } 2>&1 | tee ../jw-build.log
 
       - name: Collect outputs
         if: always()
@@ -50,7 +57,7 @@ jobs:
           mkdir -p "$OUT/test-results"
           cp ../jw-unit-tests.log ../jw-build.log "$OUT/" || true
           cp app/build/outputs/apk/debug/*.apk "$OUT/Jotwai-debug.apk" 2>/dev/null || true
-          cp app/build/outputs/apk/release/*.apk "$OUT/Jotwai-release-unsigned.apk" 2>/dev/null || true
+          cp app/build/outputs/apk/release/*.apk "$OUT/Jotwai-release-testsigned.apk" 2>/dev/null || true
           cp app/build/outputs/bundle/release/*.aab "$OUT/Jotwai-release-unsigned.aab" 2>/dev/null || true
           cp app/build/test-results/testDebugUnitTest/*.xml "$OUT/test-results/" 2>/dev/null || true
           if [ -d app/schemas ]; then cp -r app/schemas "$OUT/room-schemas"; fi
@@ -65,7 +72,7 @@ jobs:
                       print('FAILED:', r.get('name'), '>', c.get('name'))
           print(f'tests={t} failures={f} errors={e} skipped={s}')
           PY
-          APK="$OUT/Jotwai-debug.apk"
+          APK="$OUT/Jotwai-release-testsigned.apk"
           if [ -f "$APK" ]; then
             AAPT=$(ls $ANDROID_HOME/build-tools/*/aapt2 | sort -V | tail -1)
             { "$AAPT" dump badging "$APK" | grep -E "^(package|sdkVersion|targetSdkVersion|application-label:|uses-permission|INTERNET)";
@@ -83,17 +90,20 @@ jobs:
 
       - name: Install + launch on emulator (API 35)
         id: emu
-        if: always() && hashFiles('jotwai-build/Jotwai-debug.apk') != ''
+        if: always() && hashFiles('jotwai-build/Jotwai-release-testsigned.apk') != ''
         continue-on-error: true
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 35
           target: google_apis
           arch: x86_64
+          profile: pixel
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           working-directory: .
-          script: bash jotwai/ci/emulator_smoke.sh jotwai-build/Jotwai-debug.apk jotwai-build/device
+          script: |
+            bash jotwai/ci/emulator_smoke.sh jotwai-build/Jotwai-release-testsigned.apk jotwai-build/device
+            bash jotwai/ci/store_screenshots.sh jotwai-build/Jotwai-debug.apk jotwai-build/store-screenshots
 
       - name: Commit build outputs and reports
         if: always()
@@ -111,4 +121,4 @@ jobs:
         if: always()
         run: |
           grep -q "BUILD SUCCESSFUL" ../jw-unit-tests.log || { echo "unit tests failed"; exit 1; }
-          grep -q "BUILD SUCCESSFUL" ../jw-build.log || { echo "build failed"; exit 1; }
+          [ "$(grep -c "BUILD SUCCESSFUL" ../jw-build.log)" = "2" ] || { echo "build failed"; exit 1; }

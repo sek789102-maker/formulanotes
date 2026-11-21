@@ -42,7 +42,13 @@ android {
       isMinifyEnabled = true
       isShrinkResources = true
       proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-      if (hasReleaseKeystore) signingConfig = signingConfigs.getByName("release")
+      if (hasReleaseKeystore) {
+        signingConfig = signingConfigs.getByName("release")
+      } else if (System.getenv("RELEASE_TEST_SIGN") == "1") {
+        // CI only: sign the minified release build with the debug key so it can be
+        // installed on the emulator. Never used for the store upload.
+        signingConfig = signingConfigs.getByName("debug")
+      }
     }
   }
   compileOptions {

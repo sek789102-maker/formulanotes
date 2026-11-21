@@ -10,6 +10,7 @@ uses-permission: name='android.permission.FOREGROUND_SERVICE'
 uses-permission: name='com.sek789102.jotwai.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION'
 application-label:'จดไว้'
 
-20747907 /home/runner/work/formulanotes/formulanotes/jotwai-build/Jotwai-debug.apk
-6321390 /home/runner/work/formulanotes/formulanotes/jotwai-build/Jotwai-release-unsigned.aab
+20764359 /home/runner/work/formulanotes/formulanotes/jotwai-build/Jotwai-debug.apk
+3291882 /home/runner/work/formulanotes/formulanotes/jotwai-build/Jotwai-release-testsigned.apk
+6322271 /home/runner/work/formulanotes/formulanotes/jotwai-build/Jotwai-release-unsigned.aab
 3287786 /home/runner/work/formulanotes/formulanotes/jotwai-build/Jotwai-release-unsigned.apk

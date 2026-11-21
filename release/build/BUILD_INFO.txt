@@ -1,1 +1,1 @@
-commit=6c1ce57 signing=debug-key emulator=cancelled
+commit=87821d2 signing=debug-key emulator=failure

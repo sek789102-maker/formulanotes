@@ -20,19 +20,19 @@ Try `flutter pub outdated` for more information.
 schedule failed: Exception: boom
 schedule failed: Exception: boom
 00:00 +9: /home/runner/work/formulanotes/formulanotes/lifekeep/test/large_data_test.dart: 3,000 records: queries, search, reminders cap, backup/restore round-trip
-00:01 +10: /home/runner/work/formulanotes/formulanotes/lifekeep/test/large_data_test.dart: 3,000 records: queries, search, reminders cap, backup/restore round-trip
-00:01 +11: /home/runner/work/formulanotes/formulanotes/lifekeep/test/large_data_test.dart: 3,000 records: queries, search, reminders cap, backup/restore round-trip
-00:01 +12: /home/runner/work/formulanotes/formulanotes/lifekeep/test/large_data_test.dart: 3,000 records: queries, search, reminders cap, backup/restore round-trip
-00:02 +13: /home/runner/work/formulanotes/formulanotes/lifekeep/test/large_data_test.dart: 3,000 records: queries, search, reminders cap, backup/restore round-trip
-00:02 +14: /home/runner/work/formulanotes/formulanotes/lifekeep/test/large_data_test.dart: 3,000 records: queries, search, reminders cap, backup/restore round-trip
-00:02 +15: /home/runner/work/formulanotes/formulanotes/lifekeep/test/large_data_test.dart: 3,000 records: queries, search, reminders cap, backup/restore round-trip
-00:02 +16: /home/runner/work/formulanotes/formulanotes/lifekeep/test/large_data_test.dart: 3,000 records: queries, search, reminders cap, backup/restore round-trip
-00:02 +17: /home/runner/work/formulanotes/formulanotes/lifekeep/test/large_data_test.dart: 3,000 records: queries, search, reminders cap, backup/restore round-trip
-00:02 +18: /home/runner/work/formulanotes/formulanotes/lifekeep/test/large_data_test.dart: 3,000 records: queries, search, reminders cap, backup/restore round-trip
-00:02 +19: /home/runner/work/formulanotes/formulanotes/lifekeep/test/large_data_test.dart: 3,000 records: queries, search, reminders cap, backup/restore round-trip
-00:02 +20: /home/runner/work/formulanotes/formulanotes/lifekeep/test/large_data_test.dart: 3,000 records: queries, search, reminders cap, backup/restore round-trip
-00:02 +21: /home/runner/work/formulanotes/formulanotes/lifekeep/test/large_data_test.dart: 3,000 records: queries, search, reminders cap, backup/restore round-trip
-00:02 +22: /home/runner/work/formulanotes/formulanotes/lifekeep/test/large_data_test.dart: 3,000 records: queries, search, reminders cap, backup/restore round-trip
+00:02 +10: /home/runner/work/formulanotes/formulanotes/lifekeep/test/large_data_test.dart: 3,000 records: queries, search, reminders cap, backup/restore round-trip
+00:02 +11: /home/runner/work/formulanotes/formulanotes/lifekeep/test/large_data_test.dart: 3,000 records: queries, search, reminders cap, backup/restore round-trip
+00:02 +12: /home/runner/work/formulanotes/formulanotes/lifekeep/test/large_data_test.dart: 3,000 records: queries, search, reminders cap, backup/restore round-trip
+00:03 +13: /home/runner/work/formulanotes/formulanotes/lifekeep/test/large_data_test.dart: 3,000 records: queries, search, reminders cap, backup/restore round-trip
+00:03 +14: /home/runner/work/formulanotes/formulanotes/lifekeep/test/large_data_test.dart: 3,000 records: queries, search, reminders cap, backup/restore round-trip
+00:03 +15: /home/runner/work/formulanotes/formulanotes/lifekeep/test/large_data_test.dart: 3,000 records: queries, search, reminders cap, backup/restore round-trip
+00:03 +16: /home/runner/work/formulanotes/formulanotes/lifekeep/test/large_data_test.dart: 3,000 records: queries, search, reminders cap, backup/restore round-trip
+00:03 +17: /home/runner/work/formulanotes/formulanotes/lifekeep/test/large_data_test.dart: 3,000 records: queries, search, reminders cap, backup/restore round-trip
+00:03 +18: /home/runner/work/formulanotes/formulanotes/lifekeep/test/large_data_test.dart: 3,000 records: queries, search, reminders cap, backup/restore round-trip
+00:03 +19: /home/runner/work/formulanotes/formulanotes/lifekeep/test/large_data_test.dart: 3,000 records: queries, search, reminders cap, backup/restore round-trip
+00:03 +20: /home/runner/work/formulanotes/formulanotes/lifekeep/test/large_data_test.dart: 3,000 records: queries, search, reminders cap, backup/restore round-trip
+00:03 +21: /home/runner/work/formulanotes/formulanotes/lifekeep/test/large_data_test.dart: 3,000 records: queries, search, reminders cap, backup/restore round-trip
+00:03 +22: /home/runner/work/formulanotes/formulanotes/lifekeep/test/large_data_test.dart: 3,000 records: queries, search, reminders cap, backup/restore round-trip
 00:03 +23: /home/runner/work/formulanotes/formulanotes/lifekeep/test/large_data_test.dart: 3,000 records: queries, search, reminders cap, backup/restore round-trip
 00:03 +24: /home/runner/work/formulanotes/formulanotes/lifekeep/test/large_data_test.dart: 3,000 records: queries, search, reminders cap, backup/restore round-trip
 00:03 +25: /home/runner/work/formulanotes/formulanotes/lifekeep/test/large_data_test.dart: 3,000 records: queries, search, reminders cap, backup/restore round-trip
@@ -57,28 +57,32 @@ error AppException(ErrorKind.database): ฐานข้อมูลถูกส�
 00:08 +42: /home/runner/work/formulanotes/formulanotes/lifekeep/test/layout_stress_test.dart: no overflow at 320x640 text x1.3
 00:08 +43: /home/runner/work/formulanotes/formulanotes/lifekeep/test/layout_stress_test.dart: no overflow at 320x640 text x1.3
 00:08 +44: /home/runner/work/formulanotes/formulanotes/lifekeep/test/layout_stress_test.dart: no overflow at 320x640 text x1.3
-00:11 +45: /home/runner/work/formulanotes/formulanotes/lifekeep/test/widget_flow_test.dart: home → add task via form → Tasks tabs → complete → calendar → settings
-00:13 +46: /home/runner/work/formulanotes/formulanotes/lifekeep/test/widget_flow_test.dart: home → add task via form → Tasks tabs → complete → calendar → settings
-00:15 +47: /home/runner/work/formulanotes/formulanotes/lifekeep/test/layout_stress_test.dart: no overflow at 800x1280 text x1.0
-00:16 +48: /home/runner/work/formulanotes/formulanotes/lifekeep/test/widget_flow_test.dart: documents: add via form, list ↔ grid, search highlight, detail
-00:17 +49: /home/runner/work/formulanotes/formulanotes/lifekeep/test/widget_flow_test.dart: documents: add via form, list ↔ grid, search highlight, detail
-00:17 +50: /home/runner/work/formulanotes/formulanotes/lifekeep/test/widget_flow_test.dart: documents: add via form, list ↔ grid, search highlight, detail
-00:17 +51: /home/runner/work/formulanotes/formulanotes/lifekeep/test/widget_flow_test.dart: documents: add via form, list ↔ grid, search highlight, detail
-00:17 +52: /home/runner/work/formulanotes/formulanotes/lifekeep/test/widget_flow_test.dart: documents: add via form, list ↔ grid, search highlight, detail
-00:17 +53: /home/runner/work/formulanotes/formulanotes/lifekeep/test/widget_flow_test.dart: documents: add via form, list ↔ grid, search highlight, detail
-00:18 +54: /home/runner/work/formulanotes/formulanotes/lifekeep/test/widget_flow_test.dart: documents: add via form, list ↔ grid, search highlight, detail
-00:18 +55: /home/runner/work/formulanotes/formulanotes/lifekeep/test/widget_flow_test.dart: documents: add via form, list ↔ grid, search highlight, detail
-00:18 +56: /home/runner/work/formulanotes/formulanotes/lifekeep/test/widget_flow_test.dart: documents: add via form, list ↔ grid, search highlight, detail
-00:18 +57: /home/runner/work/formulanotes/formulanotes/lifekeep/test/widget_flow_test.dart: documents: add via form, list ↔ grid, search highlight, detail
-00:18 +58: /home/runner/work/formulanotes/formulanotes/lifekeep/test/widget_flow_test.dart: documents: add via form, list ↔ grid, search highlight, detail
-00:18 +59: /home/runner/work/formulanotes/formulanotes/lifekeep/test/widget_flow_test.dart: documents: add via form, list ↔ grid, search highlight, detail
-00:18 +60: /home/runner/work/formulanotes/formulanotes/lifekeep/test/widget_flow_test.dart: global search groups results and filters by type
-00:19 +61: /home/runner/work/formulanotes/formulanotes/lifekeep/test/widget_flow_test.dart: global search groups results and filters by type
-00:19 +62: /home/runner/work/formulanotes/formulanotes/lifekeep/test/widget_flow_test.dart: global search groups results and filters by type
-00:19 +63: /home/runner/work/formulanotes/formulanotes/lifekeep/test/widget_flow_test.dart: global search groups results and filters by type
-00:19 +64: /home/runner/work/formulanotes/formulanotes/lifekeep/test/widget_flow_test.dart: global search groups results and filters by type
-00:19 +65: /home/runner/work/formulanotes/formulanotes/lifekeep/test/widget_flow_test.dart: global search groups results and filters by type
-00:19 +66: /home/runner/work/formulanotes/formulanotes/lifekeep/test/widget_flow_test.dart: global search groups results and filters by type
-00:19 +67: /home/runner/work/formulanotes/formulanotes/lifekeep/test/widget_flow_test.dart: global search groups results and filters by type
-00:19 +68: /home/runner/work/formulanotes/formulanotes/lifekeep/test/widget_flow_test.dart: global search groups results and filters by type
-00:19 +69: All tests passed!
+00:09 +45: /home/runner/work/formulanotes/formulanotes/lifekeep/test/layout_stress_test.dart: no overflow at 412x915 text x1.0
+00:11 +46: /home/runner/work/formulanotes/formulanotes/lifekeep/test/widget_flow_test.dart: home → add task via form → Tasks tabs → complete → calendar → settings
+00:12 +47: /home/runner/work/formulanotes/formulanotes/lifekeep/test/widget_flow_test.dart: home → add task via form → Tasks tabs → complete → calendar → settings
+00:13 +48: /home/runner/work/formulanotes/formulanotes/lifekeep/test/widget_flow_test.dart: home → add task via form → Tasks tabs → complete → calendar → settings
+00:13 +49: /home/runner/work/formulanotes/formulanotes/lifekeep/test/reminder_permission_test.dart: home warns when reminders exist but exact alarms are not allowed
+00:15 +50: /home/runner/work/formulanotes/formulanotes/lifekeep/test/reminder_permission_test.dart: home warns when reminders exist but exact alarms are not allowed
+00:16 +51: /home/runner/work/formulanotes/formulanotes/lifekeep/test/widget_flow_test.dart: global search groups results and filters by type
+00:16 +52: /home/runner/work/formulanotes/formulanotes/lifekeep/test/reminder_permission_test.dart: no warning when everything is allowed
+00:16 +53: loading /home/runner/work/formulanotes/formulanotes/lifekeep/test/backup_test.dart
+00:17 +53: /home/runner/work/formulanotes/formulanotes/lifekeep/test/backup_test.dart: backup contains manifest, checksums, data and attachments; inspection passes
+00:17 +54: /home/runner/work/formulanotes/formulanotes/lifekeep/test/backup_test.dart: replace-restore into another install recreates everything incl. attachments
+00:17 +55: /home/runner/work/formulanotes/formulanotes/lifekeep/test/backup_test.dart: merge-restore skips duplicates and keeps existing data
+00:17 +56: /home/runner/work/formulanotes/formulanotes/lifekeep/test/backup_test.dart: merge-restore skips duplicates and keeps existing data
+00:17 +57: /home/runner/work/formulanotes/formulanotes/lifekeep/test/backup_test.dart: merge-restore skips duplicates and keeps existing data
+00:17 +58: /home/runner/work/formulanotes/formulanotes/lifekeep/test/backup_test.dart: merge-restore skips duplicates and keeps existing data
+00:17 +59: /home/runner/work/formulanotes/formulanotes/lifekeep/test/backup_test.dart: merge-restore skips duplicates and keeps existing data
+00:17 +60: /home/runner/work/formulanotes/formulanotes/lifekeep/test/backup_test.dart: merge-restore skips duplicates and keeps existing data
+00:17 +61: /home/runner/work/formulanotes/formulanotes/lifekeep/test/backup_test.dart: merge-restore skips duplicates and keeps existing data
+00:17 +62: /home/runner/work/formulanotes/formulanotes/lifekeep/test/backup_test.dart: merge-restore skips duplicates and keeps existing data
+00:17 +63: /home/runner/work/formulanotes/formulanotes/lifekeep/test/backup_test.dart: merge-restore skips duplicates and keeps existing data
+00:17 +64: /home/runner/work/formulanotes/formulanotes/lifekeep/test/backup_test.dart: corrupted data (checksum mismatch) is rejected
+00:17 +65: /home/runner/work/formulanotes/formulanotes/lifekeep/test/backup_test.dart: backup from a newer format version is rejected
+00:17 +66: /home/runner/work/formulanotes/formulanotes/lifekeep/test/backup_test.dart: non-zip and foreign zip files are rejected
+00:17 +67: /home/runner/work/formulanotes/formulanotes/lifekeep/test/backup_test.dart: invalid records are skipped with a warning (valid ones kept)
+00:17 +68: /home/runner/work/formulanotes/formulanotes/lifekeep/test/backup_test.dart: a failure during restore rolls back and leaves current data intact
+00:17 +69: /home/runner/work/formulanotes/formulanotes/lifekeep/test/backup_test.dart: auto backup runs when due, rotates old ones only after success
+00:17 +70: /home/runner/work/formulanotes/formulanotes/lifekeep/test/backup_test.dart: isDue respects frequency
+00:17 +71: /home/runner/work/formulanotes/formulanotes/lifekeep/test/backup_test.dart: delete all data removes content and attachments but keeps backups by default
+00:17 +72: All tests passed!

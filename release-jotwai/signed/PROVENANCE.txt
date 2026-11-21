@@ -1,1 +1,1 @@
-built by CI from commit 7308635 (bundleRelease, R8 minified, unsigned), versionCode 1 / versionName 1.0.0; signed locally with the Jotwai upload key (jarsigner SHA256withRSA). The same code's release build was installed and tested on an emulator in CI.
+built by CI from commit fd31879 (bundleRelease, R8 minified, unsigned), versionCode 2 / versionName 1.0.1; signed locally with the Jotwai upload key (jarsigner SHA256withRSA). The same code's release build was installed and tested on an emulator in CI.

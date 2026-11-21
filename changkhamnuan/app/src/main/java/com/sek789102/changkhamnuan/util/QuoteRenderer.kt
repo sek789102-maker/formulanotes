@@ -194,7 +194,7 @@ class QuoteRenderer(private val context: Context) {
         block(grandL.height + words.height + 14f) { cv, top ->
             cv.drawLine(w - margin - 260f, top + 2f, w - margin, top + 2f, Paint().apply { color = ink; strokeWidth = 1f })
             cv.save(); cv.translate(w - margin - colAmt - 208f, top + 6f); grandL.draw(cv); cv.restore()
-            cv.save(); cv.translate(w - margin - colAmt - 36f, top + 6f); grandV.draw(cv); cv.restore()
+            cv.save(); cv.translate(w - margin - 4f - (colAmt + 40f), top + 6f); grandV.draw(cv); cv.restore()
             cv.save(); cv.translate(margin, top + 8f + grandL.height); words.draw(cv); cv.restore()
         }
         if (project.withholding) {

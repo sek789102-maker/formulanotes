@@ -79,6 +79,7 @@ jobs:
               echo; ls -l "$OUT"/*.apk "$OUT"/*.aab 2>/dev/null | awk '{print $5, $9}'; } > "$OUT/artifact-inspection.txt"
           fi
           cat "$OUT/TEST_SUMMARY.txt" || true
+          if grep -q "uses-permission" "$OUT/artifact-inspection.txt"; then echo "PERMISSIONS FOUND (app should request none)"; grep uses-permission "$OUT/artifact-inspection.txt"; fi
 
       - name: Enable KVM for the emulator
         if: always()

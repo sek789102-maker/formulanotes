@@ -5,4 +5,4 @@ application-label:'ช่างคำนวณ'
 
 18818115 /home/runner/work/formulanotes/formulanotes/changkhamnuan-build/ChangKhamnuan-debug.apk
 1978773 /home/runner/work/formulanotes/formulanotes/changkhamnuan-build/ChangKhamnuan-release-testsigned.apk
-4175321 /home/runner/work/formulanotes/formulanotes/changkhamnuan-build/ChangKhamnuan-release-unsigned.aab
+4175090 /home/runner/work/formulanotes/formulanotes/changkhamnuan-build/ChangKhamnuan-release-unsigned.aab

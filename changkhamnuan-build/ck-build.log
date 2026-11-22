@@ -54,8 +54,8 @@ Unable to strip the following libraries, packaging them as they are: libandroidx
 > Task :app:generateReleaseRFile FROM-CACHE
 > Task :app:javaPreCompileRelease FROM-CACHE
 > Task :app:mergeReleaseArtProfile
-> Task :app:checkReleaseAarMetadata
 > Task :app:mapReleaseSourceSetPaths
+> Task :app:checkReleaseAarMetadata
 > Task :app:compileReleaseNavigationResources FROM-CACHE
 > Task :app:createReleaseCompatibleScreenManifests
 > Task :app:extractDeepLinksRelease FROM-CACHE
@@ -115,9 +115,9 @@ Exception in thread "AWT-EventQueue-0" java.lang.NullPointerException: Cannot in
 > Task :app:produceReleaseBundleIdeListingFile
 > Task :app:createReleaseBundleListingFileRedirect
 > Task :app:bundleRelease
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_2-1795321464208.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_2-1795322320832.json
 
-BUILD SUCCESSFUL in 3m 36s
+BUILD SUCCESSFUL in 3m 1s
 87 actionable tasks: 56 executed, 9 from cache, 22 up-to-date
 > Task :app:preBuild UP-TO-DATE
 > Task :app:preReleaseBuild UP-TO-DATE
@@ -172,7 +172,7 @@ BUILD SUCCESSFUL in 3m 36s
 > Task :app:packageRelease
 > Task :app:createReleaseApkListingFileRedirect
 > Task :app:assembleRelease
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_2-1795321681337.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_2-1795322502651.json
 
-BUILD SUCCESSFUL in 1m 3s
+BUILD SUCCESSFUL in 52s
 48 actionable tasks: 11 executed, 1 from cache, 36 up-to-date

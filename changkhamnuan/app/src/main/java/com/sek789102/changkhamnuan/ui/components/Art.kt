@@ -129,6 +129,7 @@ fun ArtHeader(
     subtitle: String,
     icon: ImageVector,
     height: Dp = 196.dp,
+    titleSize: Int = 30,
     extra: (@Composable () -> Unit)? = null
 ) {
     val bg = MaterialTheme.colorScheme.background
@@ -158,7 +159,7 @@ fun ArtHeader(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 GoldBadge(icon, 58.dp, 17.dp)
                 Spacer(Modifier.width(14.dp))
-                TwoTone(first, second)
+                TwoTone(first, second, titleSize)
             }
             Spacer(Modifier.height(8.dp))
             Text(subtitle, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.88f))

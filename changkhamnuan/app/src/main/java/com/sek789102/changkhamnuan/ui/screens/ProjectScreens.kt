@@ -112,7 +112,7 @@ fun ProjectsScreen(padding: PaddingValues, vm: AppViewModel, onOpen: (Long) -> U
         ) {
             item {
                 Box(Modifier.bleed(16.dp)) {
-                    ArtHeader(R.drawable.art_header_projects, "งาน / ", "ใบเสนอราคา", "รวมวัสดุ ค่าแรง แล้วส่งให้ลูกค้าทาง LINE", Icons.AutoMirrored.Outlined.Assignment, height = 184.dp)
+                    ArtHeader(R.drawable.art_header_projects, "งาน / ", "ใบเสนอราคา", "รวมวัสดุ ค่าแรง แล้วส่งให้ลูกค้าทาง LINE", Icons.AutoMirrored.Outlined.Assignment, height = 184.dp, titleSize = 23)
                 }
             }
             if (list != null && list.isEmpty()) {

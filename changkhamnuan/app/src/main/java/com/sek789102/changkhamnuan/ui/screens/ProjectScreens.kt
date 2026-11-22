@@ -1,5 +1,22 @@
 package com.sek789102.changkhamnuan.ui.screens
 
+import com.sek789102.changkhamnuan.R
+import com.sek789102.changkhamnuan.ui.components.ArtHeader
+import com.sek789102.changkhamnuan.ui.components.GoldBadge
+import com.sek789102.changkhamnuan.ui.components.Panel
+import com.sek789102.changkhamnuan.ui.components.TwoTone
+import com.sek789102.changkhamnuan.ui.components.bleed
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.automirrored.outlined.Assignment
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import androidx.compose.foundation.clickable
@@ -86,42 +103,67 @@ fun ProjectsScreen(padding: PaddingValues, vm: AppViewModel, onOpen: (Long) -> U
     val summaries by vm.summaries.collectAsStateWithLifecycle()
     var creating by remember { mutableStateOf(false) }
     val fmt = remember { SimpleDateFormat("d MMM yyyy", Locale.forLanguageTag("th-TH")) }
-    Column(Modifier.fillMaxSize().padding(padding)) {
+    val list = projects
+    Box(Modifier.fillMaxSize().padding(padding)) {
         LazyColumn(
-            Modifier.weight(1f).testTag("project_list"),
-            contentPadding = PaddingValues(16.dp),
+            Modifier.fillMaxSize().testTag("project_list"),
+            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 96.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            val list = projects
+            item {
+                Box(Modifier.bleed(16.dp)) {
+                    ArtHeader(R.drawable.art_header_projects, "งาน / ", "ใบเสนอราคา", "รวมวัสดุ ค่าแรง แล้วส่งให้ลูกค้าทาง LINE", Icons.AutoMirrored.Outlined.Assignment, height = 184.dp)
+                }
+            }
             if (list != null && list.isEmpty()) {
                 item {
-                    Column(Modifier.fillMaxWidth().padding(vertical = 48.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(Icons.Outlined.WorkOutline, null, Modifier.size(56.dp), tint = MaterialTheme.colorScheme.secondary)
-                        Text("ยังไม่มีงาน", style = MaterialTheme.typography.titleMedium)
-                        Text("คำนวณวัสดุแล้วกด “เพิ่มลงงาน” หรือสร้างงานใหม่", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Column(Modifier.fillMaxWidth().padding(top = 12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                        Image(
+                            painterResource(R.drawable.art_empty_projects), null, contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxWidth().aspectRatio(1.9f).clip(RoundedCornerShape(24.dp))
+                        )
+                        Spacer(Modifier.height(12.dp))
+                        TwoTone("ยังไม่มี", "งาน", size = 28)
+                        Text(
+                            "คำนวณวัสดุแล้วกด “เพิ่มลงงาน” หรือสร้างงานใหม่",
+                            style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            textAlign = TextAlign.Center, modifier = Modifier.padding(top = 4.dp)
+                        )
+                        Button(
+                            onClick = { creating = true }, shape = RoundedCornerShape(50),
+                            modifier = Modifier.padding(top = 20.dp).width(230.dp).height(58.dp).testTag("new_project")
+                        ) {
+                            Icon(Icons.Outlined.Add, null, Modifier.size(26.dp)); Spacer(Modifier.width(10.dp))
+                            Text("งานใหม่", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                        }
                     }
                 }
             }
             items(list.orEmpty(), key = { it.id }) { p ->
                 val s = summaries[p.id]
-                Card(
-                    onClick = { onOpen(p.id) },
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
-                    modifier = Modifier.fillMaxWidth().testTag("project_${p.id}")
-                ) {
-                    Column(Modifier.padding(16.dp)) {
-                        Text(p.name, style = MaterialTheme.typography.titleMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                        if (p.customerName.isNotBlank()) Text(p.customerName, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        Row(Modifier.fillMaxWidth().padding(top = 6.dp)) {
-                            Text("${s?.count ?: 0} รายการ · แก้ไข ${fmt.format(Date(p.updatedAt))}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.weight(1f))
-                            Text("${Fmt.money(s?.total ?: 0.0)} บาท", style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.secondary)
+                Panel(Modifier.fillMaxWidth().testTag("project_${p.id}"), radius = 18.dp, onClick = { onOpen(p.id) }) {
+                    Row(Modifier.padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
+                        GoldBadge(Icons.AutoMirrored.Outlined.Assignment, 46.dp, 14.dp)
+                        Spacer(Modifier.width(12.dp))
+                        Column(Modifier.weight(1f)) {
+                            Text(p.name, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                            if (p.customerName.isNotBlank()) Text(p.customerName, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                            Text("${s?.count ?: 0} รายการ · แก้ไข ${fmt.format(Date(p.updatedAt))}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        }
+                        Column(horizontalAlignment = Alignment.End) {
+                            Text(Fmt.money(s?.total ?: 0.0), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.secondary)
+                            Text("บาท", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                     }
                 }
             }
         }
-        Row(Modifier.fillMaxWidth().padding(16.dp), horizontalArrangement = Arrangement.End) {
-            ExtendedFloatingActionButton(onClick = { creating = true }, icon = { Icon(Icons.Outlined.Add, null) }, text = { Text("งานใหม่") }, modifier = Modifier.testTag("new_project"))
+        if (!list.isNullOrEmpty()) {
+            ExtendedFloatingActionButton(
+                onClick = { creating = true }, icon = { Icon(Icons.Outlined.Add, null) }, text = { Text("งานใหม่", fontWeight = FontWeight.Bold) },
+                shape = RoundedCornerShape(50), containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp).testTag("new_project")
+            )
         }
     }
     if (creating) {

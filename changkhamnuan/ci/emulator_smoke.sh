@@ -9,10 +9,13 @@ adb wait-for-device
 adb install -r "$APK" > "$OUT/install.txt" 2>&1 || { cat "$OUT/install.txt"; exit 1; }
 adb logcat -c
 adb shell am start -n $ACT > /dev/null; sleep 8; shot 01-home
+tap_tag tab_prices; sleep 2; shot 01b-prices 1
+tap_tag tab_more; sleep 2; shot 01c-more 1
+tap_tag tab_projects; sleep 2; shot 01d-projects-empty 1
+tap_tag tab_calc; sleep 2
 
 for c in bricks plaster concrete tiles paint rebar; do
-  tap_tag "calc_$c" && sleep 2 && shot "02-calc-$c" 1
-  adb shell input keyevent 4; sleep 1
+  if tap_tag_s "calc_$c"; then sleep 2; shot "02-calc-$c" 1; adb shell input keyevent 4; sleep 1; fi
 done
 
 tap_tag calc_bricks; sleep 2

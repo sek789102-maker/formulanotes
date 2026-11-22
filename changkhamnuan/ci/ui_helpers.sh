@@ -17,3 +17,11 @@ PY
   done
   echo "tag not found: $1"; return 1
 }
+# Like tap_tag but scrolls the list down until the element appears (lazy lists only compose what is visible).
+tap_tag_s() {
+  for _ in 1 2 3 4 5; do
+    tap_tag "$1" > /dev/null 2>&1 && return 0
+    adb shell input swipe 540 1450 540 750 350; sleep 1
+  done
+  echo "tag not found after scrolling: $1"; return 1
+}

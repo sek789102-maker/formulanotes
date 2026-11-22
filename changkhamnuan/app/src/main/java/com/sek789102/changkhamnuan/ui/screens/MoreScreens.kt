@@ -21,13 +21,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
 import androidx.compose.material.icons.outlined.Backup
-import androidx.compose.material.icons.outlined.Restore
-import androidx.compose.material.icons.outlined.Storefront
 import androidx.compose.material.icons.outlined.SquareFoot
 import androidx.compose.material.icons.outlined.Tune
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -71,6 +68,39 @@ import com.sek789102.changkhamnuan.ui.components.ChoiceInput
 import com.sek789102.changkhamnuan.ui.components.ConfirmDialog
 import com.sek789102.changkhamnuan.ui.components.NumberInput
 import com.sek789102.changkhamnuan.ui.components.SectionTitle
+import com.sek789102.changkhamnuan.R
+import com.sek789102.changkhamnuan.ui.components.ArtHeader
+import com.sek789102.changkhamnuan.ui.components.FadedThumb
+import com.sek789102.changkhamnuan.ui.components.Gold
+import com.sek789102.changkhamnuan.ui.components.GoldBadge
+import com.sek789102.changkhamnuan.ui.components.GoldBrush
+import com.sek789102.changkhamnuan.ui.components.GoldSection
+import com.sek789102.changkhamnuan.ui.components.Panel
+import com.sek789102.changkhamnuan.ui.components.bleed
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.outlined.BrightnessMedium
+import androidx.compose.material.icons.outlined.Check
+import androidx.compose.material.icons.outlined.CloudUpload
+import androidx.compose.material.icons.outlined.DarkMode
+import androidx.compose.material.icons.outlined.History
+import androidx.compose.material.icons.outlined.Layers
+import androidx.compose.material.icons.outlined.LightMode
+import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Surface
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -79,6 +109,20 @@ import java.util.Date
 import java.util.Locale
 
 // ---------------------------------------------------------------- prices
+
+fun materialArt(key: String): Int = when {
+    key == "brick_mon" -> R.drawable.art_m_brick
+    key == "brick_aac" || key == "brick_block" -> R.drawable.art_m_aac
+    key == "cement_bag" -> R.drawable.art_m_cement_bag
+    key == "mortar_aac" || key == "plaster_bag" || key == "tile_adhesive" || key == "grout" -> R.drawable.art_m_powder
+    key == "sand" -> R.drawable.art_m_sand
+    key == "stone" -> R.drawable.art_m_gravel
+    key == "ready_mix" -> R.drawable.art_c_concrete
+    key == "tile_box" -> R.drawable.art_c_tiles
+    key.startsWith("paint") || key.startsWith("primer") -> R.drawable.art_c_paint
+    key.startsWith("rebar") -> R.drawable.art_m_rebar
+    else -> R.drawable.art_m_cement_bag
+}
 
 @Composable
 fun PricesScreen(padding: PaddingValues, vm: AppViewModel) {
@@ -89,35 +133,55 @@ fun PricesScreen(padding: PaddingValues, vm: AppViewModel) {
         ConfirmDialog("ลบราคา ${c.name}?", "งานที่เพิ่มไปแล้วไม่เปลี่ยน แต่การคำนวณครั้งต่อไปจะไม่มีราคานี้", "ลบราคา",
             onDismiss = { confirmDeletePrice = null }) { vm.setPrice(c.key, null) }
     }
-    LazyColumn(Modifier.fillMaxSize().padding(padding).testTag("price_list"), contentPadding = PaddingValues(16.dp)) {
-        if (prices.isEmpty()) {
-            item {
-                androidx.compose.material3.Card(
-                    colors = androidx.compose.material3.CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
-                    modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
-                ) {
+    LazyColumn(
+        Modifier.fillMaxSize().padding(padding).testTag("price_list"),
+        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        item {
+            Box(Modifier.bleed(16.dp)) {
+                ArtHeader(R.drawable.art_header_prices, "ราคา", "วัสดุ", "ราคาจากร้านของคุณ ใช้กับทุกงาน", Icons.Outlined.Layers)
+            }
+        }
+        item {
+            Panel(Modifier.fillMaxWidth(), radius = 18.dp) {
+                Row(Modifier.padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Box(Modifier.size(36.dp).clip(CircleShape).background(GoldBrush), contentAlignment = Alignment.Center) {
+                        Text("i", style = MaterialTheme.typography.titleMedium, color = Color(0xFF1C1400), fontWeight = FontWeight.Bold)
+                    }
+                    Spacer(Modifier.width(12.dp))
                     Text(
-                        "ใส่ราคาจากร้านที่คุณซื้อจริงครั้งเดียว แล้วแอปจะคิดค่าวัสดุและเติมราคาในใบเสนอราคาให้ทุกงาน",
-                        style = MaterialTheme.typography.bodyMedium, modifier = Modifier.padding(14.dp)
+                        "ใส่ราคาวัสดุที่คุณซื้อจริงครั้งเดียว แล้วแอปจะคิดค่าวัสดุและเติมราคาในใบเสนอราคาให้ทุกงาน",
+                        style = MaterialTheme.typography.bodyMedium
                     )
                 }
             }
         }
         items(Catalog.items, key = { it.key }) { c ->
             val p = prices[c.key]
-            ListItem(
-                headlineContent = { Text(c.name) },
-                supportingContent = { Text("ต่อ${c.unit}") },
-                trailingContent = {
-                    Text(
-                        if (p != null) "${Fmt.money(p)} บาท" else "ใส่ราคา",
-                        style = MaterialTheme.typography.titleSmall,
-                        color = if (p != null) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.secondary
-                    )
-                },
-                modifier = Modifier.clickable { editing = c }.testTag("price_${c.key}")
-            )
-            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+            Panel(Modifier.fillMaxWidth().height(86.dp).testTag("price_${c.key}"), radius = 18.dp, onClick = { editing = c }) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    FadedThumb(materialArt(c.key), Modifier.width(108.dp).fillMaxHeight())
+                    Column(Modifier.weight(1f).padding(horizontal = 8.dp)) {
+                        Text(c.name, style = MaterialTheme.typography.titleMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        Text("ต่อ${c.unit}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                    Surface(
+                        shape = RoundedCornerShape(50), color = Color.Transparent,
+                        border = BorderStroke(1.5.dp, if (p != null) Gold else Gold.copy(alpha = 0.6f)),
+                        modifier = Modifier.padding(end = 12.dp)
+                    ) {
+                        Row(Modifier.padding(start = 12.dp, end = 6.dp, top = 6.dp, bottom = 6.dp), verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                if (p != null) "${Fmt.money(p)} ฿" else "ใส่ราคา",
+                                style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.SemiBold,
+                                color = MaterialTheme.colorScheme.secondary
+                            )
+                            Icon(Icons.AutoMirrored.Outlined.KeyboardArrowRight, null, tint = MaterialTheme.colorScheme.secondary, modifier = Modifier.size(20.dp))
+                        }
+                    }
+                }
+            }
         }
     }
     editing?.let { c ->
@@ -161,55 +225,112 @@ fun MoreScreen(padding: PaddingValues, vm: AppViewModel, onProfile: () -> Unit, 
             withContext(Dispatchers.IO) { context.contentResolver.openInputStream(uri)?.use { vm.importBackup(it) } }
         }
     }
-    Column(Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState()).padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        NavRow(Icons.Outlined.Storefront, "ข้อมูลร้าน / ช่าง", if (s.profile.isEmpty) "ยังไม่ได้ตั้ง — แสดงบนใบเสนอราคา" else s.profile.shopName.ifBlank { s.profile.ownerName }, "nav_profile", onProfile)
-        NavRow(Icons.Outlined.Tune, "อัตราการใช้วัสดุ", "ปรับสูตร เช่น อิฐต่อ ตร.ม. ปูนต่อถุง สีต่อแกลลอน", "nav_rates", onRates)
-        NavRow(Icons.Outlined.SquareFoot, "แปลงหน่วย", "ตร.ม. ↔ ตร.วา · ไร่ · ฟุต · คิว", "nav_converter", onConverter)
-
-        SectionTitle("ธีม")
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            listOf(ThemeMode.SYSTEM to "ตามระบบ", ThemeMode.LIGHT to "สว่าง", ThemeMode.DARK to "มืด").forEach { (m, l) ->
-                FilterChip(selected = s.theme == m, onClick = { vm.setTheme(m) }, label = { Text(l) })
-            }
+    Column(Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState())) {
+        ArtHeader(R.drawable.art_header_more, "เพิ่ม", "เติม", "ข้อมูลร้าน · สูตร · สำรองข้อมูล", Icons.Outlined.Settings)
+        Column(Modifier.padding(horizontal = 16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            NavCard(Icons.Outlined.Person, "ข้อมูลร้าน / ช่าง", if (s.profile.isEmpty) "ยังไม่ได้ตั้งค่า — แสดงบนใบเสนอราคา" else s.profile.shopName.ifBlank { s.profile.ownerName }, "nav_profile", onProfile)
+            NavCard(Icons.Outlined.Tune, "อัตราการใช้วัสดุ", "ปรับสูตร เช่น อิฐต่อ ตร.ม. ปูนต่อถุง สีต่อแกลลอน", "nav_rates", onRates)
+            NavCard(Icons.Outlined.SquareFoot, "แปลงหน่วย", "ตร.ม. ↔ ตร.วา · ไร่ · ฟุต · คิว", "nav_converter", onConverter)
         }
+        Column(Modifier.padding(horizontal = 16.dp)) {
+            GoldSection("ธีม")
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                listOf(
+                    Triple(ThemeMode.SYSTEM, "ตามระบบ", Icons.Outlined.BrightnessMedium),
+                    Triple(ThemeMode.LIGHT, "สว่าง", Icons.Outlined.LightMode),
+                    Triple(ThemeMode.DARK, "มืด", Icons.Outlined.DarkMode)
+                ).forEach { (m, l, ic) -> ThemeChip(l, ic, s.theme == m, Modifier.weight(1f).testTag("theme_${m.name.lowercase()}")) { vm.setTheme(m) } }
+            }
 
-        SectionTitle("สำรองและกู้คืน")
-        Text(
-            "บันทึกงาน ราคา อัตรา และข้อมูลร้านทั้งหมดเป็นไฟล์เดียว เก็บไว้ใน Google Drive หรือส่งเข้า LINE ตัวเอง ใช้ย้ายเครื่องได้",
-            style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        Text(
-            if (s.lastBackupAt > 0) "สำรองล่าสุด " + SimpleDateFormat("d MMM yyyy HH:mm", Locale.forLanguageTag("th-TH")).format(Date(s.lastBackupAt)) else "ยังไม่เคยสำรองข้อมูล",
-            style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.secondary
-        )
-        Row(horizontalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.padding(vertical = 6.dp)) {
-            FilledTonalButton(onClick = {
-                exporter.launch("changkhamnuan_backup_" + SimpleDateFormat("yyyyMMdd_HHmm", Locale.US).format(Date()) + ".json")
-            }, modifier = Modifier.weight(1f).testTag("backup_export")) {
-                Icon(Icons.Outlined.Backup, null); Spacer(Modifier.width(6.dp)); Text("สำรองข้อมูล")
+            GoldSection("สำรองและกู้คืน")
+            Panel(Modifier.fillMaxWidth()) {
+                Column(Modifier.padding(16.dp)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Outlined.CloudUpload, null, tint = MaterialTheme.colorScheme.secondary, modifier = Modifier.size(52.dp))
+                        Spacer(Modifier.width(14.dp))
+                        Column(Modifier.weight(1f)) {
+                            Text(
+                                "บันทึกงาน ราคา อัตรา และข้อมูลร้านทั้งหมดเป็นไฟล์เดียว เก็บไว้ใน Google Drive หรือส่งเข้า LINE ตัวเอง ใช้ย้ายเครื่องได้",
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                            Text(
+                                if (s.lastBackupAt > 0) "สำรองล่าสุด " + SimpleDateFormat("d MMM yyyy HH:mm", Locale.forLanguageTag("th-TH")).format(Date(s.lastBackupAt)) else "ยังไม่เคยสำรองข้อมูล",
+                                style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.secondary, modifier = Modifier.padding(top = 4.dp)
+                            )
+                        }
+                    }
+                    Row(horizontalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.padding(top = 14.dp)) {
+                        Button(
+                            onClick = { exporter.launch("changkhamnuan_backup_" + SimpleDateFormat("yyyyMMdd_HHmm", Locale.US).format(Date()) + ".json") },
+                            shape = RoundedCornerShape(50), modifier = Modifier.weight(1f).height(50.dp).testTag("backup_export")
+                        ) { Icon(Icons.Outlined.Backup, null); Spacer(Modifier.width(6.dp)); Text("สำรองข้อมูล", fontWeight = FontWeight.SemiBold) }
+                        OutlinedButton(
+                            onClick = { importer.launch(arrayOf("application/json", "text/plain", "application/octet-stream")) },
+                            shape = RoundedCornerShape(50), border = BorderStroke(1.5.dp, Gold),
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.secondary),
+                            modifier = Modifier.weight(1f).height(50.dp).testTag("backup_import")
+                        ) { Icon(Icons.Outlined.History, null); Spacer(Modifier.width(6.dp)); Text("กู้คืน", fontWeight = FontWeight.SemiBold) }
+                    }
+                }
             }
-            OutlinedButton(onClick = { importer.launch(arrayOf("application/json", "text/plain", "application/octet-stream")) }, modifier = Modifier.weight(1f).testTag("backup_import")) {
-                Icon(Icons.Outlined.Restore, null); Spacer(Modifier.width(6.dp)); Text("กู้คืน")
+
+            GoldSection("เกี่ยวกับ")
+            Panel(Modifier.fillMaxWidth()) {
+                Row(Modifier.padding(16.dp)) {
+                    Box(Modifier.size(44.dp).clip(CircleShape).background(GoldBrush), contentAlignment = Alignment.Center) {
+                        Text("i", style = MaterialTheme.typography.titleLarge, color = Color(0xFF1C1400), fontWeight = FontWeight.Bold)
+                    }
+                    Spacer(Modifier.width(14.dp))
+                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Text("• ใช้งานออฟไลน์ทั้งหมด ไม่มีโฆษณา ไม่ต้องสมัครบัญชี ไม่ขอสิทธิ์ใดๆ ในเครื่อง", style = MaterialTheme.typography.bodyMedium)
+                        Text("• ปริมาณวัสดุเป็นค่าประมาณจากอัตรามาตรฐาน (เช่น ตารางราคากลางงานก่อสร้าง) ควรตรวจสอบและเผื่อตามหน้างาน งานโครงสร้างให้ใช้ตามแบบวิศวกร", style = MaterialTheme.typography.bodyMedium)
+                        Text("• ไฟล์สำรองข้อมูลไม่ได้เข้ารหัส ควรเก็บไว้ในที่ปลอดภัย", style = MaterialTheme.typography.bodyMedium)
+                    }
+                }
             }
+            Text("เวอร์ชัน ${BuildConfig.VERSION_NAME}", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 10.dp, bottom = 24.dp))
         }
-
-        SectionTitle("เกี่ยวกับ")
-        Text("• ใช้งานออฟไลน์ทั้งหมด ไม่มีโฆษณา ไม่ต้องสมัครบัญชี ไม่ขอสิทธิ์ใดๆ ในเครื่อง", style = MaterialTheme.typography.bodyMedium)
-        Text("• ปริมาณวัสดุเป็นค่าประมาณจากอัตรามาตรฐาน (เช่น ตารางราคากลางงานก่อสร้าง) ควรตรวจสอบและเผื่อตามหน้างาน งานโครงสร้างให้ใช้ตามแบบวิศวกร", style = MaterialTheme.typography.bodyMedium)
-        Text("• ไฟล์สำรองข้อมูลไม่ได้เข้ารหัส ควรเก็บไว้ในที่ปลอดภัย", style = MaterialTheme.typography.bodyMedium)
-        Text("เวอร์ชัน ${BuildConfig.VERSION_NAME}", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 8.dp, bottom = 24.dp))
     }
 }
 
 @Composable
-private fun NavRow(icon: ImageVector, title: String, sub: String, tag: String, onClick: () -> Unit) {
-    ListItem(
-        headlineContent = { Text(title) },
-        supportingContent = { Text(sub) },
-        leadingContent = { Icon(icon, null, tint = MaterialTheme.colorScheme.secondary) },
-        trailingContent = { Icon(Icons.AutoMirrored.Outlined.KeyboardArrowRight, null) },
-        modifier = Modifier.clickable(onClick = onClick).testTag(tag)
-    )
+private fun NavCard(icon: ImageVector, title: String, sub: String, tag: String, onClick: () -> Unit) {
+    Panel(Modifier.fillMaxWidth().testTag(tag), onClick = onClick) {
+        Box(Modifier.matchParentSize().background(Brush.horizontalGradient(listOf(Gold.copy(alpha = 0.10f), Color.Transparent))))
+        Row(Modifier.padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
+            GoldBadge(icon, 56.dp, 16.dp)
+            Spacer(Modifier.width(14.dp))
+            Column(Modifier.weight(1f)) {
+                Text(title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                Text(sub, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
+            Icon(Icons.AutoMirrored.Outlined.KeyboardArrowRight, null, modifier = Modifier.size(28.dp))
+        }
+    }
+}
+
+@Composable
+private fun ThemeChip(label: String, icon: ImageVector, selected: Boolean, modifier: Modifier, onClick: () -> Unit) {
+    Box(modifier) {
+        Surface(
+            onClick = onClick, shape = RoundedCornerShape(50),
+            color = if (selected) Gold.copy(alpha = 0.10f) else MaterialTheme.colorScheme.surfaceContainerHigh,
+            border = if (selected) BorderStroke(2.dp, Gold) else BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+            modifier = Modifier.fillMaxWidth().padding(top = 6.dp, end = 6.dp).height(50.dp)
+        ) {
+            Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
+                Icon(icon, null, tint = if (selected || icon == Icons.Outlined.LightMode) Gold else MaterialTheme.colorScheme.onSurface, modifier = Modifier.size(22.dp))
+                Spacer(Modifier.width(8.dp))
+                Text(label, style = MaterialTheme.typography.labelLarge, color = if (selected) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onSurface)
+            }
+        }
+        if (selected) {
+            Box(
+                Modifier.align(Alignment.TopEnd).size(22.dp).clip(CircleShape).background(Gold),
+                contentAlignment = Alignment.Center
+            ) { Icon(Icons.Outlined.Check, null, tint = Color(0xFF1C1400), modifier = Modifier.size(15.dp)) }
+        }
+    }
 }
 
 // ---------------------------------------------------------------- profile

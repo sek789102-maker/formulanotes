@@ -78,6 +78,25 @@ import com.sek789102.changkhamnuan.ui.components.ChoiceInput
 import com.sek789102.changkhamnuan.ui.components.KeyValueRow
 import com.sek789102.changkhamnuan.ui.components.NumberInput
 import com.sek789102.changkhamnuan.ui.components.SectionTitle
+import com.sek789102.changkhamnuan.R
+import com.sek789102.changkhamnuan.ui.components.ArtHeader
+import com.sek789102.changkhamnuan.ui.components.CornerGlow
+import com.sek789102.changkhamnuan.ui.components.GoArrow
+import com.sek789102.changkhamnuan.ui.components.GoldBadge
+import com.sek789102.changkhamnuan.ui.components.GoldPill
+import com.sek789102.changkhamnuan.ui.components.Panel
+import com.sek789102.changkhamnuan.ui.components.bleed
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
+import androidx.compose.material.icons.outlined.Bolt
+import androidx.compose.material.icons.outlined.Calculate
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 
 fun calcIcon(id: String): ImageVector = when (id) {
     "bricks" -> Icons.Outlined.ViewModule
@@ -89,37 +108,61 @@ fun calcIcon(id: String): ImageVector = when (id) {
     else -> Icons.Outlined.SquareFoot
 }
 
+fun calcArt(id: String): Int = when (id) {
+    "bricks" -> R.drawable.art_c_bricks
+    "plaster" -> R.drawable.art_c_plaster
+    "concrete" -> R.drawable.art_c_concrete
+    "tiles" -> R.drawable.art_c_tiles
+    "paint" -> R.drawable.art_c_paint
+    "rebar" -> R.drawable.art_c_rebar
+    else -> R.drawable.art_c_converter
+}
+
 @Composable
 fun CalcHomeScreen(padding: PaddingValues, onOpen: (String) -> Unit, onConverter: () -> Unit) {
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(150.dp),
+        columns = GridCells.Adaptive(158.dp),
         modifier = Modifier.fillMaxSize().padding(padding).testTag("calc_grid"),
-        contentPadding = PaddingValues(16.dp),
+        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        items(Calculators.all, key = { it.id }) { c ->
-            CalcCard(calcIcon(c.id), c.title, c.subtitle, "calc_${c.id}") { onOpen(c.id) }
+        item(span = { GridItemSpan(maxLineSpan) }) {
+            Box(Modifier.bleed(16.dp)) {
+                ArtHeader(
+                    R.drawable.art_header_calc, "ช่าง", "คำนวณ", "เลือกงาน ใส่ขนาด ได้จำนวนที่ต้องซื้อทันที",
+                    Icons.Outlined.Calculate, height = 236.dp
+                ) { GoldPill(Icons.Outlined.Bolt, "ใช้งานออฟไลน์", "ไม่มีโฆษณา") }
+            }
         }
-        item { CalcCard(Icons.Outlined.SquareFoot, "แปลงหน่วย", "ตร.วา · ไร่ · ฟุต · คิว", "calc_converter", onConverter) }
+        items(Calculators.all, key = { it.id }) { c ->
+            CalcCard(calcIcon(c.id), calcArt(c.id), c.title, c.subtitle, "calc_${c.id}") { onOpen(c.id) }
+        }
+        item { CalcCard(Icons.Outlined.SquareFoot, R.drawable.art_c_converter, "แปลงหน่วย", "ตร.วา · ไร่ · ม² · คิว", "calc_converter", onConverter) }
     }
 }
 
 @Composable
-private fun CalcCard(icon: ImageVector, title: String, subtitle: String, tag: String, onClick: () -> Unit) {
-    Card(
-        onClick = onClick,
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
-        modifier = Modifier.fillMaxWidth().heightIn(min = 128.dp).testTag(tag)
-    ) {
-        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            androidx.compose.foundation.layout.Box(
-                Modifier.size(48.dp).background(MaterialTheme.colorScheme.primary, androidx.compose.foundation.shape.RoundedCornerShape(14.dp)),
-                contentAlignment = Alignment.Center
-            ) { Icon(icon, null, Modifier.size(28.dp), tint = MaterialTheme.colorScheme.onPrimary) }
-            Text(title, style = MaterialTheme.typography.titleMedium)
-            Text(subtitle, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 2, overflow = TextOverflow.Ellipsis)
+private fun CalcCard(icon: ImageVector, art: Int, title: String, subtitle: String, tag: String, onClick: () -> Unit) {
+    Panel(Modifier.fillMaxWidth().height(176.dp).testTag(tag), radius = 22.dp, onClick = onClick) {
+        val base = MaterialTheme.colorScheme.surfaceContainerHigh
+        Image(
+            painterResource(art), null, contentScale = ContentScale.Crop,
+            modifier = Modifier.align(Alignment.TopEnd).fillMaxWidth(0.62f).fillMaxHeight(0.66f)
+        )
+        Box(Modifier.matchParentSize().background(Brush.horizontalGradient(0.30f to base, 0.62f to base.copy(alpha = 0.35f), 0.85f to Color.Transparent)))
+        Box(Modifier.matchParentSize().background(Brush.verticalGradient(0.40f to Color.Transparent, 0.70f to MaterialTheme.colorScheme.surfaceContainerLow)))
+        CornerGlow(Modifier.matchParentSize())
+        Column(Modifier.padding(14.dp)) {
+            GoldBadge(icon, 50.dp, 15.dp)
+            Spacer(Modifier.height(10.dp))
+            Text(title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            Text(
+                subtitle, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 2, overflow = TextOverflow.Ellipsis, modifier = Modifier.padding(end = 34.dp)
+            )
         }
+        GoArrow(Icons.AutoMirrored.Outlined.KeyboardArrowRight, Modifier.align(Alignment.BottomEnd).padding(10.dp))
     }
 }
 

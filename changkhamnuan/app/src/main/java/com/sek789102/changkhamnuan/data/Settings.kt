@@ -32,7 +32,7 @@ data class BusinessProfile(
 }
 
 data class Settings(
-    val theme: ThemeMode = ThemeMode.SYSTEM,
+    val theme: ThemeMode = ThemeMode.DARK,
     val profile: BusinessProfile = BusinessProfile(),
     /** User changes to material usage rates (key → value). */
     val rateOverrides: Map<String, Double> = emptyMap(),
@@ -54,7 +54,7 @@ class SettingsRepository(private val context: Context) {
         .map { it.toSettings() }
 
     private fun Preferences.toSettings() = Settings(
-        theme = ThemeMode.entries.firstOrNull { it.name == this[K.THEME] } ?: ThemeMode.SYSTEM,
+        theme = ThemeMode.entries.firstOrNull { it.name == this[K.THEME] } ?: ThemeMode.DARK,
         profile = profileFromJson(this[K.PROFILE]),
         rateOverrides = ratesFromJson(this[K.RATES]),
         lastBackupAt = this[K.LAST_BACKUP] ?: 0L,

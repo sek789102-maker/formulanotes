@@ -10,18 +10,13 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Calculate
-import androidx.compose.material.icons.outlined.Engineering
 import androidx.compose.material.icons.outlined.MoreHoriz
 import androidx.compose.material.icons.outlined.Sell
 import androidx.compose.material.icons.outlined.WorkOutline
-import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -32,13 +27,23 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sek789102.changkhamnuan.ui.AppViewModel
-import com.sek789102.changkhamnuan.ui.components.TabHeader
+import com.sek789102.changkhamnuan.ui.components.FloatingNavBar
+import com.sek789102.changkhamnuan.ui.components.isDarkUi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsTopHeight
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.platform.LocalView
+import androidx.core.view.WindowCompat
 import com.sek789102.changkhamnuan.ui.screens.CalcHomeScreen
 import com.sek789102.changkhamnuan.ui.screens.CalcScreen
 import com.sek789102.changkhamnuan.ui.screens.ConverterScreen
@@ -99,36 +104,28 @@ class MainActivity : ComponentActivity() {
         BackHandler(enabled = stack.size > 1) { pop() }
 
         val current = stack.last()
+        val view = LocalView.current
+        val darkTabs = isDarkUi() && current.startsWith("tab:")
+        SideEffect {
+            val w = (view.context as? android.app.Activity)?.window ?: return@SideEffect
+            WindowCompat.getInsetsController(w, view).isAppearanceLightStatusBars = !darkTabs
+        }
         when {
             current.startsWith("tab:") -> {
                 val tab = current.removePrefix("tab:").toIntOrNull() ?: 0
                 Scaffold(
                     snackbarHost = { SnackbarHost(snackbar) },
-                    topBar = {
-                        when (tab) {
-                            0 -> TabHeader("ช่างคำนวณ", "เลือกงาน ใส่ขนาด ได้จำนวนที่ต้องซื้อทันที", Icons.Outlined.Engineering)
-                            1 -> TabHeader("งาน / ใบเสนอราคา", "รวมวัสดุ ค่าแรง แล้วส่งให้ลูกค้าทาง LINE")
-                            2 -> TabHeader("ราคาวัสดุ", "ราคาจากร้านของคุณ ใช้กับทุกงาน")
-                            else -> TabHeader("เพิ่มเติม", "ข้อมูลร้าน · สูตร · สำรองข้อมูล")
-                        }
-                    },
+                    contentWindowInsets = WindowInsets(0, 0, 0, 0),
                     bottomBar = {
-                        NavigationBar {
+                        FloatingNavBar(
                             listOf(
                                 Triple("คำนวณ", Icons.Outlined.Calculate, "tab_calc"),
                                 Triple("งาน", Icons.Outlined.WorkOutline, "tab_projects"),
                                 Triple("ราคาวัสดุ", Icons.Outlined.Sell, "tab_prices"),
                                 Triple("เพิ่มเติม", Icons.Outlined.MoreHoriz, "tab_more")
-                            ).forEachIndexed { i, (label, icon, tag) ->
-                                NavigationBarItem(
-                                    selected = tab == i,
-                                    onClick = { stack.clear(); stack.add("tab:$i") },
-                                    icon = { Icon(icon, null) },
-                                    label = { Text(label) },
-                                    modifier = Modifier.testTag(tag)
-                                )
-                            }
-                        }
+                            ),
+                            tab
+                        ) { i -> stack.clear(); stack.add("tab:$i") }
                     }
                 ) { padding ->
                     when (tab) {
@@ -137,6 +134,11 @@ class MainActivity : ComponentActivity() {
                         2 -> PricesScreen(padding, vm)
                         else -> MoreScreen(padding, vm, onProfile = { push(Routes.PROFILE) }, onRates = { push(Routes.RATES) }, onConverter = { push(Routes.CONVERTER) })
                     }
+                    // Keeps the status-bar icons readable while content scrolls under them.
+                    Box(
+                        Modifier.fillMaxWidth().windowInsetsTopHeight(WindowInsets.statusBars)
+                            .background(Brush.verticalGradient(listOf(MaterialTheme.colorScheme.background, MaterialTheme.colorScheme.background.copy(alpha = 0f))))
+                    )
                 }
             }
             current.startsWith("calc:") -> CalcScreen(current.removePrefix("calc:"), vm, snackbar, onBack = { pop() }, onOpenProject = { openProject(it) })

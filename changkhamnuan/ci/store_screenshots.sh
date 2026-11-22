@@ -24,7 +24,7 @@ tap_tag share_image; sleep 5; shot 7-share 1
 adb shell input keyevent 4; sleep 1; adb shell input keyevent 4; sleep 1
 adb shell am start -n $ACT > /dev/null; sleep 1
 tap_tag tab_prices; sleep 2; shot 8-prices 1
-tap_tag tab_more; sleep 1; tap_tag nav_converter; sleep 1; shot 9-converter 1
+tap_tag tab_more; sleep 2; shot 10-more 1; tap_tag nav_converter; sleep 1; shot 9-converter 1
 adb shell input keyevent 4; sleep 1
 # The quote image itself, as sent to customers
 adb shell "run-as $PKG sh -c 'ls cache/quotes'" > "$OUT/quote-files.txt" 2>&1 || true

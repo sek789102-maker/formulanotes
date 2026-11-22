@@ -17,11 +17,25 @@ PY
   done
   echo "tag not found: $1"; return 1
 }
-# Like tap_tag but scrolls the list down until the element appears (lazy lists only compose what is visible).
+# Like tap_tag but scrolls the list down until the element appears (lazy lists only compose what
+# is visible). One UI dump per step keeps it fast. Starts from the top of the list.
+find_tag() {
+  adb shell uiautomator dump /sdcard/ui.xml > /dev/null 2>&1
+  adb pull /sdcard/ui.xml /tmp/ui.xml > /dev/null 2>&1
+  python3 - "$1" <<'PY2'
+import re, sys
+xml = open('/tmp/ui.xml', encoding='utf-8').read()
+m = re.search(r'resource-id="%s"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"' % re.escape(sys.argv[1]), xml)
+if m:
+    a, b, c, d = map(int, m.groups())
+    if d - b > 20: print((a + c) // 2, (b + d) // 2)
+PY2
+}
 tap_tag_s() {
-  for _ in 1 2 3 4 5 6 7 8 9 10 11 12; do
-    tap_tag "$1" > /dev/null 2>&1 && return 0
-    adb shell input swipe 540 1450 540 750 350; sleep 1
+  for _ in $(seq 1 16); do
+    xy=$(find_tag "$1")
+    if [ -n "$xy" ]; then adb shell input tap $xy; return 0; fi
+    adb shell input swipe 540 1450 540 750 250; sleep 0.6
   done
   echo "tag not found after scrolling: $1"; return 1
 }

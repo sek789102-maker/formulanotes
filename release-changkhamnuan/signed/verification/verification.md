@@ -1,13 +1,13 @@
 # Signed release verification
 
-- Commit: b0b6830
+- Commit: 36c2596
 
-## App Bundle (ChangKhamnuan-1.2.0-3-release.aab)
+## App Bundle (ChangKhamnuan-1.3.0-4-release.aab)
 - ✅ bundletool validate: OK
 - ✅ jarsigner -verify: jar verified
 - ✅ signed by the upload certificate (SHA-256 matches upload-certificate-sha256.txt)
-- android:versionCode="3"
-- android:versionName="1.2.0"
+- android:versionCode="4"
+- android:versionName="1.3.0"
 - package="com.sek789102.changkhamnuan"
 - INTERNET permission entries: 0
 - ✅ universal APK built from the signed AAB installed on emulator (API 35)

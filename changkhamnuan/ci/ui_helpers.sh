@@ -31,7 +31,9 @@ if m:
     if d - b > 20: print((a + c) // 2, (b + d) // 2)
 PY2
 }
+scroll_top() { for _ in 1 2 3 4 5 6 7 8; do adb shell input swipe 540 500 540 1600 120; done; sleep 0.5; }
 tap_tag_s() {
+  [ "${2:-}" = "top" ] && scroll_top
   for _ in $(seq 1 16); do
     xy=$(find_tag "$1")
     if [ -n "$xy" ]; then adb shell input tap $xy; return 0; fi

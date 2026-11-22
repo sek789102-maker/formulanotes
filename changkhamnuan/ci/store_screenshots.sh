@@ -13,11 +13,11 @@ adb shell am force-stop $PKG; adb shell cmd statusbar collapse; adb shell am sta
 shot 1-calculators 6
 adb shell input swipe 540 1500 540 400 400; shot 1b-calculators-more 2
 adb shell input swipe 540 1500 540 400 400; shot 1c-calculators-outdoor 2
-tap_tag_s calc_roof; sleep 2; adb shell input swipe 540 1500 540 400 300; shot 11-roof-result 2
+tap_tag_s calc_roof top; sleep 2; adb shell input swipe 540 1500 540 400 300; shot 11-roof-result 2
 adb shell input keyevent 4; sleep 1
-tap_tag_s calc_tiles; sleep 2; adb shell input swipe 540 1500 540 500 300; shot 2-tiles-result 2
+tap_tag_s calc_tiles top; sleep 2; adb shell input swipe 540 1500 540 500 300; shot 2-tiles-result 2
 adb shell input keyevent 4; sleep 1
-tap_tag_s calc_bricks; sleep 2; adb shell input swipe 540 1500 540 400 300; shot 3-bricks-result 2
+tap_tag_s calc_bricks top; sleep 2; adb shell input swipe 540 1500 540 400 300; shot 3-bricks-result 2
 adb shell input keyevent 4; sleep 1
 tap_tag tab_projects; sleep 2; shot 4-projects 1
 adb shell uiautomator dump /sdcard/ui.xml > /dev/null 2>&1; adb pull /sdcard/ui.xml /tmp/ui.xml > /dev/null 2>&1

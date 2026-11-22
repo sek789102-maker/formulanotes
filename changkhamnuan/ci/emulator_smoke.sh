@@ -15,10 +15,10 @@ tap_tag tab_projects; sleep 2; shot 01d-projects-empty 1
 tap_tag tab_calc; sleep 2
 
 for c in concrete footing piles stairs rebar rebar_grid steel_section formwork excavation fill cutfill retaining road drain tanks slope bricks plaster drywall paint tiles flooring ceiling roof excavation fill yard fence pipes; do
-  if tap_tag_s "calc_$c"; then sleep 2; shot "02-calc-$c" 1; adb shell input keyevent 4; sleep 1; fi
+  if tap_tag_s "calc_$c" top; then sleep 2; shot "02-calc-$c" 1; adb shell input keyevent 4; sleep 1; fi
 done
 
-tap_tag_s calc_bricks; sleep 2
+tap_tag tab_calc; sleep 1; tap_tag_s calc_bricks top; sleep 2
 tap_tag in_length; adb shell input keyevent 123; for _ in 1 2 3; do adb shell input keyevent 67; done; adb shell input text "6"; adb shell input keyevent 111
 tap_tag add_to_project; sleep 2; shot 03-add-dialog 1
 tap_tag new_project_name; adb shell input text "Kitchen"; adb shell input keyevent 111

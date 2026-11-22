@@ -1,4 +1,4 @@
-# Google Play Console Checklist — ช่างคำนวณ 1.1.0
+# Google Play Console Checklist — ช่างคำนวณ 1.2.0
 
 สถานะ: ✅ = เตรียมไว้แล้ว/ตรวจแล้ว · ✍️ = **เจ้าของแอปต้องทำ/กรอกเอง** · ⚠️ = ต้องระวัง
 
@@ -37,11 +37,11 @@
 ## D. Release
 | รายการ | สถานะ | หมายเหตุ |
 |---|---|---|
-| Android App Bundle | ✅ | `signed/ChangKhamnuan-1.1.0-2-release.aab` เซ็นด้วย Upload key ของช่างคำนวณ |
+| Android App Bundle | ✅ | `signed/ChangKhamnuan-1.2.0-3-release.aab` เซ็นด้วย Upload key ของช่างคำนวณ |
 | Play App Signing | ✍️ | เลือก **"Use Google-generated key"** (ค่าเริ่มต้น) |
 | Upload key | ✅ | ส่งให้เจ้าของแยกต่างหาก (ไม่อยู่ใน GitHub) · SHA-256 ใน `signed/upload-certificate-sha256.txt` · **คนละกุญแจกับ LIFEKEEP และ จดไว้** |
 | targetSdk | ✅ | 36 |
-| versionCode / versionName | ✅ | 2 / 1.1.0 — ครั้งถัดไปต้องเพิ่ม `versionCode` ใน `changkhamnuan/app/build.gradle.kts` |
+| versionCode / versionName | ✅ | 3 / 1.2.0 — ครั้งถัดไปต้องเพิ่ม `versionCode` ใน `changkhamnuan/app/build.gradle.kts` |
 | Release notes | ✅ | RELEASE_NOTES.md |
 | Countries / pricing | ✍️ | เช่น ไทย · ฟรี |
 

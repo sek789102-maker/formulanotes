@@ -1,8 +1,8 @@
-# ช่างคำนวณ 1.1.0 — ไฟล์สำหรับ Google Play
+# ช่างคำนวณ 1.2.0 — ไฟล์สำหรับ Google Play
 
 | ไฟล์ | ใช้ทำอะไร |
 |---|---|
-| `signed/ChangKhamnuan-1.1.0-2-release.aab` | **อัปโหลดขึ้น Play Console** (เซ็นด้วย upload key แล้ว) |
+| `signed/ChangKhamnuan-1.2.0-3-release.aab` | **อัปโหลดขึ้น Play Console** (เซ็นด้วย upload key แล้ว) |
 | `signed/upload-certificate-sha256.txt` | ลายนิ้วมือใบรับรอง upload key (เปิดเผยได้) |
 | `signed/verification/verification.md` | ผลตรวจจาก CI |
 | `docs/PLAY_CONSOLE_CHECKLIST.md` | ขั้นตอนใน Play Console (✍️ = ต้องกรอกเอง) |

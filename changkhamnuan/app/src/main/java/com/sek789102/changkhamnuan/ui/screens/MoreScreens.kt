@@ -112,27 +112,29 @@ import java.util.Locale
 
 fun materialArt(key: String): Int = when {
     key == "brick_mon" -> R.drawable.art_m_brick
-    key == "brick_aac" || key == "brick_block" -> R.drawable.art_m_aac
+    key == "brick_aac" -> R.drawable.art_m_aac
+    key == "brick_block" -> R.drawable.art_m_block
     key == "cement_bag" -> R.drawable.art_m_cement_bag
-    key == "mortar_aac" || key == "plaster_bag" || key == "tile_adhesive" || key == "grout" -> R.drawable.art_m_powder
-    key == "sand" -> R.drawable.art_m_sand
+    key == "plaster_bag" -> R.drawable.art_m_powder
+    key == "mortar_aac" || key == "tile_adhesive" || key == "grout" -> R.drawable.art_m_mortar
+    key == "sand" || key == "fill_sand" -> R.drawable.art_m_sand
     key == "stone" -> R.drawable.art_m_gravel
-    key == "ready_mix" -> R.drawable.art_c_concrete
+    key == "ready_mix" || key == "lean_concrete" -> R.drawable.art_c_concrete
+    key == "plywood" -> R.drawable.art_c_footing
+    key.startsWith("rebar") -> R.drawable.art_m_rebar
     key == "tile_box" -> R.drawable.art_c_tiles
     key.startsWith("paint") || key.startsWith("primer") -> R.drawable.art_c_paint
-    key.startsWith("rebar") -> R.drawable.art_m_rebar
-    key == "lean_concrete" -> R.drawable.art_c_concrete
-    key == "plywood" -> R.drawable.art_c_retaining
     key.startsWith("floor_") || key == "skirting" -> R.drawable.art_c_flooring
-    key.startsWith("roof_") || key.startsWith("metal_") || key == "purlin" -> R.drawable.art_c_roof
+    key.startsWith("metal_") -> R.drawable.art_m_metal_sheet
+    key.startsWith("roof_") -> R.drawable.art_c_roof
+    key == "purlin" -> R.drawable.art_m_steel
     key == "c_stud" || key == "u_track" -> R.drawable.art_c_drywall
     key in setOf("gypsum_board", "c_line", "wall_angle", "hanger", "ceiling_tile", "main_tee", "cross_tee_120", "cross_tee_60") -> R.drawable.art_c_ceiling
     key.startsWith("pvc_") || key.startsWith("elbow_") || key.startsWith("tee_") || key.startsWith("socket_") || key == "pipe_clip" -> R.drawable.art_c_pipes
     key == "fill_soil" || key == "laterite" -> R.drawable.art_c_fill
-    key == "fill_sand" -> R.drawable.art_m_sand
     key == "haul_soil" -> R.drawable.art_c_excavation
     key == "wire_mesh" || key.startsWith("paver_") -> R.drawable.art_c_yard
-    key.startsWith("fence_") -> R.drawable.art_c_fence
+    key.startsWith("fence_") -> R.drawable.art_m_fence
     else -> R.drawable.art_m_cement_bag
 }
 

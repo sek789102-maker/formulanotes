@@ -61,6 +61,7 @@ object RateDefs {
         RateDef("rebar_lap", "ขนาดบรรจุ", "เผื่อทาบต่อ/ตัดเหล็ก", "%", 10.0, SRC_EST),
         // กำแพงกันดิน / รั้ว
         RateDef("retain_steel_kg_m3", "กำแพงกันดิน", "เหล็กเสริมต่อคอนกรีต 1 คิว", "กก./ลบ.ม.", 90.0, SRC_STRUCT),
+        RateDef("footing_steel_kg_m3", "ฐานราก", "เหล็กเสริมต่อคอนกรีต 1 คิว", "กก./ลบ.ม.", 80.0, SRC_STRUCT),
         RateDef("lean_thick", "กำแพงกันดิน", "คอนกรีตหยาบรองพื้น หนา", "ซม.", 5.0, SRC_EST),
         RateDef("fence_steel_kg_m3", "รั้ว", "เหล็กเสริมต่อคอนกรีต 1 คิว (เสา/คาน/ฐาน)", "กก./ลบ.ม.", 100.0, SRC_STRUCT),
         RateDef("fence_mesh_roll", "รั้ว", "ตาข่ายรั้ว 1 ม้วน ยาว", "ม.", 10.0, SRC_LABEL_GEN),

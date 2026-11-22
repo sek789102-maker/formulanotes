@@ -80,4 +80,12 @@ class ExtraCalculatorsTest {
         assertEquals(1.0, buy(p, "pvc_glue"), 0.0) // 8 + 12 + 6 = 26 joints
         assertEquals(20.0, buy(p, "pipe_clip"), 0.0)
     }
+
+    @Test fun `footings with pedestals`() {
+        // 6 × (1 × 1 × 0.3) + 6 × (0.2 × 0.2 × 1.0) = 2.04 m³, +5% = 2.142 → 2.5 คิว
+        val f = ExtraCalculators.footing.run(emptyMap(), r)
+        assertEquals(2.5, buy(f, "ready_mix"), 0.0)
+        assertEquals(6.0, f.laborBase, 0.0)
+        assertEquals(calcGroups.first().second.size, 4)
+    }
 }

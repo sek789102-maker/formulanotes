@@ -14,7 +14,7 @@ tap_tag tab_more; sleep 2; shot 01c-more 1
 tap_tag tab_projects; sleep 2; shot 01d-projects-empty 1
 tap_tag tab_calc; sleep 2
 
-for c in concrete rebar retaining bricks plaster drywall paint tiles flooring ceiling roof excavation fill yard fence pipes; do
+for c in concrete rebar footing retaining bricks plaster drywall paint tiles flooring ceiling roof excavation fill yard fence pipes; do
   if tap_tag_s "calc_$c"; then sleep 2; shot "02-calc-$c" 1; adb shell input keyevent 4; sleep 1; fi
 done
 

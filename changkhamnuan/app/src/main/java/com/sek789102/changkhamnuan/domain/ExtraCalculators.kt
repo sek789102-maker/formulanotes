@@ -65,6 +65,50 @@ object ExtraCalculators {
         }
     )
 
+    // ---- ฐานราก + ตอม่อ ----
+    val footing = Calculator(
+        id = "footing",
+        title = "ฐานราก",
+        subtitle = "ฐานแผ่ · ตอม่อ · คอนกรีตหยาบ",
+        fields = listOf(
+            NumberField("count", "จำนวนฐาน", "ฐาน", 6.0),
+            NumberField("w", "ฐานกว้าง", "ม.", 1.0),
+            NumberField("l", "ฐานยาว", "ม.", 1.0),
+            NumberField("t", "ฐานหนา", "ซม.", 30.0),
+            NumberField("pw", "ตอม่อ กว้าง", "ซม.", 20.0, "ใส่ 0 ถ้าไม่มีตอม่อ"),
+            NumberField("pd", "ตอม่อ ลึก", "ซม.", 20.0),
+            NumberField("ph", "ตอม่อ สูง", "ม.", 1.0),
+            mixField
+        ),
+        compute = { i, r ->
+            val n = pos(i.num("count")); val w = pos(i.num("w")); val l = pos(i.num("l")); val t = pos(i.num("t")) / 100
+            val pw = pos(i.num("pw")) / 100; val pd = pos(i.num("pd")) / 100; val ph = pos(i.num("ph"))
+            val pad = n * w * l * t
+            val ped = n * pw * pd * ph
+            val vol = pad + ped
+            val withWaste = vol * (1 + r["concrete_waste"] / 100)
+            val lean = n * (w + 0.1) * (l + 0.1) * r["lean_thick"] / 100
+            val steelKg = vol * r["footing_steel_kg_m3"]
+            val form = n * (2 * (w + l) * t + 2 * (pw + pd) * ph)
+            CalcResult(
+                facts = listOf(
+                    "คอนกรีตฐาน" to "${Fmt.n(pad, 3)} ลบ.ม.",
+                    "คอนกรีตตอม่อ" to "${Fmt.n(ped, 3)} ลบ.ม.",
+                    "รวมเผื่อ ${Fmt.n(r["concrete_waste"])}%" to "${Fmt.n(withWaste, 3)} ลบ.ม.",
+                    "พื้นที่ไม้แบบ" to "${Fmt.n(form)} ตร.ม.",
+                    "เหล็กเสริม (ประมาณ)" to "${Fmt.n(steelKg)} กก."
+                ),
+                materials = Calculators.concreteLines(withWaste, i.choice("mix"), r) + listOfNotNull(
+                    if (lean > 0) MaterialLine("lean_concrete", "คอนกรีตหยาบรองพื้น หนา ${Fmt.n(r["lean_thick"])} ซม.", lean, "ลบ.ม.", ceilTo(lean, 0.5), "คิว") else null,
+                    if (steelKg > 0) Calculators.rebarFromKg(steelKg, r, "≈ ${Fmt.n(steelKg)} กก. (${Fmt.n(r["footing_steel_kg_m3"])} กก./คิว) ขนาดจริงตามแบบ") else null,
+                    if (form > 0) MaterialLine("plywood", "ไม้อัดทำแบบ 4×8 ฟุต", form / 2.88, "แผ่น", ceilTo(form / 2.88), "แผ่น", "ถ้าไม่ใช้ซ้ำ · ใช้ซ้ำได้จะลดลง") else null
+                ),
+                laborBase = n, laborUnit = "ฐาน",
+                warnings = listOf("ขนาดฐาน ตอม่อ และเหล็กเสริมต้องใช้ตามแบบวิศวกร ตัวเลขนี้ใช้ตั้งงบและสั่งของ")
+            )
+        }
+    )
+
     // ---- ปูพื้น SPC / ลามิเนต / ไวนิล ----
     val flooring = Calculator(
         id = "flooring",
@@ -425,5 +469,5 @@ object ExtraCalculators {
         }
     )
 
-    val all = listOf(retaining, flooring, roof, ceiling, drywall, pipes, fill, excavation, yard, fence)
+    val all = listOf(retaining, footing, flooring, roof, ceiling, drywall, pipes, fill, excavation, yard, fence)
 }

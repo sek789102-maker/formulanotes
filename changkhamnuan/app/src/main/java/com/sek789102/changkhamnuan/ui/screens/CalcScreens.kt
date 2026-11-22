@@ -88,6 +88,7 @@ import com.sek789102.changkhamnuan.ui.components.GoldSection
 import androidx.compose.material.icons.outlined.Apps
 import androidx.compose.material.icons.outlined.Construction
 import androidx.compose.material.icons.outlined.Fence
+import androidx.compose.material.icons.outlined.Foundation
 import androidx.compose.material.icons.outlined.Landscape
 import androidx.compose.material.icons.outlined.Lightbulb
 import androidx.compose.material.icons.outlined.Plumbing
@@ -117,6 +118,7 @@ fun calcIcon(id: String): ImageVector = when (id) {
     "paint" -> Icons.Outlined.FormatPaint
     "rebar" -> Icons.Outlined.LinearScale
     "retaining" -> Icons.Outlined.Terrain
+    "footing" -> Icons.Outlined.Foundation
     "flooring" -> Icons.Outlined.ViewDay
     "roof" -> Icons.Outlined.Roofing
     "ceiling" -> Icons.Outlined.Lightbulb
@@ -137,6 +139,7 @@ fun calcArt(id: String): Int = when (id) {
     "paint" -> R.drawable.art_c_paint
     "rebar" -> R.drawable.art_c_rebar
     "retaining" -> R.drawable.art_c_retaining
+    "footing" -> R.drawable.art_c_footing
     "flooring" -> R.drawable.art_c_flooring
     "roof" -> R.drawable.art_c_roof
     "ceiling" -> R.drawable.art_c_ceiling
@@ -151,7 +154,7 @@ fun calcArt(id: String): Int = when (id) {
 
 /** Calculator sections on the home screen (every calculator must appear in one). */
 val calcGroups = listOf(
-    "งานโครงสร้าง" to listOf("concrete", "rebar", "retaining"),
+    "งานโครงสร้าง" to listOf("concrete", "rebar", "footing", "retaining"),
     "งานก่อ ฉาบ ผนัง สี" to listOf("bricks", "plaster", "drywall", "paint"),
     "งานพื้น ฝ้า หลังคา" to listOf("tiles", "flooring", "ceiling", "roof"),
     "งานดิน งานภายนอก" to listOf("excavation", "fill", "yard", "fence"),

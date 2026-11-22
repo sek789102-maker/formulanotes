@@ -22,8 +22,14 @@ object Catalog {
         CatalogItem("stone", "หิน", "คิว", G_MASON),
         CatalogItem("ready_mix", "คอนกรีตผสมเสร็จ", "คิว", G_CONC),
         CatalogItem("lean_concrete", "คอนกรีตหยาบ (ลีน)", "คิว", G_CONC),
-        CatalogItem("plywood", "ไม้อัดทำแบบ 4×8 ฟุต", "แผ่น", G_CONC)
+        CatalogItem("plywood", "ไม้อัดทำแบบ 4×8 ฟุต", "แผ่น", G_CONC),
+        CatalogItem("batten", "ไม้เคร่า", "ท่อน", G_CONC),
+        CatalogItem("prop", "ค้ำยัน", "ต้น", G_CONC),
+        CatalogItem("nails", "ตะปู", "กก.", G_CONC),
+        CatalogItem("pile_driven", "เสาเข็มตอก", "ต้น", G_CONC)
     ) + Calculators.rebarSizes.map { (n, _) -> CatalogItem("rebar_$n", "เหล็ก $n", "เส้น", G_CONC) } + listOf(
+        CatalogItem("tie_wire", "ลวดผูกเหล็ก", "กก.", G_CONC),
+        CatalogItem("steel_kg", "เหล็กรูปพรรณ (ราคาต่อ กก.)", "กก.", G_CONC),
         CatalogItem("tile_box", "กระเบื้อง", "กล่อง", G_FINISH),
         CatalogItem("tile_adhesive", "กาวซีเมนต์", "ถุง", G_FINISH),
         CatalogItem("grout", "ยาแนว", "ถุง", G_FINISH),
@@ -69,7 +75,14 @@ object Catalog {
         CatalogItem("paver_worm", "บล็อกตัวหนอน", "ก้อน", G_OUT),
         CatalogItem("paver_rect", "บล็อกปูพื้น 10×20 ซม.", "ก้อน", G_OUT),
         CatalogItem("fence_mesh", "ตาข่ายรั้ว", "ม้วน", G_OUT),
-        CatalogItem("fence_post", "เสาเหล็กรั้ว", "ต้น", G_OUT)
+        CatalogItem("fence_post", "เสาเหล็กรั้ว", "ต้น", G_OUT),
+        CatalogItem("crushed_rock", "หินคลุก", "คิว", G_OUT),
+        CatalogItem("dowel", "เหล็กเดือย", "ท่อน", G_OUT),
+        CatalogItem("joint_sealant", "วัสดุยาแนวรอยต่อถนน", "ม.", G_OUT),
+        CatalogItem("manhole", "บ่อพัก", "บ่อ", G_OUT)
+    ) + CivilCalculators.drainSizes.map { (id, d) -> CatalogItem("drain_pipe_$id", "ท่อระบายน้ำ คสล. Ø ${d.toInt()} ซม.", "ท่อน", G_OUT) } + listOf(
+        CatalogItem("septic_tank", "ถังบำบัดสำเร็จรูป", "ถัง", G_PIPE),
+        CatalogItem("water_tank", "ถังเก็บน้ำ", "ถัง", G_PIPE)
     )
 
     val byKey = items.associateBy { it.key }

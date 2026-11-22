@@ -18,6 +18,17 @@ import com.sek789102.changkhamnuan.domain.CalcResult
 import com.sek789102.changkhamnuan.domain.ItemKind
 import com.sek789102.changkhamnuan.domain.Rates
 import com.sek789102.changkhamnuan.util.QuoteRenderer
+import com.sek789102.changkhamnuan.util.StageDoc
+import com.sek789102.changkhamnuan.util.BoqCsv
+import com.sek789102.changkhamnuan.data.InstallmentEntity
+import com.sek789102.changkhamnuan.data.CostEntity
+import com.sek789102.changkhamnuan.domain.Contractor
+import com.sek789102.changkhamnuan.domain.DocType
+import com.sek789102.changkhamnuan.domain.Fmt
+import com.sek789102.changkhamnuan.domain.OrderLine
+import com.sek789102.changkhamnuan.domain.QuoteLine
+import com.sek789102.changkhamnuan.domain.QuoteMath
+import com.sek789102.changkhamnuan.domain.QuoteOptions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -91,27 +102,71 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     fun resetRates() = viewModelScope.launch { settingsRepo.setRates(emptyMap()); say("คืนค่ามาตรฐานทั้งหมดแล้ว") }
     fun setOnboarded() = viewModelScope.launch { settingsRepo.setOnboarded() }
 
-    // ---- quote sharing ----
-    /** Builds the quote file in the cache folder and returns a share intent for it. */
-    suspend fun quoteShareIntent(projectId: Long, asImage: Boolean): Intent? = withContext(Dispatchers.IO) {
+    // ---- documents ----
+    /** Builds a document (quote / invoice / receipt / BOQ, optionally for one payment stage) and returns a share intent. */
+    suspend fun docShareIntent(projectId: Long, type: DocType, asImage: Boolean, stageId: Long? = null): Intent? = withContext(Dispatchers.IO) {
         runCatching {
             val p = repo.getProject(projectId) ?: return@runCatching null
             val items = repo.getItems(projectId)
             val profile = settingsRepo.settings.first().profile
+            val stage = stageId?.let { sid ->
+                val all = repo.getInstallments(projectId)
+                val idx = all.indexOfFirst { it.id == sid }
+                if (idx < 0) return@runCatching null
+                val st = all[idx]
+                val total = contractTotal(p, items)
+                StageDoc(idx + 1, st.title, Contractor.stageAmount(st.percent, st.amount, total), st.percent, total)
+            }
             val renderer = QuoteRenderer(app)
             val dir = File(app.cacheDir, "quotes").apply { mkdirs() }
             dir.listFiles()?.forEach { it.delete() }
-            val base = renderer.quoteNumber(p)
+            val base = renderer.docNumber(p, type, stage?.no ?: 0)
             val file = File(dir, if (asImage) "$base.png" else "$base.pdf")
-            if (asImage) renderer.writePng(p, items, profile, file) else renderer.writePdf(p, items, profile, file)
-            val uri: Uri = FileProvider.getUriForFile(app, "${app.packageName}.fileprovider", file)
-            Intent(Intent.ACTION_SEND)
-                .setType(if (asImage) "image/png" else "application/pdf")
-                .putExtra(Intent.EXTRA_STREAM, uri)
-                .putExtra(Intent.EXTRA_SUBJECT, "ใบเสนอราคา ${p.name}")
-                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        }.onFailure { say("สร้างใบเสนอราคาไม่สำเร็จ") }.getOrNull()
+            if (asImage) renderer.writePng(p, items, profile, file, type, stage) else renderer.writePdf(p, items, profile, file, type, stage)
+            fileIntent(file, if (asImage) "image/png" else "application/pdf", "${type.th} ${p.name}")
+        }.onFailure { say("สร้างเอกสารไม่สำเร็จ") }.getOrNull()
     }
+
+    suspend fun quoteShareIntent(projectId: Long, asImage: Boolean): Intent? = docShareIntent(projectId, DocType.QUOTE, asImage)
+
+    suspend fun boqCsvIntent(projectId: Long): Intent? = withContext(Dispatchers.IO) {
+        runCatching {
+            val p = repo.getProject(projectId) ?: return@runCatching null
+            val dir = File(app.cacheDir, "quotes").apply { mkdirs() }
+            dir.listFiles()?.forEach { it.delete() }
+            val file = File(dir, QuoteRenderer(app).docNumber(p, DocType.BOQ) + ".csv")
+            file.writeText(BoqCsv.build(p, repo.getItems(projectId)), Charsets.UTF_8)
+            fileIntent(file, "text/csv", "BOQ ${p.name}")
+        }.onFailure { say("สร้างไฟล์ BOQ ไม่สำเร็จ") }.getOrNull()
+    }
+
+    private fun fileIntent(file: File, mime: String, subject: String): Intent {
+        val uri: Uri = FileProvider.getUriForFile(app, "${app.packageName}.fileprovider", file)
+        return Intent(Intent.ACTION_SEND).setType(mime).putExtra(Intent.EXTRA_STREAM, uri)
+            .putExtra(Intent.EXTRA_SUBJECT, subject).addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+    }
+
+    /** Job value including overhead, discount and VAT (what the customer pays). */
+    fun contractTotal(p: ProjectEntity, items: List<ItemEntity>): Double =
+        QuoteMath.totals(items.map { QuoteLine(it.kind, it.qty, it.unitPrice) }, QuoteOptions(p.overheadPercent, p.discount, p.vat, p.withholding)).total
+
+    fun orderText(p: ProjectEntity, lines: List<OrderLine>, shop: String): String = buildString {
+        append("รายการสั่งของ").append(if (shop.isNotBlank()) " — $shop" else "").append("\n")
+        append("งาน: ${p.name}").append(if (p.siteAddress.isNotBlank()) "\nส่งที่: ${p.siteAddress}" else "").append("\n\n")
+        lines.forEachIndexed { i, l -> append("${i + 1}. ${l.name}  ${Fmt.n(l.qty)} ${l.unit}\n") }
+        append("\nรวม ${lines.size} รายการ")
+    }
+
+    // ---- payment stages & costs ----
+    fun observeInstallments(id: Long) = repo.observeInstallments(id)
+    fun observeCosts(id: Long) = repo.observeCosts(id)
+    fun addInstallment(projectId: Long, title: String, percent: Double, amount: Double) = viewModelScope.launch { repo.addInstallment(projectId, title, percent, amount) }
+    fun applyPreset(projectId: Long, stages: List<Pair<String, Double>>) = viewModelScope.launch { repo.applyPreset(projectId, stages); say("แบ่งงวดแล้ว") }
+    fun updateInstallment(i: InstallmentEntity) = viewModelScope.launch { repo.updateInstallment(i) }
+    fun deleteInstallment(i: InstallmentEntity) = viewModelScope.launch { repo.deleteInstallment(i) }
+    fun addCost(c: CostEntity) = viewModelScope.launch { repo.addCost(c) }
+    fun updateCost(c: CostEntity) = viewModelScope.launch { repo.updateCost(c) }
+    fun deleteCost(c: CostEntity) = viewModelScope.launch { repo.deleteCost(c) }
 
     // ---- backup ----
     suspend fun exportBackup(out: OutputStream) {

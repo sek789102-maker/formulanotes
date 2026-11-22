@@ -14,7 +14,7 @@ tap_tag tab_more; sleep 2; shot 01c-more 1
 tap_tag tab_projects; sleep 2; shot 01d-projects-empty 1
 tap_tag tab_calc; sleep 2
 
-for c in concrete rebar footing retaining bricks plaster drywall paint tiles flooring ceiling roof excavation fill yard fence pipes; do
+for c in concrete footing piles stairs rebar rebar_grid steel_section formwork excavation fill cutfill retaining road drain tanks slope bricks plaster drywall paint tiles flooring ceiling roof excavation fill yard fence pipes; do
   if tap_tag_s "calc_$c"; then sleep 2; shot "02-calc-$c" 1; adb shell input keyevent 4; sleep 1; fi
 done
 
@@ -23,9 +23,15 @@ tap_tag in_length; adb shell input keyevent 123; for _ in 1 2 3; do adb shell in
 tap_tag add_to_project; sleep 2; shot 03-add-dialog 1
 tap_tag new_project_name; adb shell input text "Kitchen"; adb shell input keyevent 111
 tap_tag create_and_add; sleep 3; shot 04-project 2
-tap_tag share_image; sleep 2; shot 05a-profile-prompt 1; tap_tag share_anyway; sleep 4; shot 05-share-image 1
+tap_tag tool_stages; sleep 2; tap_tag preset_0; sleep 1; tap_tag dialog_confirm; sleep 2; shot 04b-stages 1
+tap_tag stage_invoice_1; sleep 1; tap_tag doc_image; sleep 4; shot 04e-stage-invoice 1; adb shell input keyevent 4; sleep 2; adb shell input keyevent 4; sleep 2
+tap_tag tool_profit; sleep 2; shot 04c-costs 1; adb shell input keyevent 4; sleep 2
+tap_tag tool_order; sleep 2; shot 04d-order 1; adb shell input keyevent 4; sleep 2
+tap_tag_s share_image; sleep 2; shot 05a-profile-prompt 1; tap_tag share_anyway; sleep 4; shot 05-share-image 1
 adb shell input keyevent 4; sleep 2
-tap_tag share_pdf; sleep 2; tap_tag share_anyway; sleep 4; shot 06-share-pdf 1
+tap_tag_s share_pdf; sleep 2; tap_tag share_anyway; sleep 4; shot 06-share-pdf 1
+adb shell input keyevent 4; sleep 2
+tap_tag_s doc_boq; sleep 1; tap_tag share_image; sleep 2; tap_tag share_anyway; sleep 4; shot 06b-share-boq 1
 adb shell input keyevent 4; sleep 2
 adb shell am start -n $ACT > /dev/null; sleep 2
 

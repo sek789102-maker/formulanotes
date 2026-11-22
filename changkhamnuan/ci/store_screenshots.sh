@@ -23,8 +23,11 @@ tap_tag tab_projects; sleep 2; shot 4-projects 1
 adb shell uiautomator dump /sdcard/ui.xml > /dev/null 2>&1; adb pull /sdcard/ui.xml /tmp/ui.xml > /dev/null 2>&1
 PID=$(python3 -c "import re;print((re.findall(r'resource-id=\"project_(\d+)\"', open('/tmp/ui.xml',encoding='utf-8').read()) or ['1'])[0])")
 tap_tag "project_$PID"; sleep 2; shot 5-project 1
+tap_tag tool_stages; sleep 2; shot 12-stages 1; adb shell input keyevent 4; sleep 2
+tap_tag tool_profit; sleep 2; shot 13-profit 1; adb shell input keyevent 4; sleep 2
+tap_tag tool_order; sleep 2; shot 14-order 1; adb shell input keyevent 4; sleep 2
 adb shell input swipe 540 1600 540 300 300; sleep 1; adb shell input swipe 540 1600 540 300 300; shot 6-totals 1
-tap_tag share_image; sleep 5; shot 7-share 1
+tap_tag_s share_image; sleep 5; shot 7-share 1
 adb shell input keyevent 4; sleep 1; adb shell input keyevent 4; sleep 1
 adb shell am start -n $ACT > /dev/null; sleep 1
 tap_tag tab_prices; sleep 2; shot 8-prices 1

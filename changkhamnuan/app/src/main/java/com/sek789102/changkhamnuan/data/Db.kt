@@ -15,6 +15,8 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverter
 import androidx.room.TypeConverters
 import androidx.room.Update
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.sek789102.changkhamnuan.domain.ItemKind
 import kotlinx.coroutines.flow.Flow
 
@@ -57,6 +59,42 @@ data class ItemEntity(
     val group: String = "",
     val sortOrder: Int = 0
 )
+
+/** A payment stage (งวดงาน). [percent] > 0 means a share of the job total; otherwise [amount] in baht. */
+@Entity(
+    tableName = "installments",
+    foreignKeys = [ForeignKey(entity = ProjectEntity::class, parentColumns = ["id"], childColumns = ["projectId"], onDelete = ForeignKey.CASCADE)],
+    indices = [Index("projectId")]
+)
+data class InstallmentEntity(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val projectId: Long,
+    val title: String,
+    val percent: Double = 0.0,
+    val amount: Double = 0.0,
+    /** 0 = not paid yet. */
+    val paidAt: Long = 0L,
+    val sortOrder: Int = 0
+)
+
+/** Real money spent on a job: daily wages (LABOR: qty = man-days) or site expenses (MATERIAL / OTHER). */
+@Entity(
+    tableName = "costs",
+    foreignKeys = [ForeignKey(entity = ProjectEntity::class, parentColumns = ["id"], childColumns = ["projectId"], onDelete = ForeignKey.CASCADE)],
+    indices = [Index("projectId")]
+)
+data class CostEntity(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val projectId: Long,
+    val date: Long,
+    val kind: ItemKind,
+    val title: String,
+    val qty: Double,
+    val unitCost: Double,
+    val note: String = ""
+) {
+    val amount: Double get() = qty * unitCost
+}
 
 @Entity(tableName = "prices")
 data class PriceEntity(@PrimaryKey val key: String, val price: Double)
@@ -127,11 +165,52 @@ interface ProjectDao {
 
     @Query("DELETE FROM prices WHERE `key` = :key")
     suspend fun deletePrice(key: String)
+
+    // ---- installments ----
+    @Query("SELECT * FROM installments WHERE projectId = :projectId ORDER BY sortOrder, id")
+    fun observeInstallments(projectId: Long): Flow<List<InstallmentEntity>>
+
+    @Query("SELECT * FROM installments WHERE projectId = :projectId ORDER BY sortOrder, id")
+    suspend fun getInstallments(projectId: Long): List<InstallmentEntity>
+
+    @Query("SELECT * FROM installments")
+    suspend fun getAllInstallments(): List<InstallmentEntity>
+
+    @Query("SELECT COALESCE(MAX(sortOrder), 0) FROM installments WHERE projectId = :projectId")
+    suspend fun maxInstallmentSort(projectId: Long): Int
+
+    @Insert
+    suspend fun insertInstallments(list: List<InstallmentEntity>)
+
+    @Update
+    suspend fun updateInstallment(i: InstallmentEntity)
+
+    @Query("DELETE FROM installments WHERE id = :id")
+    suspend fun deleteInstallment(id: Long)
+
+    // ---- costs ----
+    @Query("SELECT * FROM costs WHERE projectId = :projectId ORDER BY date DESC, id DESC")
+    fun observeCosts(projectId: Long): Flow<List<CostEntity>>
+
+    @Query("SELECT * FROM costs")
+    suspend fun getAllCosts(): List<CostEntity>
+
+    @Insert
+    suspend fun insertCosts(list: List<CostEntity>)
+
+    @Update
+    suspend fun updateCost(c: CostEntity)
+
+    @Query("DELETE FROM costs WHERE id = :id")
+    suspend fun deleteCost(id: Long)
 }
 
 data class ProjectSummary(val projectId: Long, val count: Int, val total: Double?)
 
-@Database(entities = [ProjectEntity::class, ItemEntity::class, PriceEntity::class], version = 1, exportSchema = true)
+@Database(
+    entities = [ProjectEntity::class, ItemEntity::class, PriceEntity::class, InstallmentEntity::class, CostEntity::class],
+    version = 2, exportSchema = true
+)
 @TypeConverters(DbConverters::class)
 abstract class AppDb : RoomDatabase() {
     abstract fun dao(): ProjectDao
@@ -140,7 +219,26 @@ abstract class AppDb : RoomDatabase() {
         @Volatile private var instance: AppDb? = null
         fun get(context: Context): AppDb = instance ?: synchronized(this) {
             instance ?: Room.databaseBuilder(context.applicationContext, AppDb::class.java, "changkhamnuan.db")
+                .addMigrations(MIGRATION_1_2)
                 .build().also { instance = it }
+        }
+
+        /** 1.3: payment stages and real job costs. Existing jobs, items and prices are kept. */
+        val MIGRATION_1_2 = object : Migration(1, 2) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `installments` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `projectId` INTEGER NOT NULL, " +
+                        "`title` TEXT NOT NULL, `percent` REAL NOT NULL, `amount` REAL NOT NULL, `paidAt` INTEGER NOT NULL, `sortOrder` INTEGER NOT NULL, " +
+                        "FOREIGN KEY(`projectId`) REFERENCES `projects`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )"
+                )
+                db.execSQL("CREATE INDEX IF NOT EXISTS `index_installments_projectId` ON `installments` (`projectId`)")
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `costs` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `projectId` INTEGER NOT NULL, " +
+                        "`date` INTEGER NOT NULL, `kind` TEXT NOT NULL, `title` TEXT NOT NULL, `qty` REAL NOT NULL, `unitCost` REAL NOT NULL, `note` TEXT NOT NULL, " +
+                        "FOREIGN KEY(`projectId`) REFERENCES `projects`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )"
+                )
+                db.execSQL("CREATE INDEX IF NOT EXISTS `index_costs_projectId` ON `costs` (`projectId`)")
+            }
         }
     }
 }

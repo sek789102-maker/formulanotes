@@ -89,6 +89,16 @@ import androidx.compose.material.icons.outlined.Apps
 import androidx.compose.material.icons.outlined.Construction
 import androidx.compose.material.icons.outlined.Fence
 import androidx.compose.material.icons.outlined.Foundation
+import androidx.compose.material.icons.outlined.AddRoad
+import androidx.compose.material.icons.outlined.Carpenter
+import androidx.compose.material.icons.outlined.Grid4x4
+import androidx.compose.material.icons.outlined.Height
+import androidx.compose.material.icons.outlined.PropaneTank
+import androidx.compose.material.icons.outlined.Stairs
+import androidx.compose.material.icons.outlined.Straighten
+import androidx.compose.material.icons.outlined.VerticalAlignBottom
+import androidx.compose.material.icons.outlined.ViewColumn
+import androidx.compose.material.icons.outlined.WaterDrop
 import androidx.compose.material.icons.outlined.Landscape
 import androidx.compose.material.icons.outlined.Lightbulb
 import androidx.compose.material.icons.outlined.Plumbing
@@ -119,6 +129,16 @@ fun calcIcon(id: String): ImageVector = when (id) {
     "rebar" -> Icons.Outlined.LinearScale
     "retaining" -> Icons.Outlined.Terrain
     "footing" -> Icons.Outlined.Foundation
+    "rebar_grid" -> Icons.Outlined.Grid4x4
+    "steel_section" -> Icons.Outlined.ViewColumn
+    "piles" -> Icons.Outlined.VerticalAlignBottom
+    "road" -> Icons.Outlined.AddRoad
+    "drain" -> Icons.Outlined.WaterDrop
+    "slope" -> Icons.Outlined.Straighten
+    "stairs" -> Icons.Outlined.Stairs
+    "formwork" -> Icons.Outlined.Carpenter
+    "cutfill" -> Icons.Outlined.Height
+    "tanks" -> Icons.Outlined.PropaneTank
     "flooring" -> Icons.Outlined.ViewDay
     "roof" -> Icons.Outlined.Roofing
     "ceiling" -> Icons.Outlined.Lightbulb
@@ -140,6 +160,16 @@ fun calcArt(id: String): Int = when (id) {
     "rebar" -> R.drawable.art_c_rebar
     "retaining" -> R.drawable.art_c_retaining
     "footing" -> R.drawable.art_c_footing
+    "rebar_grid" -> R.drawable.art_c_rebar_grid
+    "steel_section" -> R.drawable.art_c_steel_section
+    "piles" -> R.drawable.art_c_piles
+    "road" -> R.drawable.art_c_road
+    "drain" -> R.drawable.art_c_drain
+    "slope" -> R.drawable.art_c_slope
+    "stairs" -> R.drawable.art_c_stairs
+    "formwork" -> R.drawable.art_c_formwork
+    "cutfill" -> R.drawable.art_c_cutfill
+    "tanks" -> R.drawable.art_c_tanks
     "flooring" -> R.drawable.art_c_flooring
     "roof" -> R.drawable.art_c_roof
     "ceiling" -> R.drawable.art_c_ceiling
@@ -154,11 +184,14 @@ fun calcArt(id: String): Int = when (id) {
 
 /** Calculator sections on the home screen (every calculator must appear in one). */
 val calcGroups = listOf(
-    "งานโครงสร้าง" to listOf("concrete", "rebar", "footing", "retaining"),
+    "งานโครงสร้าง" to listOf("concrete", "footing", "piles", "stairs"),
+    "งานเหล็ก และไม้แบบ" to listOf("rebar", "rebar_grid", "steel_section", "formwork"),
     "งานก่อ ฉาบ ผนัง สี" to listOf("bricks", "plaster", "drywall", "paint"),
     "งานพื้น ฝ้า หลังคา" to listOf("tiles", "flooring", "ceiling", "roof"),
-    "งานดิน งานภายนอก" to listOf("excavation", "fill", "yard", "fence"),
-    "งานระบบ และเครื่องมือ" to listOf("pipes")
+    "งานดิน" to listOf("excavation", "fill", "cutfill", "retaining"),
+    "งานโยธาภายนอก" to listOf("road", "drain", "yard", "fence"),
+    "งานระบบ และเครื่องมือ" to listOf("pipes", "tanks", "slope")
+)
 )
 
 @Composable
@@ -254,6 +287,7 @@ fun CalcScreen(calcId: String, vm: AppViewModel, snackbar: SnackbarHostState, on
                 }
             }
             ResultCard(result, prices)
+            if (!calc.isTool) {
             SectionTitle("ค่าแรง (ไม่บังคับ)")
             NumberInput(labor, { labor = it }, "ค่าแรง", "บาท/${result.laborUnit}", tag = "in_labor",
                 help = if ((labor.toDoubleOrNull() ?: 0.0) > 0) "รวม ${Fmt.money((labor.toDoubleOrNull() ?: 0.0) * result.laborBase)} บาท (${Fmt.n(result.laborBase)} ${result.laborUnit})" else null)
@@ -265,6 +299,7 @@ fun CalcScreen(calcId: String, vm: AppViewModel, snackbar: SnackbarHostState, on
                 Icon(Icons.Outlined.Add, null)
                 Spacer(Modifier.width(8.dp))
                 Text("เพิ่มลงงาน / ใบเสนอราคา")
+            }
             }
             Row(verticalAlignment = Alignment.Top) {
                 Icon(Icons.Outlined.Info, null, Modifier.size(16.dp).padding(top = 2.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -298,8 +333,10 @@ fun ResultCard(result: CalcResult, prices: Map<String, Double>) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Text("ผลการคำนวณ", style = MaterialTheme.typography.titleMedium)
             result.facts.forEach { (k, v) -> KeyValueRow(k, v) }
-            HorizontalDivider(Modifier.padding(vertical = 6.dp))
-            Text("ต้องซื้อ", style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.secondary)
+            if (result.materials.isNotEmpty()) {
+                HorizontalDivider(Modifier.padding(vertical = 6.dp))
+                Text("ต้องซื้อ", style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.secondary)
+            }
             var total = 0.0
             var priced = true
             result.materials.filter { it.buyQty > 0 }.forEach { m ->

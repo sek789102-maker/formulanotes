@@ -98,7 +98,7 @@ fun ConfirmDialog(title: String, message: String, confirm: String, onDismiss: ()
         onDismissRequest = onDismiss,
         title = { Text(title) },
         text = { Text(message) },
-        confirmButton = { TextButton(onClick = { onConfirm(); onDismiss() }) { Text(confirm, color = MaterialTheme.colorScheme.error) } },
+        confirmButton = { TextButton(onClick = { onConfirm(); onDismiss() }, modifier = Modifier.testTag("dialog_confirm")) { Text(confirm, color = MaterialTheme.colorScheme.error) } },
         dismissButton = { TextButton(onClick = onDismiss) { Text("ยกเลิก") } }
     )
 }

@@ -53,6 +53,9 @@ import com.sek789102.changkhamnuan.ui.screens.ProfileScreen
 import com.sek789102.changkhamnuan.ui.screens.ProjectScreen
 import com.sek789102.changkhamnuan.ui.screens.ProjectsScreen
 import com.sek789102.changkhamnuan.ui.screens.RatesScreen
+import com.sek789102.changkhamnuan.ui.screens.StagesScreen
+import com.sek789102.changkhamnuan.ui.screens.CostsScreen
+import com.sek789102.changkhamnuan.ui.screens.OrderScreen
 import com.sek789102.changkhamnuan.ui.theme.AppTheme
 
 /** Screens, stored as strings so the back stack survives rotation. "tab:<n>" are the four main tabs. */
@@ -144,8 +147,14 @@ class MainActivity : ComponentActivity() {
             current.startsWith("calc:") -> CalcScreen(current.removePrefix("calc:"), vm, snackbar, onBack = { pop() }, onOpenProject = { openProject(it) })
             current.startsWith("project:") -> ProjectScreen(
                 current.removePrefix("project:").toLongOrNull() ?: 0L, vm, snackbar,
-                onBack = { pop() }, onOpenProject = { openProject(it) }, onOpenProfile = { push(Routes.PROFILE) }
+                onBack = { pop() }, onOpenProject = { openProject(it) }, onOpenProfile = { push(Routes.PROFILE) },
+                onOpenStages = { push("stages:" + current.removePrefix("project:")) },
+                onOpenCosts = { push("costs:" + current.removePrefix("project:")) },
+                onOpenOrder = { push("order:" + current.removePrefix("project:")) }
             )
+            current.startsWith("stages:") -> StagesScreen(current.removePrefix("stages:").toLongOrNull() ?: 0L, vm, snackbar, onBack = { pop() })
+            current.startsWith("costs:") -> CostsScreen(current.removePrefix("costs:").toLongOrNull() ?: 0L, vm, snackbar, onBack = { pop() })
+            current.startsWith("order:") -> OrderScreen(current.removePrefix("order:").toLongOrNull() ?: 0L, vm, snackbar, onBack = { pop() })
             current == Routes.PROFILE -> ProfileScreen(vm, snackbar, onBack = { pop() })
             current == Routes.RATES -> RatesScreen(vm, snackbar, onBack = { pop() })
             current == Routes.CONVERTER -> ConverterScreen(onBack = { pop() })

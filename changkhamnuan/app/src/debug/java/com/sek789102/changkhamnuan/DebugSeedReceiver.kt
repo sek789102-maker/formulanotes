@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.Intent
 import com.sek789102.changkhamnuan.data.BusinessProfile
 import com.sek789102.changkhamnuan.domain.Calculators
+import com.sek789102.changkhamnuan.domain.Contractor
+import com.sek789102.changkhamnuan.data.CostEntity
 import com.sek789102.changkhamnuan.domain.ItemKind
 import com.sek789102.changkhamnuan.domain.Rates
 import kotlinx.coroutines.runBlocking
@@ -29,6 +31,14 @@ class DebugSeedReceiver : BroadcastReceiver() {
             repo.addCalcResult(id, "พื้นครัว", Calculators.concrete.run(mapOf("shape" to "slab", "slab_w" to "3", "slab_l" to "4", "slab_t" to "10", "mix" to "ready"), r), 900.0)
             repo.addCalcResult(id, "ปูพื้นครัว", Calculators.tiles.run(mapOf("w" to "3", "l" to "4", "size" to "60x60"), r), 250.0)
             repo.addItem(id, ItemKind.OTHER, "ค่าขนส่งวัสดุ", 1.0, "เที่ยว", 800.0)
+            repo.applyPreset(id, Contractor.presets[1].second)
+            repo.getInstallments(id).firstOrNull()?.let { repo.updateInstallment(it.copy(paidAt = System.currentTimeMillis())) }
+            val day = 86_400_000L
+            val now = System.currentTimeMillis()
+            repo.addCost(CostEntity(projectId = id, date = now - 3 * day, kind = ItemKind.LABOR, title = "ช่างก่อ 2 คน", qty = 6.0, unitCost = 450.0))
+            repo.addCost(CostEntity(projectId = id, date = now - 2 * day, kind = ItemKind.LABOR, title = "กรรมกร", qty = 4.0, unitCost = 350.0))
+            repo.addCost(CostEntity(projectId = id, date = now - 3 * day, kind = ItemKind.MATERIAL, title = "อิฐมวลเบา + ปูนก่อ ร้าน ก.", qty = 1.0, unitCost = 5200.0))
+            repo.addCost(CostEntity(projectId = id, date = now - day, kind = ItemKind.OTHER, title = "ค่าน้ำมันรถ", qty = 1.0, unitCost = 600.0))
         }
     }
 }

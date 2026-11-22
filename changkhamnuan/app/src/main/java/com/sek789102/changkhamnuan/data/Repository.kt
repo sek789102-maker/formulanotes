@@ -111,14 +111,48 @@ class Repository(private val db: AppDb, private val settings: SettingsRepository
         n
     }
 
+    // ---- installments (งวดงาน) ----
+    fun observeInstallments(projectId: Long) = dao.observeInstallments(projectId)
+    suspend fun getInstallments(projectId: Long) = dao.getInstallments(projectId)
+
+    suspend fun addInstallment(projectId: Long, title: String, percent: Double, amount: Double) {
+        dao.insertInstallments(listOf(InstallmentEntity(projectId = projectId, title = title.trim().ifBlank { "งวดงาน" }.take(80),
+            percent = percent.coerceIn(0.0, 100.0), amount = amount.coerceAtLeast(0.0), sortOrder = dao.maxInstallmentSort(projectId) + 1)))
+        touch(projectId)
+    }
+
+    /** Replaces unpaid stages with a preset split; paid stages are kept. */
+    suspend fun applyPreset(projectId: Long, stages: List<Pair<String, Double>>) = db.withTransaction {
+        dao.getInstallments(projectId).filter { it.paidAt == 0L }.forEach { dao.deleteInstallment(it.id) }
+        var order = dao.maxInstallmentSort(projectId)
+        dao.insertInstallments(stages.map { (t, pct) -> InstallmentEntity(projectId = projectId, title = t, percent = pct, sortOrder = ++order) })
+        touch(projectId)
+    }
+
+    suspend fun updateInstallment(i: InstallmentEntity) { dao.updateInstallment(i); touch(i.projectId) }
+    suspend fun deleteInstallment(i: InstallmentEntity) { dao.deleteInstallment(i.id); touch(i.projectId) }
+
+    // ---- real costs (ค่าแรงรายวัน / ค่าใช้จ่ายหน้างาน) ----
+    fun observeCosts(projectId: Long) = dao.observeCosts(projectId)
+
+    suspend fun addCost(c: CostEntity) {
+        dao.insertCosts(listOf(c.copy(id = 0, title = c.title.trim().ifBlank { "รายการ" }.take(80), note = c.note.take(200))))
+        touch(c.projectId)
+    }
+
+    suspend fun updateCost(c: CostEntity) { dao.updateCost(c); touch(c.projectId) }
+    suspend fun deleteCost(c: CostEntity) { dao.deleteCost(c.id); touch(c.projectId) }
+
     // ---- backup (single JSON file) ----
     suspend fun exportBackup(out: OutputStream, s: Settings) = withContext(Dispatchers.IO) {
         val root = JSONObject()
-            .put("app", "ChangKhamnuan").put("version", 1).put("exportedAt", System.currentTimeMillis())
+            .put("app", "ChangKhamnuan").put("version", 2).put("exportedAt", System.currentTimeMillis())
             .put("profile", JSONObject(SettingsRepository.profileToJson(s.profile)))
             .put("rates", JSONObject(SettingsRepository.ratesToJson(s.rateOverrides)))
             .put("prices", JSONObject().apply { dao.getPrices().forEach { put(it.key, it.price) } })
         val items = dao.getAllItems().groupBy { it.projectId }
+        val stages = dao.getAllInstallments().groupBy { it.projectId }
+        val costs = dao.getAllCosts().groupBy { it.projectId }
         root.put("projects", JSONArray().apply {
             dao.getProjects().forEach { p ->
                 put(
@@ -134,6 +168,18 @@ class Repository(private val db: AppDb, private val settings: SettingsRepository
                                         .put("unitPrice", i.unitPrice).put("priceKey", i.priceKey ?: JSONObject.NULL)
                                         .put("group", i.group).put("sortOrder", i.sortOrder)
                                 )
+                            }
+                        })
+                        .put("installments", JSONArray().apply {
+                            stages[p.id].orEmpty().forEach { st ->
+                                put(JSONObject().put("title", st.title).put("percent", st.percent).put("amount", st.amount)
+                                    .put("paidAt", st.paidAt).put("sortOrder", st.sortOrder))
+                            }
+                        })
+                        .put("costs", JSONArray().apply {
+                            costs[p.id].orEmpty().forEach { c ->
+                                put(JSONObject().put("date", c.date).put("kind", c.kind.name).put("title", c.title)
+                                    .put("qty", c.qty).put("unitCost", c.unitCost).put("note", c.note))
                             }
                         })
                 )
@@ -179,6 +225,19 @@ class Repository(private val db: AppDb, private val settings: SettingsRepository
                         priceKey = if (io.isNull("priceKey")) null else io.optString("priceKey"),
                         group = io.optString("group"), sortOrder = io.optInt("sortOrder", j)
                     )
+                })
+                val st = o.optJSONArray("installments") ?: JSONArray()
+                dao.insertInstallments((0 until st.length()).mapNotNull { j ->
+                    val so = st.optJSONObject(j) ?: return@mapNotNull null
+                    InstallmentEntity(projectId = id, title = so.optString("title"), percent = so.optDouble("percent", 0.0),
+                        amount = so.optDouble("amount", 0.0), paidAt = so.optLong("paidAt", 0L), sortOrder = so.optInt("sortOrder", j))
+                })
+                val cs = o.optJSONArray("costs") ?: JSONArray()
+                dao.insertCosts((0 until cs.length()).mapNotNull { j ->
+                    val co = cs.optJSONObject(j) ?: return@mapNotNull null
+                    CostEntity(projectId = id, date = co.optLong("date", created),
+                        kind = ItemKind.entries.firstOrNull { k -> k.name == co.optString("kind") } ?: ItemKind.OTHER,
+                        title = co.optString("title"), qty = co.optDouble("qty", 0.0), unitCost = co.optDouble("unitCost", 0.0), note = co.optString("note"))
                 })
                 added++
             }

@@ -20,7 +20,7 @@ class ExtraCalculatorsTest {
                 .flatMap { f -> f.options.map { mapOf(f.key to it.first) } }
             for (v in variants) {
                 val res = calc.run(v, r)
-                if (v.isEmpty()) assertTrue("${calc.id} has no materials", res.materials.isNotEmpty())
+                if (v.isEmpty() && !calc.isTool) assertTrue("${calc.id} has no materials", res.materials.isNotEmpty())
                 for (m in res.materials) {
                     assertTrue("${calc.id} $v ${m.priceKey} not in catalog", Catalog.byKey.containsKey(m.priceKey))
                     assertTrue("${calc.id} ${m.name} qty", m.qty.isFinite() && m.qty >= 0)

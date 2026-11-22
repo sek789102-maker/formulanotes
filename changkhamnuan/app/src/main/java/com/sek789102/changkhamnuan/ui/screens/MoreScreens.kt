@@ -120,7 +120,7 @@ fun materialArt(key: String): Int = when {
     key == "sand" || key == "fill_sand" -> R.drawable.art_m_sand
     key == "stone" -> R.drawable.art_m_gravel
     key == "ready_mix" || key == "lean_concrete" -> R.drawable.art_c_concrete
-    key == "plywood" -> R.drawable.art_c_footing
+    key == "plywood" -> R.drawable.art_c_formwork
     key.startsWith("rebar") -> R.drawable.art_m_rebar
     key == "tile_box" -> R.drawable.art_c_tiles
     key.startsWith("paint") || key.startsWith("primer") -> R.drawable.art_c_paint
@@ -135,6 +135,14 @@ fun materialArt(key: String): Int = when {
     key == "haul_soil" -> R.drawable.art_c_excavation
     key == "wire_mesh" || key.startsWith("paver_") -> R.drawable.art_c_yard
     key.startsWith("fence_") -> R.drawable.art_m_fence
+    key == "tie_wire" -> R.drawable.art_c_rebar_grid
+    key == "steel_kg" -> R.drawable.art_c_steel_section
+    key == "pile_driven" -> R.drawable.art_c_piles
+    key == "batten" || key == "prop" || key == "nails" -> R.drawable.art_c_formwork
+    key == "crushed_rock" -> R.drawable.art_m_gravel
+    key == "dowel" || key == "joint_sealant" -> R.drawable.art_c_road
+    key == "manhole" || key.startsWith("drain_pipe_") -> R.drawable.art_c_drain
+    key == "septic_tank" || key == "water_tank" -> R.drawable.art_c_tanks
     else -> R.drawable.art_m_cement_bag
 }
 

@@ -1,5 +1,13 @@
 package com.sek789102.changkhamnuan.ui.screens
 
+import com.sek789102.changkhamnuan.domain.Contractor
+import com.sek789102.changkhamnuan.domain.DocType
+import com.sek789102.changkhamnuan.ui.components.GoldSection
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.material3.FilterChip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import com.sek789102.changkhamnuan.R
 import com.sek789102.changkhamnuan.ui.components.ArtHeader
 import com.sek789102.changkhamnuan.ui.components.GoldBadge
@@ -204,7 +212,10 @@ fun ProjectScreen(
     snackbar: SnackbarHostState,
     onBack: () -> Unit,
     onOpenProject: (Long) -> Unit,
-    onOpenProfile: () -> Unit
+    onOpenProfile: () -> Unit,
+    onOpenStages: () -> Unit = {},
+    onOpenCosts: () -> Unit = {},
+    onOpenOrder: () -> Unit = {}
 ) {
     val project by remember(projectId) { vm.observeProject(projectId) }.collectAsState(initial = null)
     val items by remember(projectId) { vm.observeItems(projectId) }.collectAsState(initial = emptyList())
@@ -216,6 +227,10 @@ fun ProjectScreen(
     var newItemKind by remember { mutableStateOf<ItemKind?>(null) }
     var confirmDelete by remember { mutableStateOf(false) }
     var busy by remember { mutableStateOf(false) }
+    var docType by rememberSaveable { mutableStateOf(DocType.QUOTE) }
+    var docDialog by remember { mutableStateOf<DocType?>(null) }
+    val stages by remember(projectId) { vm.observeInstallments(projectId) }.collectAsState(initial = emptyList())
+    val costs by remember(projectId) { vm.observeCosts(projectId) }.collectAsState(initial = emptyList())
 
     val settings by vm.settings.collectAsStateWithLifecycle()
     var askProfile by remember { mutableStateOf<Boolean?>(null) }
@@ -228,9 +243,9 @@ fun ProjectScreen(
         }
         busy = true
         scope.launch {
-            vm.quoteShareIntent(projectId, asImage)?.let { intent ->
+            vm.docShareIntent(projectId, docType, asImage)?.let { intent ->
                 try {
-                    context.startActivity(Intent.createChooser(intent, "ส่งใบเสนอราคา"))
+                    context.startActivity(Intent.createChooser(intent, "ส่ง${docType.th}"))
                 } catch (_: ActivityNotFoundException) {
                     vm.say("ไม่พบแอปที่ใช้ส่งไฟล์")
                 }
@@ -265,6 +280,26 @@ fun ProjectScreen(
                 if (p.customerName.isNotBlank() || p.siteAddress.isNotBlank()) {
                     Text(listOf(p.customerName, p.customerPhone, p.siteAddress).filter { it.isNotBlank() }.joinToString(" · "),
                         style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+            }
+            item(key = "tools") {
+                val contract = totals.total
+                val pay = Contractor.payments(contract, stages.map { Triple(it.percent, it.amount, it.paidAt > 0) })
+                val profit = Contractor.profit(totals.beforeVat, costs.map { it.kind to it.amount })
+                GoldSection("เครื่องมือผู้รับเหมา")
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        ToolCard(R.drawable.art_c_installments, "งวดงาน", if (stages.isEmpty()) "แบ่งงวด · เบิกเงิน" else "รับแล้ว ${Fmt.money(pay.paid)}", "tool_stages", Modifier.weight(1f), onOpenStages)
+                        ToolCard(R.drawable.art_c_docs, "ใบแจ้งหนี้ / ใบเสร็จ", "ทั้งงาน หรือรายงวด", "tool_docs", Modifier.weight(1f)) { docDialog = DocType.INVOICE }
+                    }
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        ToolCard(R.drawable.art_c_labor, "ค่าแรงรายวัน", "${Fmt.money(profit.labor)} บาท", "tool_labor", Modifier.weight(1f), onOpenCosts)
+                        ToolCard(R.drawable.art_c_profit, "กำไรงานนี้", if (costs.isEmpty()) "บันทึกต้นทุนจริง" else "${Fmt.money(profit.profit)} (${Fmt.n(profit.marginPercent, 0)}%)", "tool_profit", Modifier.weight(1f), onOpenCosts)
+                    }
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        ToolCard(R.drawable.art_c_order, "รายการสั่งของ", "ส่งร้านวัสดุทาง LINE", "tool_order", Modifier.weight(1f), onOpenOrder)
+                        ToolCard(R.drawable.art_c_boq, "BOQ", "แยกหมวด · PDF / Excel", "tool_boq", Modifier.weight(1f)) { docDialog = DocType.BOQ }
+                    }
                 }
             }
             listOf(ItemKind.MATERIAL to "ค่าวัสดุ", ItemKind.LABOR to "ค่าแรง", ItemKind.OTHER to "ค่าใช้จ่ายอื่น").forEach { (kind, label) ->
@@ -317,6 +352,12 @@ fun ProjectScreen(
                 }
             }
             item {
+                SectionTitle("ส่งเอกสาร")
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    listOf(DocType.QUOTE to "เสนอราคา", DocType.INVOICE to "แจ้งหนี้", DocType.RECEIPT to "ใบเสร็จ", DocType.BOQ to "BOQ").forEach { (t, l) ->
+                        FilterChip(selected = docType == t, onClick = { docType = t }, label = { Text(l, maxLines = 1) }, modifier = Modifier.testTag("doc_${t.name.lowercase()}"))
+                    }
+                }
                 Row(Modifier.fillMaxWidth().padding(top = 8.dp), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                     Button(onClick = { share(asImage = true) }, enabled = !busy && items.isNotEmpty(), modifier = Modifier.weight(1f).testTag("share_image")) {
                         Icon(Icons.Outlined.Image, null); Spacer(Modifier.width(6.dp)); Text("ส่งเป็นรูป")
@@ -325,12 +366,18 @@ fun ProjectScreen(
                         Icon(Icons.Outlined.PictureAsPdf, null); Spacer(Modifier.width(6.dp)); Text("ส่ง PDF")
                     }
                 }
-                Text("ใบเสนอราคาแสดงชื่อร้านของคุณ (ตั้งที่ “เพิ่มเติม → ข้อมูลร้าน”)", style = MaterialTheme.typography.bodySmall,
+                if (docType == DocType.BOQ) {
+                    TextButton(onClick = { scope.launch { startShare(context, vm, vm.boqCsvIntent(projectId), "ส่งไฟล์ BOQ") } }, enabled = items.isNotEmpty(), modifier = Modifier.testTag("share_csv")) {
+                        Text("ส่ง BOQ เป็นไฟล์ Excel (CSV)")
+                    }
+                }
+                Text("เอกสารแสดงชื่อร้านของคุณ (ตั้งที่ “เพิ่มเติม → ข้อมูลร้าน”) · ใบแจ้งหนี้/ใบเสร็จรายงวด อยู่ที่ “งวดงาน”", style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 6.dp, bottom = 32.dp))
             }
         }
     }
 
+    docDialog?.let { t -> DocFormatDialog(vm, projectId, t, null, " · ทั้งงาน") { docDialog = null } }
     if (editInfo && p != null) {
         ProjectInfoDialog(p, onDismiss = { editInfo = false }) { name, customer, phone, site ->
             editInfo = false
@@ -366,6 +413,20 @@ fun ProjectScreen(
         ConfirmDialog("ลบงานนี้?", "รายการทั้งหมดในงาน “${p.name}” จะถูกลบ กู้คืนไม่ได้", "ลบ", onDismiss = { confirmDelete = false }) {
             vm.deleteProject(p.id)
             onBack()
+        }
+    }
+}
+
+@Composable
+private fun ToolCard(art: Int, title: String, sub: String, tag: String, modifier: Modifier, onClick: () -> Unit) {
+    Panel(modifier.height(104.dp).testTag(tag), radius = 18.dp, onClick = onClick) {
+        val base = MaterialTheme.colorScheme.surfaceContainerHigh
+        Image(painterResource(art), null, contentScale = ContentScale.Crop, modifier = Modifier.align(Alignment.CenterEnd).fillMaxWidth(0.55f).fillMaxHeight())
+        Box(Modifier.matchParentSize().background(Brush.horizontalGradient(0.35f to base, 0.75f to base.copy(alpha = 0.4f), 1f to Color.Transparent)))
+        Column(Modifier.padding(12.dp).fillMaxWidth(0.75f)) {
+            Text(title, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold, maxLines = 2)
+            Spacer(Modifier.height(4.dp))
+            Text(sub, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.secondary, maxLines = 2, overflow = TextOverflow.Ellipsis)
         }
     }
 }

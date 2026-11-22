@@ -76,6 +76,8 @@ data class Calculator(
     val title: String,
     val subtitle: String,
     val fields: List<Field>,
+    /** A helper tool (e.g. slope) that gives numbers only, nothing to buy or add to a job. */
+    val isTool: Boolean = false,
     val compute: (Inputs, Rates) -> CalcResult
 ) {
     fun run(raw: Map<String, String>, rates: Rates): CalcResult = compute(Inputs(this, raw), rates)
@@ -418,7 +420,7 @@ object Calculators {
         return MaterialLine("rebar_DB12", "เหล็ก DB12 (เส้นละ ${Fmt.n(r["rebar_length"])} ม.)", kg, "กก.", ceilTo(kg / perBar), "เส้น", note)
     }
 
-    val all: List<Calculator> by lazy { listOf(bricks, plaster, concrete, tiles, paint, rebar) + ExtraCalculators.all }
+    val all: List<Calculator> by lazy { listOf(bricks, plaster, concrete, tiles, paint, rebar) + ExtraCalculators.all + CivilCalculators.all }
     fun byId(id: String) = all.firstOrNull { it.id == id }
 }
 

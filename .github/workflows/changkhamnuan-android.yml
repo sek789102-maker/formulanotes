@@ -41,7 +41,7 @@ jobs:
       # build can never be tested or shipped by mistake.
       - name: Remove previous build outputs
         working-directory: .
-        run: rm -f changkhamnuan-build/*.apk changkhamnuan-build/*.aab changkhamnuan-build/TEST_SUMMARY.txt
+        run: rm -rf changkhamnuan-build/*.apk changkhamnuan-build/*.aab changkhamnuan-build/TEST_SUMMARY.txt changkhamnuan-build/test-results
 
       - name: Unit tests (JVM + Robolectric)
         run: |

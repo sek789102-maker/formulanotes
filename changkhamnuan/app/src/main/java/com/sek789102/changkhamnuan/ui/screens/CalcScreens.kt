@@ -192,7 +192,6 @@ val calcGroups = listOf(
     "งานโยธาภายนอก" to listOf("road", "drain", "yard", "fence"),
     "งานระบบ และเครื่องมือ" to listOf("pipes", "tanks", "slope")
 )
-)
 
 @Composable
 fun CalcHomeScreen(padding: PaddingValues, onOpen: (String) -> Unit, onConverter: () -> Unit) {

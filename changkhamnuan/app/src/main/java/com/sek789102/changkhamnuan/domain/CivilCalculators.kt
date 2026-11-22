@@ -308,7 +308,7 @@ object CivilCalculators {
                     if (pipes > 0) MaterialLine("drain_pipe_$id", "ท่อระบายน้ำ คสล. Ø ${Fmt.n(dcm)} ซม.", pipes, "ท่อน", pipes, "ท่อน") else null,
                     if (holes > 0) MaterialLine("manhole", "บ่อพัก", holes, "บ่อ", holes, "บ่อ", "สำเร็จรูป หรือหล่อในที่") else null,
                     if (sand > 0) MaterialLine("fill_sand", "ทรายรองท่อ", sand, "ลบ.ม.", ceilTo(sand, 0.5), "คิว") else null,
-                    if (mortarKg > 0) Calculators.cementBags(mortarKg, r).copy(name = "ปูนซีเมนต์ ยาแนวรอยต่อท่อ")
+                    if (mortarKg > 0) Calculators.cementBags(mortarKg, r).copy(name = "ปูนซีเมนต์ ยาแนวรอยต่อท่อ") else null
                 ),
                 laborBase = len, laborUnit = "ม."
             )

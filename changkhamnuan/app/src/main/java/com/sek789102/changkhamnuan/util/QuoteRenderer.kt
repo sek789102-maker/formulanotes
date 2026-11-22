@@ -297,14 +297,14 @@ class QuoteRenderer(private val context: Context) {
     }
 
     fun writePdf(project: ProjectEntity, items: List<ItemEntity>, profile: BusinessProfile, out: File, doc: DocType = DocType.QUOTE, stage: StageDoc? = null) {
-        val doc = PdfDocument()
+        val pdf = PdfDocument()
         val pageH = 842f
         var pageNo = 0
         var page: PdfDocument.Page? = null
         fun newPage(): Canvas {
-            page?.let { doc.finishPage(it) }
+            page?.let { pdf.finishPage(it) }
             pageNo++
-            page = doc.startPage(PdfDocument.PageInfo.Builder(w.toInt(), pageH.toInt(), pageNo).create())
+            page = pdf.startPage(PdfDocument.PageInfo.Builder(w.toInt(), pageH.toInt(), pageNo).create())
             return page!!.canvas
         }
         var current: Canvas? = null
@@ -319,10 +319,10 @@ class QuoteRenderer(private val context: Context) {
                     } else y
                 }
             )
-            page?.let { doc.finishPage(it) }
-            FileOutputStream(out).use { doc.writeTo(it) }
+            page?.let { pdf.finishPage(it) }
+            FileOutputStream(out).use { pdf.writeTo(it) }
         } finally {
-            doc.close()
+            pdf.close()
         }
     }
 

@@ -19,7 +19,7 @@ PY
 }
 # Like tap_tag but scrolls the list down until the element appears (lazy lists only compose what is visible).
 tap_tag_s() {
-  for _ in 1 2 3 4 5; do
+  for _ in 1 2 3 4 5 6 7 8 9 10 11 12; do
     tap_tag "$1" > /dev/null 2>&1 && return 0
     adb shell input swipe 540 1450 540 750 350; sleep 1
   done

@@ -84,6 +84,17 @@ import com.sek789102.changkhamnuan.ui.components.CornerGlow
 import com.sek789102.changkhamnuan.ui.components.GoArrow
 import com.sek789102.changkhamnuan.ui.components.GoldBadge
 import com.sek789102.changkhamnuan.ui.components.GoldPill
+import com.sek789102.changkhamnuan.ui.components.GoldSection
+import androidx.compose.material.icons.outlined.Apps
+import androidx.compose.material.icons.outlined.Construction
+import androidx.compose.material.icons.outlined.Fence
+import androidx.compose.material.icons.outlined.Landscape
+import androidx.compose.material.icons.outlined.Lightbulb
+import androidx.compose.material.icons.outlined.Plumbing
+import androidx.compose.material.icons.outlined.Roofing
+import androidx.compose.material.icons.outlined.Terrain
+import androidx.compose.material.icons.outlined.ViewDay
+import androidx.compose.material.icons.outlined.ViewWeek
 import com.sek789102.changkhamnuan.ui.components.Panel
 import com.sek789102.changkhamnuan.ui.components.bleed
 import androidx.compose.foundation.Image
@@ -105,6 +116,16 @@ fun calcIcon(id: String): ImageVector = when (id) {
     "tiles" -> Icons.Outlined.GridOn
     "paint" -> Icons.Outlined.FormatPaint
     "rebar" -> Icons.Outlined.LinearScale
+    "retaining" -> Icons.Outlined.Terrain
+    "flooring" -> Icons.Outlined.ViewDay
+    "roof" -> Icons.Outlined.Roofing
+    "ceiling" -> Icons.Outlined.Lightbulb
+    "drywall" -> Icons.Outlined.ViewWeek
+    "pipes" -> Icons.Outlined.Plumbing
+    "fill" -> Icons.Outlined.Landscape
+    "excavation" -> Icons.Outlined.Construction
+    "yard" -> Icons.Outlined.Apps
+    "fence" -> Icons.Outlined.Fence
     else -> Icons.Outlined.SquareFoot
 }
 
@@ -115,8 +136,27 @@ fun calcArt(id: String): Int = when (id) {
     "tiles" -> R.drawable.art_c_tiles
     "paint" -> R.drawable.art_c_paint
     "rebar" -> R.drawable.art_c_rebar
+    "retaining" -> R.drawable.art_c_retaining
+    "flooring" -> R.drawable.art_c_flooring
+    "roof" -> R.drawable.art_c_roof
+    "ceiling" -> R.drawable.art_c_ceiling
+    "drywall" -> R.drawable.art_c_drywall
+    "pipes" -> R.drawable.art_c_pipes
+    "fill" -> R.drawable.art_c_fill
+    "excavation" -> R.drawable.art_c_excavation
+    "yard" -> R.drawable.art_c_yard
+    "fence" -> R.drawable.art_c_fence
     else -> R.drawable.art_c_converter
 }
+
+/** Calculator sections on the home screen (every calculator must appear in one). */
+val calcGroups = listOf(
+    "งานโครงสร้าง" to listOf("concrete", "rebar", "retaining"),
+    "งานก่อ ฉาบ ผนัง สี" to listOf("bricks", "plaster", "drywall", "paint"),
+    "งานพื้น ฝ้า หลังคา" to listOf("tiles", "flooring", "ceiling", "roof"),
+    "งานดิน งานภายนอก" to listOf("excavation", "fill", "yard", "fence"),
+    "งานระบบ และเครื่องมือ" to listOf("pipes")
+)
 
 @Composable
 fun CalcHomeScreen(padding: PaddingValues, onOpen: (String) -> Unit, onConverter: () -> Unit) {
@@ -135,10 +175,13 @@ fun CalcHomeScreen(padding: PaddingValues, onOpen: (String) -> Unit, onConverter
                 ) { GoldPill(Icons.Outlined.Bolt, "ใช้งานออฟไลน์", "ไม่มีโฆษณา") }
             }
         }
-        items(Calculators.all, key = { it.id }) { c ->
-            CalcCard(calcIcon(c.id), calcArt(c.id), c.title, c.subtitle, "calc_${c.id}") { onOpen(c.id) }
+        calcGroups.forEach { (group, ids) ->
+            item(key = "g_$group", span = { GridItemSpan(maxLineSpan) }) { GoldSection(group) }
+            items(ids.mapNotNull { Calculators.byId(it) }, key = { it.id }) { c ->
+                CalcCard(calcIcon(c.id), calcArt(c.id), c.title, c.subtitle, "calc_${c.id}") { onOpen(c.id) }
+            }
         }
-        item { CalcCard(Icons.Outlined.SquareFoot, R.drawable.art_c_converter, "แปลงหน่วย", "ตร.วา · ไร่ · ม² · คิว", "calc_converter", onConverter) }
+        item(key = "converter") { CalcCard(Icons.Outlined.SquareFoot, R.drawable.art_c_converter, "แปลงหน่วย", "ตร.วา · ไร่ · ม² · คิว", "calc_converter", onConverter) }
     }
 }
 

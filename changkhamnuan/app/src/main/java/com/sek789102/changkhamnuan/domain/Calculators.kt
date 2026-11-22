@@ -102,7 +102,7 @@ fun ceilTo(v: Double, step: Double = 1.0): Double {
 object Calculators {
 
     // ---- shared wall area helper ----
-    private val wallFields = listOf(
+    val wallFields = listOf(
         NumberField("length", "ความยาวผนัง", "ม.", 4.0),
         NumberField("height", "ความสูงผนัง", "ม.", 3.0),
         NumberField("doors", "ประตู (หักออก)", "ช่อง", 0.0, "ช่องละ 0.9 × 2.0 ม."),
@@ -121,12 +121,12 @@ object Calculators {
         "พื้นที่สุทธิ (หักช่องเปิด)" to "${Fmt.n(area)} ตร.ม."
     )
 
-    private fun cementBags(kg: Double, r: Rates) = MaterialLine(
+    fun cementBags(kg: Double, r: Rates) = MaterialLine(
         "cement_bag", "ปูนซีเมนต์", kg, "กก.", ceilTo(kg / r["cement_bag_kg"]), "ถุง",
         "≈ ${Fmt.n(kg / r["cement_bag_kg"])} ถุง (ถุงละ ${Fmt.n(r["cement_bag_kg"])} กก.)"
     )
 
-    private fun sand(m3: Double) = MaterialLine("sand", "ทรายหยาบ", m3, "ลบ.ม.", ceilTo(m3, 0.5), "คิว", "ร้านมักขายทีละครึ่งคิว")
+    fun sand(m3: Double) = MaterialLine("sand", "ทรายหยาบ", m3, "ลบ.ม.", ceilTo(m3, 0.5), "คิว", "ร้านมักขายทีละครึ่งคิว")
 
     // ---- 1. ก่ออิฐ ----
     val bricks = Calculator(
@@ -398,7 +398,27 @@ object Calculators {
         }
     )
 
-    val all = listOf(bricks, plaster, concrete, tiles, paint, rebar)
+    /** Concrete as bought: ready-mix by the half cubic metre, or cement/sand/stone for site mixing. */
+    fun concreteLines(volWithWaste: Double, mix: String, r: Rates, readyKey: String = "ready_mix", readyName: String = "คอนกรีตผสมเสร็จ"): List<MaterialLine> {
+        if (volWithWaste <= 0) return emptyList()
+        if (mix == "ready") return listOf(MaterialLine(readyKey, readyName, volWithWaste, "ลบ.ม.", ceilTo(volWithWaste, 0.5), "คิว", "สั่งทีละครึ่งคิว"))
+        val (c, s, a) = mixes.firstOrNull { it.first == mix }?.second ?: Triple(1.0, 2.0, 4.0)
+        val parts = c + s + a
+        val dry = volWithWaste * r["concrete_dry_factor"]
+        return listOf(
+            cementBags(dry * c / parts * r["cement_density"], r),
+            sand(dry * s / parts),
+            MaterialLine("stone", "หิน", dry * a / parts, "ลบ.ม.", ceilTo(dry * a / parts, 0.5), "คิว", "ร้านมักขายทีละครึ่งคิว")
+        )
+    }
+
+    /** Main bars estimated from kg of steel, bought as DB12 lengths. */
+    fun rebarFromKg(kg: Double, r: Rates, note: String): MaterialLine {
+        val perBar = rebarKgPerM(12.0) * r["rebar_length"]
+        return MaterialLine("rebar_DB12", "เหล็ก DB12 (เส้นละ ${Fmt.n(r["rebar_length"])} ม.)", kg, "กก.", ceilTo(kg / perBar), "เส้น", note)
+    }
+
+    val all: List<Calculator> by lazy { listOf(bricks, plaster, concrete, tiles, paint, rebar) + ExtraCalculators.all }
     fun byId(id: String) = all.firstOrNull { it.id == id }
 }
 

@@ -18,6 +18,8 @@ object RateDefs {
     private const val SRC_YOTA = "ตารางปริมาณวัสดุ หลักเกณฑ์ราคากลางงานก่อสร้าง (yotathai.com) — รวมเผื่อเสียหายแล้ว"
     private const val SRC_EST = "ค่าประมาณทั่วไป — ควรปรับตามฉลากสินค้า/หน้างาน"
     private const val SRC_LABEL = "ดูฉลากปูนที่ใช้จริง แล้วปรับค่า"
+    private const val SRC_LABEL_GEN = "ขนาดที่ขายทั่วไป — ดูฉลาก/สเปกสินค้าที่ใช้จริง แล้วปรับค่า"
+    private const val SRC_STRUCT = "ค่าประมาณเพื่อตั้งงบ — ปริมาณจริงต้องใช้ตามแบบวิศวกร"
 
     val all: List<RateDef> = listOf(
         // ก่ออิฐมอญ (ขนาด 7x16x3.5 ซม.)
@@ -56,7 +58,50 @@ object RateDefs {
         RateDef("grout_bag_kg", "ขนาดบรรจุ", "ยาแนว 1 ถุง", "กก.", 1.0, "ขนาดถุงที่ขายทั่วไป"),
         RateDef("paint_bucket_gal", "ขนาดบรรจุ", "สี 1 ถัง", "แกลลอน", 2.5, "ถัง 9.46 ลิตร = 2.5 แกลลอน"),
         RateDef("rebar_length", "ขนาดบรรจุ", "เหล็กเส้น 1 เส้น", "ม.", 10.0, "ความยาวมาตรฐาน"),
-        RateDef("rebar_lap", "ขนาดบรรจุ", "เผื่อทาบต่อ/ตัดเหล็ก", "%", 10.0, SRC_EST)
+        RateDef("rebar_lap", "ขนาดบรรจุ", "เผื่อทาบต่อ/ตัดเหล็ก", "%", 10.0, SRC_EST),
+        // กำแพงกันดิน / รั้ว
+        RateDef("retain_steel_kg_m3", "กำแพงกันดิน", "เหล็กเสริมต่อคอนกรีต 1 คิว", "กก./ลบ.ม.", 90.0, SRC_STRUCT),
+        RateDef("lean_thick", "กำแพงกันดิน", "คอนกรีตหยาบรองพื้น หนา", "ซม.", 5.0, SRC_EST),
+        RateDef("fence_steel_kg_m3", "รั้ว", "เหล็กเสริมต่อคอนกรีต 1 คิว (เสา/คาน/ฐาน)", "กก./ลบ.ม.", 100.0, SRC_STRUCT),
+        RateDef("fence_mesh_roll", "รั้ว", "ตาข่ายรั้ว 1 ม้วน ยาว", "ม.", 10.0, SRC_LABEL_GEN),
+        // ปูพื้น
+        RateDef("floor_box_spc", "ปูพื้น", "SPC 1 กล่อง ปูได้", "ตร.ม./กล่อง", 2.2, SRC_LABEL_GEN),
+        RateDef("floor_box_laminate", "ปูพื้น", "ลามิเนต 1 กล่อง ปูได้", "ตร.ม./กล่อง", 2.4, SRC_LABEL_GEN),
+        RateDef("floor_box_vinyl", "ปูพื้น", "กระเบื้องยาง/ไวนิล 1 กล่อง ปูได้", "ตร.ม./กล่อง", 3.3, SRC_LABEL_GEN),
+        RateDef("floor_waste", "ปูพื้น", "เผื่อตัด", "%", 7.0, SRC_EST),
+        RateDef("floor_foam_roll", "ปูพื้น", "โฟมรองพื้น 1 ม้วน ปูได้", "ตร.ม./ม้วน", 20.0, SRC_LABEL_GEN),
+        RateDef("skirting_len", "ปูพื้น", "บัวพื้น 1 เส้น ยาว", "ม.", 2.4, SRC_LABEL_GEN),
+        // หลังคา
+        RateDef("roof_tile_pcs", "หลังคา", "กระเบื้องหลังคาคอนกรีต", "แผ่น/ตร.ม.", 10.0, "กระเบื้องลอนคอนกรีตทั่วไป ≈ 10 แผ่น/ตร.ม. — ดูคู่มือผู้ผลิต"),
+        RateDef("roof_ridge_per_m", "หลังคา", "ครอบสันหลังคา", "แผ่น/ม.", 3.0, SRC_LABEL_GEN),
+        RateDef("roof_batten_spacing", "หลังคา", "ระยะแป (กระเบื้องคอนกรีต)", "ม.", 0.32, "ระยะแปตามคู่มือผู้ผลิตกระเบื้อง (ประมาณ 32–34 ซม.)"),
+        RateDef("metal_cover_width", "หลังคา", "เมทัลชีท ความกว้างใช้งานต่อแผ่น", "ม.", 0.76, SRC_LABEL_GEN),
+        RateDef("metal_purlin_spacing", "หลังคา", "ระยะแป (เมทัลชีท)", "ม.", 1.0, SRC_EST),
+        RateDef("purlin_length", "หลังคา", "แป 1 ท่อน ยาว", "ม.", 6.0, "ความยาวมาตรฐานเหล็กรูปพรรณ"),
+        RateDef("roof_waste", "หลังคา", "เผื่อตัด/แตก", "%", 5.0, SRC_EST),
+        // ฝ้า / ผนังเบา
+        RateDef("gypsum_waste", "ฝ้า / ผนังเบา", "เผื่อตัดแผ่นยิปซัม", "%", 5.0, SRC_EST),
+        RateDef("ceiling_cline_m_per_m2", "ฝ้า / ผนังเบา", "โครงซีลาย (ฝ้าฉาบเรียบ)", "ม./ตร.ม.", 2.5, "โครงหลักระยะ 1.2 ม. + โครงซอยระยะ 0.6 ม."),
+        RateDef("c_line_length", "ฝ้า / ผนังเบา", "โครงซีลาย 1 เส้น ยาว", "ม.", 4.0, SRC_LABEL_GEN),
+        RateDef("wall_angle_length", "ฝ้า / ผนังเบา", "ฉากริม 1 เส้น ยาว", "ม.", 3.0, SRC_LABEL_GEN),
+        RateDef("stud_spacing", "ฝ้า / ผนังเบา", "ระยะโครงผนัง (C-stud)", "ม.", 0.6, "ระยะทั่วไปสำหรับแผ่น 120 ซม."),
+        RateDef("stud_length", "ฝ้า / ผนังเบา", "โครงผนัง/ราง 1 เส้น ยาว", "ม.", 3.0, SRC_LABEL_GEN),
+        // ท่อ
+        RateDef("pipe_length", "ท่อ", "ท่อ PVC 1 เส้น ยาว", "ม.", 4.0, "ความยาวมาตรฐาน"),
+        RateDef("pipe_waste", "ท่อ", "เผื่อตัดท่อ", "%", 10.0, SRC_EST),
+        RateDef("clip_spacing", "ท่อ", "ระยะกิ๊บจับท่อ", "ม.", 1.0, SRC_EST),
+        RateDef("glue_joints_per_can", "ท่อ", "น้ำยาประสานท่อ 1 กระป๋อง ทาได้", "จุดต่อ", 40.0, SRC_LABEL_GEN),
+        // งานดิน
+        RateDef("fill_shrink_soil", "งานดิน", "ดินถม เผื่อยุบตัวเมื่อบดอัด", "%", 30.0, SRC_EST),
+        RateDef("fill_shrink_sand", "งานดิน", "ทรายถม เผื่อยุบตัว", "%", 20.0, SRC_EST),
+        RateDef("fill_shrink_laterite", "งานดิน", "ลูกรัง เผื่อยุบตัว", "%", 25.0, SRC_EST),
+        RateDef("dig_swell", "งานดิน", "ดินขุดฟูขึ้น (ปริมาตรตอนขน)", "%", 25.0, SRC_EST),
+        // งานลาน
+        RateDef("wire_mesh_sheet_m2", "งานลาน", "ไวร์เมช 1 แผ่น (2 × 6 ม.)", "ตร.ม.", 12.0, SRC_LABEL_GEN),
+        RateDef("wire_mesh_lap", "งานลาน", "เผื่อทาบไวร์เมช", "%", 10.0, SRC_EST),
+        RateDef("paver_worm_pcs", "งานลาน", "บล็อกตัวหนอน", "ก้อน/ตร.ม.", 40.0, SRC_LABEL_GEN),
+        RateDef("paver_rect_pcs", "งานลาน", "บล็อกปูพื้น 10×20 ซม.", "ก้อน/ตร.ม.", 50.0, "1 ÷ (0.10 × 0.20) ม."),
+        RateDef("paver_waste", "งานลาน", "เผื่อตัด/แตก", "%", 5.0, SRC_EST)
     )
 
     val byKey: Map<String, RateDef> = all.associateBy { it.key }

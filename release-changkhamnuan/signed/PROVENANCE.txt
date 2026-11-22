@@ -1,1 +1,1 @@
-built by CI from commit f942bc9 (bundleRelease, R8 minified, unsigned), versionCode 1 / versionName 1.0.0; signed locally with the ChangKhamnuan upload key (jarsigner SHA256withRSA). The same code's release build was installed and tested on an emulator in CI.
+built by CI from commit f15c879 (bundleRelease, R8 minified, unsigned), versionCode 2 / versionName 1.1.0; signed locally with the ChangKhamnuan upload key (jarsigner SHA256withRSA). The same code's release build was installed and tested on an emulator in CI (all 16 calculators opened, 23/23 unit tests).

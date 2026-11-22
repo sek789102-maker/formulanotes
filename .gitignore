@@ -4,3 +4,4 @@
 *.p12
 key.properties
 **/signing-private/
+deliver/

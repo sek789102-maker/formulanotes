@@ -84,6 +84,11 @@ import java.util.Locale
 fun PricesScreen(padding: PaddingValues, vm: AppViewModel) {
     val prices by vm.prices.collectAsStateWithLifecycle()
     var editing by remember { mutableStateOf<CatalogItem?>(null) }
+    var confirmDeletePrice by remember { mutableStateOf<CatalogItem?>(null) }
+    confirmDeletePrice?.let { c ->
+        ConfirmDialog("ลบราคา ${c.name}?", "งานที่เพิ่มไปแล้วไม่เปลี่ยน แต่การคำนวณครั้งต่อไปจะไม่มีราคานี้", "ลบราคา",
+            onDismiss = { confirmDeletePrice = null }) { vm.setPrice(c.key, null) }
+    }
     LazyColumn(Modifier.fillMaxSize().padding(padding).testTag("price_list"), contentPadding = PaddingValues(16.dp)) {
         if (prices.isEmpty()) {
             item {
@@ -121,10 +126,16 @@ fun PricesScreen(padding: PaddingValues, vm: AppViewModel) {
             onDismissRequest = { editing = null },
             title = { Text(c.name) },
             text = { NumberInput(v, { v = it }, "ราคา", "บาท/${c.unit}", tag = "price_input") },
-            confirmButton = { TextButton(onClick = { vm.setPrice(c.key, v.toDoubleOrNull()); editing = null }, modifier = Modifier.testTag("price_save")) { Text("บันทึก") } },
+            confirmButton = {
+                TextButton(
+                    onClick = { v.toDoubleOrNull()?.takeIf { it > 0 }?.let { vm.setPrice(c.key, it) }; editing = null },
+                    enabled = (v.toDoubleOrNull() ?: 0.0) > 0,
+                    modifier = Modifier.testTag("price_save")
+                ) { Text("บันทึก") }
+            },
             dismissButton = {
                 Row {
-                    if (prices[c.key] != null) TextButton(onClick = { vm.setPrice(c.key, null); editing = null }) { Text("ลบราคา", color = MaterialTheme.colorScheme.error) }
+                    if (prices[c.key] != null) TextButton(onClick = { confirmDeletePrice = c; editing = null }) { Text("ลบราคา", color = MaterialTheme.colorScheme.error) }
                     TextButton(onClick = { editing = null }) { Text("ยกเลิก") }
                 }
             }
@@ -215,18 +226,25 @@ fun ProfileScreen(vm: AppViewModel, snackbar: SnackbarHostState, onBack: () -> U
     var address by rememberSaveable { mutableStateOf(start.address) }
     var tax by rememberSaveable { mutableStateOf(start.taxId) }
     var terms by rememberSaveable { mutableStateOf(start.terms) }
+    // Leaving the screen (back arrow, system back or the save button) always keeps what was typed.
+    fun saveAndClose() {
+        vm.setProfile(BusinessProfile(shop.trim(), owner.trim(), phone.trim(), line.trim(), address.trim(), tax.trim(), terms.trim()))
+        onBack()
+    }
+    androidx.activity.compose.BackHandler { saveAndClose() }
     Scaffold(
         snackbarHost = { SnackbarHost(snackbar) },
         topBar = {
             TopAppBar(
                 colors = yellowBarColors(),
-                navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Outlined.ArrowBack, "กลับ") } },
+                navigationIcon = { IconButton(onClick = { saveAndClose() }) { Icon(Icons.AutoMirrored.Outlined.ArrowBack, "บันทึกและกลับ") } },
                 title = { Text("ข้อมูลร้าน / ช่าง") },
                 actions = {
-                    TextButton(onClick = {
-                        vm.setProfile(BusinessProfile(shop.trim(), owner.trim(), phone.trim(), line.trim(), address.trim(), tax.trim(), terms.trim()))
-                        onBack()
-                    }, modifier = Modifier.testTag("profile_save")) { Text("บันทึก") }
+                    TextButton(
+                        onClick = { saveAndClose() },
+                        colors = androidx.compose.material3.ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.onPrimary),
+                        modifier = Modifier.testTag("profile_save")
+                    ) { Text("บันทึก") }
                 }
             )
         }
@@ -240,6 +258,9 @@ fun ProfileScreen(vm: AppViewModel, snackbar: SnackbarHostState, onBack: () -> U
             OutlinedTextField(address, { address = it.take(200) }, label = { Text("ที่อยู่") }, modifier = Modifier.fillMaxWidth())
             OutlinedTextField(tax, { tax = it.filter { c -> c.isDigit() }.take(13) }, label = { Text("เลขประจำตัวผู้เสียภาษี (ถ้ามี)") }, singleLine = true, modifier = Modifier.fillMaxWidth())
             OutlinedTextField(terms, { terms = it.take(500) }, label = { Text("เงื่อนไขการชำระเงิน") }, modifier = Modifier.fillMaxWidth())
+            androidx.compose.material3.Button(onClick = { saveAndClose() }, modifier = Modifier.fillMaxWidth().padding(top = 8.dp).testTag("profile_save_bottom")) {
+                Text("บันทึกข้อมูลร้าน")
+            }
             Spacer(Modifier.height(24.dp))
         }
     }
@@ -260,7 +281,12 @@ fun RatesScreen(vm: AppViewModel, snackbar: SnackbarHostState, onBack: () -> Uni
                 colors = yellowBarColors(),
                 navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Outlined.ArrowBack, "กลับ") } },
                 title = { Text("อัตราการใช้วัสดุ") },
-                actions = { TextButton(onClick = { confirmReset = true }) { Text("คืนค่าทั้งหมด") } }
+                actions = {
+                    TextButton(
+                        onClick = { confirmReset = true },
+                        colors = androidx.compose.material3.ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.onPrimary)
+                    ) { Text("คืนค่าทั้งหมด") }
+                }
             )
         }
     ) { padding ->

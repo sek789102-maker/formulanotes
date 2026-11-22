@@ -1,8 +1,8 @@
-package: name='com.sek789102.changkhamnuan' versionCode='1' versionName='1.0.0' platformBuildVersionName='16' platformBuildVersionCode='36' compileSdkVersion='36' compileSdkVersionCodename='16'
+package: name='com.sek789102.changkhamnuan' versionCode='2' versionName='1.1.0' platformBuildVersionName='16' platformBuildVersionCode='36' compileSdkVersion='36' compileSdkVersionCodename='16'
 targetSdkVersion:'36'
 uses-permission: name='com.sek789102.changkhamnuan.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION'
 application-label:'ช่างคำนวณ'
 
-18818115 /home/runner/work/formulanotes/formulanotes/changkhamnuan-build/ChangKhamnuan-debug.apk
-1978773 /home/runner/work/formulanotes/formulanotes/changkhamnuan-build/ChangKhamnuan-release-testsigned.apk
-4175090 /home/runner/work/formulanotes/formulanotes/changkhamnuan-build/ChangKhamnuan-release-unsigned.aab
+18959864 /home/runner/work/formulanotes/formulanotes/changkhamnuan-build/ChangKhamnuan-debug.apk
+2135939 /home/runner/work/formulanotes/formulanotes/changkhamnuan-build/ChangKhamnuan-release-testsigned.apk
+4335767 /home/runner/work/formulanotes/formulanotes/changkhamnuan-build/ChangKhamnuan-release-unsigned.aab

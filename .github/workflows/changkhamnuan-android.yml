@@ -37,8 +37,16 @@ jobs:
         with:
           gradle-version: '9.3.1'
 
+      # Outputs of the previous build are committed on the branch: remove them so a failed
+      # build can never be tested or shipped by mistake.
+      - name: Remove previous build outputs
+        working-directory: .
+        run: rm -f changkhamnuan-build/*.apk changkhamnuan-build/*.aab changkhamnuan-build/TEST_SUMMARY.txt
+
       - name: Unit tests (JVM + Robolectric)
-        run: gradle :app:testDebugUnitTest --stacktrace --no-configuration-cache 2>&1 | tee ../ck-unit-tests.log
+        run: |
+          set -o pipefail
+          gradle :app:testDebugUnitTest --stacktrace --no-configuration-cache 2>&1 | tee ../ck-unit-tests.log
 
       - name: Build debug APK + release APK/AAB (unsigned)
         if: always()

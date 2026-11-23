@@ -1,1 +1,1 @@
-built by CI from commit aec651c (bundleRelease, R8 minified, unsigned), versionCode 3 / versionName 1.0.2; signed locally with the Jotwai upload key (jarsigner SHA256withRSA). The same code's release build was installed and tested on an emulator in CI.
+built by CI from commit 96f3fe0 (bundleRelease, unsigned), versionCode 4 / versionName 1.1.0; signed locally with the Jotwai upload key (jarsigner SHA256withRSA). CI: 43/43 unit tests (incl. RichText), release build installed and run on an emulator without crashes.

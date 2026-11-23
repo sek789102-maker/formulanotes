@@ -163,7 +163,9 @@ fun ProjectsScreen(padding: PaddingValues, vm: AppViewModel, onOpen: (Long) -> U
                             Text("${s?.count ?: 0} รายการ · แก้ไข ${fmt.format(Date(p.updatedAt))}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                         Column(horizontalAlignment = Alignment.End) {
-                            Text(Fmt.money(s?.total ?: 0.0), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.secondary)
+                            // Same total as the quote: overhead, discount and VAT apply to the whole subtotal.
+                            val grand = QuoteMath.totals(listOf(QuoteLine(ItemKind.OTHER, 1.0, s?.total ?: 0.0)), QuoteOptions(p.overheadPercent, p.discount, p.vat, p.withholding)).total
+                            Text(Fmt.money(grand), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.secondary)
                             Text("บาท", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                     }

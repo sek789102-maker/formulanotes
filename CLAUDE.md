@@ -14,7 +14,7 @@ Never open a pull request unless asked.
 | Folder | App | Package | Latest |
 |---|---|---|---|
 | `lifekeep/` | LIFEKEEP (documents, tasks, calendar) — **Flutter** | com.sek789102.lifekeep | 1.1.1 (versionCode 4) |
-| `jotwai/` | จดไว้ (notes) — Kotlin + Compose | com.sek789102.jotwai | 1.1.0 (versionCode 4) |
+| `jotwai/` | จดไว้ (notes) — Kotlin + Compose | com.sek789102.jotwai | 1.1.1 (versionCode 5) |
 | `changkhamnuan/` | ช่างคำนวณ (material calculator + contractor documents, paid app, no Pro tier) — Kotlin + Compose | com.sek789102.changkhamnuan | 1.3.1 (versionCode 5) |
 
 Release files (docs, store listing, signed AAB, upload-cert fingerprint) live in `release/`, `release-jotwai/`, `release-changkhamnuan/`.

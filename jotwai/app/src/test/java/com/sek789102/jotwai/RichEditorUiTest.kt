@@ -19,6 +19,7 @@ import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
@@ -120,8 +121,8 @@ class RichEditorUiTest {
 
         // Font at a bare cursor, then typing
         value = value.copy(selection = TextRange(value.text.length))
-        rule.onNodeWithTag("fmt_font").performClick()
-        rule.onNodeWithTag("font_hand").performClick()
+        rule.onNodeWithTag("fmt_font").performScrollTo().performClick()
+        rule.onNodeWithTag("font_hand").performScrollTo().performClick()
         rule.onNodeWithTag("body").performTextInput("มือ")
         assertTrue(value.text.endsWith("⟦f:hand⟧มือ⟦/f⟧"))
         assertFalse(RichText.parse(value.text).display.contains("⟦"))
@@ -153,7 +154,7 @@ class RichEditorUiTest {
 
     @Test fun showcaseLightAndFontPanel() {
         setUp("**จดไว้** ⟦c:8E24AA⟧ม่วง⟦/c⟧ ⟦z:2⟧ใหญ่⟦/z⟧\n⟦al:c⟧## กึ่งกลาง", dark = false)
-        rule.onNodeWithTag("fmt_font").performClick()
+        rule.onNodeWithTag("fmt_font").performScrollTo().performClick()
         rule.waitForIdle()
         shot("04-light-font-panel")
     }

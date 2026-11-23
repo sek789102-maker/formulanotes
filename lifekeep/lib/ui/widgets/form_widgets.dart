@@ -10,17 +10,18 @@ import '../../data/models/category.dart';
 import '../../data/models/reminder_config.dart';
 import '../../state/app_controller.dart';
 import '../design/design.dart';
+import 'thai_date_picker.dart';
 
 Future<DateTime?> pickDate(BuildContext context, {DateTime? initial, DateTime? first, DateTime? last}) {
   final now = DateTime.now();
   final init = initial ?? now;
   final f = first ?? DateTime(now.year - 50);
   final l = last ?? DateTime(now.year + 50);
-  return showDatePicker(
-    context: context,
-    initialDate: init.isBefore(f) ? f : (init.isAfter(l) ? l : init),
-    firstDate: f,
-    lastDate: l,
+  return showThaiDatePicker(
+    context,
+    initial: init.isBefore(f) ? f : (init.isAfter(l) ? l : init),
+    first: f,
+    last: l,
   );
 }
 

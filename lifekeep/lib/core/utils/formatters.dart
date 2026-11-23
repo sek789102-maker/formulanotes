@@ -57,6 +57,9 @@ class Fmt {
     return '${_thMonths[d.month - 1]} ${_beYear(d.year)}';
   }
 
+  /// Year as shown to the user: Buddhist Era in Thai, Gregorian in English.
+  static String year(int y) => Lang.isEn ? '$y' : '${_beYear(y)}';
+
   static String time(DateTime d) => '${d.hour.toString().padLeft(2, '0')}:${d.minute.toString().padLeft(2, '0')}';
 
   static String dateTime(DateTime d) => '${date(d)} · ${time(d)}';

@@ -1,13 +1,19 @@
 Resolving dependencies...
 Downloading packages...
+  android_file_picker 2.2.0 (2.2.1 available)
   cross_file 0.3.5+5 (0.4.0 available)
+  file_picker 13.4.0 (13.4.1 available)
+  file_picker_darwin 2.5.1 (2.5.2 available)
+  file_picker_linux 2.0.4 (2.0.5 available)
+  file_picker_web 4.2.1 (4.2.2 available)
   material_color_utilities 0.13.0 (0.13.1 available)
+  sqlite3 3.9.1 (3.9.2 available)
   test_api 0.7.12 (0.7.15 available)
 Got dependencies!
-3 packages have newer versions incompatible with dependency constraints.
+9 packages have newer versions incompatible with dependency constraints.
 Try `flutter pub outdated` for more information.
 00:00 +0: loading /home/runner/work/formulanotes/formulanotes/lifekeep/test/reminder_scheduler_test.dart
-00:00 +0: /home/runner/work/formulanotes/formulanotes/lifekeep/test/large_data_test.dart: 3,000 records: queries, search, reminders cap, backup/restore round-trip
+00:00 +0: /home/runner/work/formulanotes/formulanotes/lifekeep/test/reminder_scheduler_test.dart: document reminders are scheduled at the reminder time before expiry
 00:00 +1: /home/runner/work/formulanotes/formulanotes/lifekeep/test/large_data_test.dart: 3,000 records: queries, search, reminders cap, backup/restore round-trip
 00:00 +2: /home/runner/work/formulanotes/formulanotes/lifekeep/test/large_data_test.dart: 3,000 records: queries, search, reminders cap, backup/restore round-trip
 00:00 +3: /home/runner/work/formulanotes/formulanotes/lifekeep/test/large_data_test.dart: 3,000 records: queries, search, reminders cap, backup/restore round-trip
@@ -41,10 +47,10 @@ error AppException(ErrorKind.database): ฐานข้อมูลถูกส�
 00:02 +26: /home/runner/work/formulanotes/formulanotes/lifekeep/test/large_data_test.dart: 3,000 records: queries, search, reminders cap, backup/restore round-trip
 00:04 +27: /home/runner/work/formulanotes/formulanotes/lifekeep/test/layout_stress_test.dart: no overflow at 320x640 text x1.3
 00:04 +28: /home/runner/work/formulanotes/formulanotes/lifekeep/test/layout_stress_test.dart: no overflow at 320x640 text x1.3
-00:05 +29: /home/runner/work/formulanotes/formulanotes/lifekeep/test/layout_stress_test.dart: no overflow at 320x640 text x1.3
-00:05 +30: /home/runner/work/formulanotes/formulanotes/lifekeep/test/layout_stress_test.dart: no overflow at 320x640 text x1.3
-00:05 +31: /home/runner/work/formulanotes/formulanotes/lifekeep/test/layout_stress_test.dart: no overflow at 320x640 text x1.3
-00:05 +32: /home/runner/work/formulanotes/formulanotes/lifekeep/test/layout_stress_test.dart: no overflow at 320x640 text x1.3
+00:04 +29: /home/runner/work/formulanotes/formulanotes/lifekeep/test/layout_stress_test.dart: no overflow at 320x640 text x1.3
+00:04 +30: /home/runner/work/formulanotes/formulanotes/lifekeep/test/layout_stress_test.dart: no overflow at 320x640 text x1.3
+00:04 +31: /home/runner/work/formulanotes/formulanotes/lifekeep/test/layout_stress_test.dart: no overflow at 320x640 text x1.3
+00:04 +32: /home/runner/work/formulanotes/formulanotes/lifekeep/test/layout_stress_test.dart: no overflow at 320x640 text x1.3
 00:05 +33: /home/runner/work/formulanotes/formulanotes/lifekeep/test/layout_stress_test.dart: no overflow at 320x640 text x1.3
 00:06 +34: /home/runner/work/formulanotes/formulanotes/lifekeep/test/layout_stress_test.dart: no overflow at 320x640 text x1.3
 00:06 +35: /home/runner/work/formulanotes/formulanotes/lifekeep/test/layout_stress_test.dart: no overflow at 320x640 text x1.3
@@ -62,26 +68,26 @@ error AppException(ErrorKind.database): ฐานข้อมูลถูกส�
 00:12 +47: /home/runner/work/formulanotes/formulanotes/lifekeep/test/layout_stress_test.dart: no overflow at 800x1280 text x1.0
 00:12 +48: /home/runner/work/formulanotes/formulanotes/lifekeep/test/widget_flow_test.dart: documents: add via form, list ↔ grid, search highlight, detail
 00:13 +49: /home/runner/work/formulanotes/formulanotes/lifekeep/test/widget_flow_test.dart: documents: add via form, list ↔ grid, search highlight, detail
-00:14 +50: /home/runner/work/formulanotes/formulanotes/lifekeep/test/reminder_permission_test.dart: home warns when reminders exist but exact alarms are not allowed
+00:15 +50: /home/runner/work/formulanotes/formulanotes/lifekeep/test/reminder_permission_test.dart: home warns when reminders exist but exact alarms are not allowed
 00:15 +51: /home/runner/work/formulanotes/formulanotes/lifekeep/test/reminder_permission_test.dart: home warns when reminders exist but exact alarms are not allowed
 00:16 +52: /home/runner/work/formulanotes/formulanotes/lifekeep/test/backup_test.dart: backup contains manifest, checksums, data and attachments; inspection passes
-00:16 +53: /home/runner/work/formulanotes/formulanotes/lifekeep/test/reminder_permission_test.dart: no warning when everything is allowed
-00:16 +54: /home/runner/work/formulanotes/formulanotes/lifekeep/test/reminder_permission_test.dart: no warning when everything is allowed
-00:16 +55: /home/runner/work/formulanotes/formulanotes/lifekeep/test/reminder_permission_test.dart: no warning when everything is allowed
-00:16 +56: /home/runner/work/formulanotes/formulanotes/lifekeep/test/reminder_permission_test.dart: no warning when everything is allowed
-00:16 +57: /home/runner/work/formulanotes/formulanotes/lifekeep/test/reminder_permission_test.dart: no warning when everything is allowed
-00:16 +58: /home/runner/work/formulanotes/formulanotes/lifekeep/test/reminder_permission_test.dart: no warning when everything is allowed
-00:16 +59: /home/runner/work/formulanotes/formulanotes/lifekeep/test/reminder_permission_test.dart: no warning when everything is allowed
-00:17 +60: /home/runner/work/formulanotes/formulanotes/lifekeep/test/reminder_permission_test.dart: no warning when everything is allowed
+00:17 +53: /home/runner/work/formulanotes/formulanotes/lifekeep/test/reminder_permission_test.dart: no warning when everything is allowed
+00:17 +54: /home/runner/work/formulanotes/formulanotes/lifekeep/test/reminder_permission_test.dart: no warning when everything is allowed
+00:17 +55: /home/runner/work/formulanotes/formulanotes/lifekeep/test/reminder_permission_test.dart: no warning when everything is allowed
+00:17 +56: /home/runner/work/formulanotes/formulanotes/lifekeep/test/reminder_permission_test.dart: no warning when everything is allowed
+00:17 +57: /home/runner/work/formulanotes/formulanotes/lifekeep/test/backup_test.dart: backup from a newer format version is rejected
+00:17 +58: /home/runner/work/formulanotes/formulanotes/lifekeep/test/backup_test.dart: non-zip and foreign zip files are rejected
+00:17 +59: /home/runner/work/formulanotes/formulanotes/lifekeep/test/backup_test.dart: invalid records are skipped with a warning (valid ones kept)
+00:17 +60: /home/runner/work/formulanotes/formulanotes/lifekeep/test/backup_test.dart: a failure during restore rolls back and leaves current data intact
 00:17 +61: /home/runner/work/formulanotes/formulanotes/lifekeep/test/backup_test.dart: auto backup runs when due, rotates old ones only after success
 00:17 +62: /home/runner/work/formulanotes/formulanotes/lifekeep/test/backup_test.dart: isDue respects frequency
 00:17 +63: /home/runner/work/formulanotes/formulanotes/lifekeep/test/backup_test.dart: delete all data removes content and attachments but keeps backups by default
-00:17 +64: /home/runner/work/formulanotes/formulanotes/lifekeep/test/validation_test.dart: title validation
-00:17 +65: /home/runner/work/formulanotes/formulanotes/lifekeep/test/validation_test.dart: event range
-00:17 +66: /home/runner/work/formulanotes/formulanotes/lifekeep/test/validation_test.dart: custom reminder input
-00:17 +67: /home/runner/work/formulanotes/formulanotes/lifekeep/test/validation_test.dart: PIN format
-00:17 +68: /home/runner/work/formulanotes/formulanotes/lifekeep/test/validation_test.dart: ReminderConfig encode/decode/toggle is robust
-00:17 +69: /home/runner/work/formulanotes/formulanotes/lifekeep/test/validation_test.dart: TaskItem tolerates bad priority values from old/foreign data
-00:17 +70: /home/runner/work/formulanotes/formulanotes/lifekeep/test/validation_test.dart: LIKE pattern escaping
-00:17 +71: /home/runner/work/formulanotes/formulanotes/lifekeep/test/validation_test.dart: attachment names cannot escape the folder
-00:17 +72: All tests passed!
+00:18 +64: /home/runner/work/formulanotes/formulanotes/lifekeep/test/validation_test.dart: title validation
+00:18 +65: /home/runner/work/formulanotes/formulanotes/lifekeep/test/validation_test.dart: event range
+00:18 +66: /home/runner/work/formulanotes/formulanotes/lifekeep/test/validation_test.dart: custom reminder input
+00:18 +67: /home/runner/work/formulanotes/formulanotes/lifekeep/test/validation_test.dart: PIN format
+00:18 +68: /home/runner/work/formulanotes/formulanotes/lifekeep/test/validation_test.dart: ReminderConfig encode/decode/toggle is robust
+00:18 +69: /home/runner/work/formulanotes/formulanotes/lifekeep/test/validation_test.dart: TaskItem tolerates bad priority values from old/foreign data
+00:18 +70: /home/runner/work/formulanotes/formulanotes/lifekeep/test/validation_test.dart: LIKE pattern escaping
+00:18 +71: /home/runner/work/formulanotes/formulanotes/lifekeep/test/validation_test.dart: attachment names cannot escape the folder
+00:18 +72: All tests passed!

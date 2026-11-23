@@ -1,7 +1,7 @@
 # On-device verification
 
 - Device: sdk_gphone64_x86_64, Android 15 (API 35)
-- Date: 2026-11-21T04:13Z
+- Date: 2026-11-23T08:05Z
 
 ## 1. Integration tests (debug build, real Android storage/plugins)
 - ❌ integration_test failed (see integration_test.log)
@@ -16,9 +16,9 @@
 
 ## 3. Production release APK launch
 - ✅ production release APK installed
-- ✅ app running 10 s after launch (pid 4936)
+- ✅ app running 10 s after launch (pid 5152)
 - ✅ no crash / Flutter error in logcat
-- ℹ️ cold start TotalTime: 1210
+- ℹ️ cold start TotalTime: 1381
 - ✅ relaunch after process death OK
 
 **Result: 1 CHECK(S) FAILED**

@@ -1,11 +1,11 @@
-11-21 04:18:06.969  4759  4759 I flutter : LKSMOKE PHASE 2
-11-21 04:18:06.971  4759  4759 I flutter : LKSMOKE PASS document persisted after restart
-11-21 04:18:06.972  4759  4759 I flutter : LKSMOKE PASS attachment file persisted
-11-21 04:18:06.972  4759  4759 I flutter : LKSMOKE PASS task persisted
-11-21 04:18:06.982  4759  4759 I flutter : LKSMOKE PASS event persisted
-11-21 04:18:06.984  4759  4759 I flutter : LKSMOKE PASS reminder bookkeeping persisted
-11-21 04:18:06.986  4759  4759 I flutter : LKSMOKE PASS OS alarms still pending after restart
-11-21 04:18:06.988  4759  4759 I flutter : LKSMOKE PASS backup file persisted
-11-21 04:18:07.014  4759  4759 I flutter : LKSMOKE PASS attachment deleted with document
-11-21 04:18:07.014  4759  4759 I flutter : LKSMOKE PASS other reminders untouched
-11-21 04:18:07.014  4759  4759 I flutter : LKSMOKE DONE PHASE 2
+11-23 08:10:39.397  5008  5008 I flutter : LKSMOKE PHASE 2
+11-23 08:10:39.400  5008  5008 I flutter : LKSMOKE PASS document persisted after restart
+11-23 08:10:39.401  5008  5008 I flutter : LKSMOKE PASS attachment file persisted
+11-23 08:10:39.401  5008  5008 I flutter : LKSMOKE PASS task persisted
+11-23 08:10:39.402  5008  5008 I flutter : LKSMOKE PASS event persisted
+11-23 08:10:39.402  5008  5008 I flutter : LKSMOKE PASS reminder bookkeeping persisted
+11-23 08:10:39.406  5008  5008 I flutter : LKSMOKE PASS OS alarms still pending after restart
+11-23 08:10:39.408  5008  5008 I flutter : LKSMOKE PASS backup file persisted
+11-23 08:10:39.418  5008  5008 I flutter : LKSMOKE PASS attachment deleted with document
+11-23 08:10:39.418  5008  5008 I flutter : LKSMOKE PASS other reminders untouched
+11-23 08:10:39.418  5008  5008 I flutter : LKSMOKE DONE PHASE 2

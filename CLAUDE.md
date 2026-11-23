@@ -15,7 +15,7 @@ Never open a pull request unless asked.
 |---|---|---|---|
 | `lifekeep/` | LIFEKEEP (documents & tasks) | — | AAB versionCode 2 |
 | `jotwai/` | จดไว้ (notes) | com.sek789102.jotwai | 1.0.2 (versionCode 3) |
-| `changkhamnuan/` | ช่างคำนวณ (material calculator + contractor documents, paid app, no Pro tier) | com.sek789102.changkhamnuan | 1.3.0 (versionCode 4) |
+| `changkhamnuan/` | ช่างคำนวณ (material calculator + contractor documents, paid app, no Pro tier) | com.sek789102.changkhamnuan | 1.3.1 (versionCode 5) |
 
 Release files (docs, store listing, signed AAB, upload-cert fingerprint) live in `release/`, `release-jotwai/`, `release-changkhamnuan/`.
 Signing keys are NOT in the repo — the owner keeps them and attaches them when an AAB must be signed
@@ -29,7 +29,7 @@ Signing keys are NOT in the repo — the owner keeps them and attaches them when
 - Sign the AAB locally with jarsigner (SHA256withRSA) using the owner's key, then verify the fingerprint.
 - Pure-Kotlin domain tests can be compiled and run locally with kotlin-compiler-embeddable from Maven Central (fast check before pushing).
 
-## ช่างคำนวณ — what exists (1.3.0)
+## ช่างคำนวณ — what exists (1.3.1)
 - 27 calculators in 7 groups (domain/Calculators.kt, ExtraCalculators.kt, CivilCalculators.kt): concrete, footing, piles,
   stairs · rebar, rebar by spacing, structural steel, formwork · bricks, plaster, drywall, paint · tiles, flooring, ceiling,
   roof · excavation, fill, cut & fill, retaining wall · road, drain, yard, fence · pipes, tanks, slope (+ unit converter).

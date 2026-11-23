@@ -228,7 +228,7 @@ class RichTextTest {
         val t = "⟦c:E53935⟧hello⟦/c⟧"
         val v = RichText.applyTag(TextFieldValue(t, TextRange(15)), "c", "1E88E5")
         assertEquals("⟦c:E53935⟧hello⟦/c⟧⟦c:1E88E5⟧⟦/c⟧", v.text)
-        assertEquals(TextRange(t.length + 11), v.selection)
+        assertEquals(TextRange(t.length + 10), v.selection)
         val leave = RichText.applyTag(TextFieldValue(t, TextRange(15)), "c", "E53935")
         assertEquals(t, leave.text)
         assertEquals(TextRange(t.length), leave.selection)

@@ -155,7 +155,13 @@ void main() {
     await settle(t, 6);
     // (The success snackbar is transient; check the lasting state instead.)
     expect(find.text('ข้อมูลได้รับการสำรองแล้ว'), findsOneWidget);
-    await t.drag(find.byType(Scrollable).first, const Offset(0, -600));
+    // Scroll until the history entry is built (card sizes differ between designs).
+    await t.scrollUntilVisible(
+      find.textContaining('ด้วยตนเอง'),
+      150,
+      scrollable: find.byType(Scrollable).first,
+      maxScrolls: 30,
+    );
     await settle(t, 1);
     expect(
       find.textContaining('ด้วยตนเอง'),

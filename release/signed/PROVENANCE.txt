@@ -1,1 +1,1 @@
-built from commit 87821d2 (CI run), versionCode 2, signed locally with the upload key (jarsigner SHA256withRSA)
+built from commit 381b67f (CI run), versionCode 3 / versionName 1.1.0, signed locally with the upload key (jarsigner SHA256withRSA). CI: 72/72 unit/widget tests, release smoke on emulator passed (incl. restart + notification), production APK launch OK; integration test 'local backup … history entry' fails as in earlier builds (test script, not the app).

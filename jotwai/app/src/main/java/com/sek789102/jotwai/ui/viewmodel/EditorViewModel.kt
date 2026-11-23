@@ -111,7 +111,7 @@ class EditorViewModel(application: Application, val noteId: Long) : AndroidViewM
     }
 
     fun onBodyChange(v: TextFieldValue) {
-        val next = TextEditing.continueList(body, v)
+        val next = TextEditing.continueList(body, com.sek789102.jotwai.domain.RichText.fixDeletion(body, v))
         val textChanged = next.text != body.text
         body = next
         if (textChanged) changed()

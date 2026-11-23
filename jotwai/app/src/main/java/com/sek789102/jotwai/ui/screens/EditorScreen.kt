@@ -140,7 +140,8 @@ import com.sek789102.jotwai.data.model.ChecklistItem
 import com.sek789102.jotwai.data.model.NoteEntity
 import com.sek789102.jotwai.data.model.NoteType
 import com.sek789102.jotwai.data.model.RepeatRule
-import com.sek789102.jotwai.domain.MarkdownVisualTransformation
+import com.sek789102.jotwai.domain.RichText
+import com.sek789102.jotwai.ui.components.FormatToolbar
 import com.sek789102.jotwai.domain.TextEditing
 import com.sek789102.jotwai.ui.components.ColorPalette
 import com.sek789102.jotwai.ui.components.ConfirmDialog
@@ -368,7 +369,7 @@ fun EditorScreen(
             if (!readOnly) {
                 Column(Modifier.background(bg).navigationBarsPadding().imePadding()) {
                     if (showFormat && vm.type == NoteType.TEXT) {
-                        FormatBar { transform -> vm.applyBodyFormat(transform) }
+                        FormatToolbar(vm.body) { transform -> vm.applyBodyFormat(transform) }
                     }
                     Row(Modifier.fillMaxWidth().padding(horizontal = 4.dp), verticalAlignment = Alignment.CenterVertically) {
                         IconButton(onClick = { addSheet = true }, modifier = Modifier.testTag("editor_add")) {
@@ -666,12 +667,18 @@ private fun BodyField(
     autoFocus: Boolean
 ) {
     val scheme = MaterialTheme.colorScheme
-    val style = MaterialTheme.typography.bodyLarge.copy(color = scheme.onSurface)
+    // Unspecified line height lets lines with large text grow instead of overlapping.
+    val style = MaterialTheme.typography.bodyLarge.copy(color = scheme.onSurface, lineHeight = androidx.compose.ui.unit.TextUnit.Unspecified)
     val transformation = remember(scheme) {
-        MarkdownVisualTransformation(
-            markerColor = scheme.onSurfaceVariant.copy(alpha = 0.5f),
-            highlightColor = Color(0x80FFD54F),
-            doneColor = scheme.onSurfaceVariant
+        RichText.Transformation(
+            RichText.Palette(
+                marker = scheme.primary,
+                highlight = Color(0x80FFD54F),
+                done = scheme.onSurfaceVariant,
+                codeBg = scheme.onSurface.copy(alpha = 0.08f),
+                quote = scheme.onSurfaceVariant,
+                rule = scheme.outlineVariant
+            )
         )
     }
     val focus = remember { FocusRequester() }
@@ -697,28 +704,6 @@ private fun BodyField(
             }
         }
     )
-}
-
-@Composable
-private fun FormatBar(apply: ((TextFieldValue) -> TextFieldValue) -> Unit) {
-    Row(
-        Modifier.fillMaxWidth().padding(horizontal = 8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        @Composable
-        fun b(icon: androidx.compose.ui.graphics.vector.ImageVector, label: Int, tag: String, t: (TextFieldValue) -> TextFieldValue) {
-            IconButton(onClick = { apply(t) }, modifier = Modifier.testTag(tag)) { Icon(icon, stringResource(label)) }
-        }
-        b(Icons.Outlined.FormatBold, R.string.format_bold, "fmt_bold") { TextEditing.toggleWrap(it, "**") }
-        b(Icons.Outlined.FormatItalic, R.string.format_italic, "fmt_italic") { TextEditing.toggleWrap(it, "*") }
-        b(Icons.Outlined.FormatStrikethrough, R.string.format_strike, "fmt_strike") { TextEditing.toggleWrap(it, "~~") }
-        b(Icons.Outlined.BorderColor, R.string.format_highlight, "fmt_mark") { TextEditing.toggleWrap(it, "==") }
-        b(Icons.Outlined.Title, R.string.format_heading, "fmt_heading") { TextEditing.toggleLinePrefix(it, "# ") }
-        b(Icons.AutoMirrored.Outlined.FormatListBulleted, R.string.format_bullets, "fmt_bullets") { TextEditing.toggleLinePrefix(it, "- ") }
-        b(Icons.Outlined.FormatListNumbered, R.string.format_numbers, "fmt_numbers") { TextEditing.toggleLinePrefix(it, "1. ") }
-        b(Icons.Outlined.CheckBoxOutlineBlank, R.string.format_checkbox, "fmt_box") { TextEditing.toggleLinePrefix(it, "[ ] ") }
-    }
-    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
 }
 
 @Composable

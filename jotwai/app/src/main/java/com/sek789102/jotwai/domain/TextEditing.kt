@@ -9,6 +9,8 @@ object TextEditing {
     private val bulletPrefix = Regex("""^(\s*)([-*•])\s""")
     private val numberPrefix = Regex("""^(\s*)(\d{1,4})[.)]\s""")
     private val boxPrefix = Regex("""^(\s*)\[( |x|X)\]\s""")
+    private val quotePrefix = Regex("""^(\s*)>\s""")
+    private val alignTag = Regex("""^⟦al:[a-z]⟧""")
 
     /**
      * Called on every change. When the user pressed Enter at the end of a list line,
@@ -25,6 +27,10 @@ object TextEditing {
         val line = new.text.substring(lineStart, cursor - 1)
 
         val (prefix, body) = when {
+            quotePrefix.containsMatchIn(line) -> {
+                val m = quotePrefix.find(line)!!
+                "${m.groupValues[1]}> " to line.substring(m.range.last + 1)
+            }
             boxPrefix.containsMatchIn(line) -> {
                 val m = boxPrefix.find(line)!!
                 "${m.groupValues[1]}[ ] " to line.substring(m.range.last + 1)
@@ -79,9 +85,13 @@ object TextEditing {
         var end = t.indexOf('\n', value.selection.max)
         if (end < 0) end = t.length
         val lines = t.substring(start, end).split('\n')
-        val allHave = lines.all { it.startsWith(prefix) }
+        // Keep a leading alignment tag (⟦al:c⟧) in front of the list/heading marker.
+        fun head(line: String) = alignTag.find(line)?.value ?: ""
+        val allHave = lines.all { it.removePrefix(head(it)).startsWith(prefix) }
         val changed = lines.joinToString("\n") { line ->
-            if (allHave) line.removePrefix(prefix) else prefix + stripKnownPrefix(line)
+            val h = head(line)
+            val rest = line.substring(h.length)
+            h + if (allHave) rest.removePrefix(prefix) else prefix + stripKnownPrefix(rest)
         }
         val text = t.substring(0, start) + changed + t.substring(end)
         val selection = if (value.selection.collapsed && lines.size == 1) {
@@ -93,7 +103,7 @@ object TextEditing {
     }
 
     private fun stripKnownPrefix(line: String): String {
-        listOf(boxPrefix, numberPrefix, bulletPrefix, Regex("""^#{1,3}\s""")).forEach { r ->
+        listOf(boxPrefix, numberPrefix, bulletPrefix, quotePrefix, Regex("""^#{1,3}\s""")).forEach { r ->
             r.find(line)?.let { m -> if (m.range.first == 0) return line.substring(m.range.last + 1) }
         }
         return line
@@ -116,10 +126,12 @@ object TextEditing {
     }
 
     /** Strips Markdown markers for previews, sharing and the widget. */
-    fun toPlainText(text: String): String = text.lineSequence().joinToString("\n") { line ->
+    fun toPlainText(text: String): String = RichText.stripTags(text).lineSequence().joinToString("\n") { line ->
         var l = line
+        if (l.trim() == "---") return@joinToString "──────────"
+        quotePrefix.find(l)?.let { m -> l = m.groupValues[1] + "│ " + l.substring(m.range.last + 1) }
         boxPrefix.find(l)?.let { m -> l = (if (m.groupValues[2].isBlank()) "☐ " else "☑ ") + l.substring(m.range.last + 1) }
         Regex("""^#{1,3}\s""").find(l)?.let { l = l.substring(it.range.last + 1) }
-        l.replace("**", "").replace("~~", "").replace("==", "")
+        l.replace("**", "").replace("~~", "").replace("==", "").replace("`", "")
     }
 }

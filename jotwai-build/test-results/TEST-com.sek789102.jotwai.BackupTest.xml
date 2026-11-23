@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.sek789102.jotwai.BackupTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-11-21T12:39:02.402Z" hostname="runnervm0hi8g" time="5.347">
+<testsuite name="com.sek789102.jotwai.BackupTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-11-23T11:49:01.180Z" hostname="runnervm0hi8g" time="7.219">
   <properties/>
-  <testcase name="old FormulaNotes backup imports with formulas, tags and subjects kept" classname="com.sek789102.jotwai.BackupTest" time="3.003"/>
-  <testcase name="zip backup round-trips notes, checklist, folders, labels and photos" classname="com.sek789102.jotwai.BackupTest" time="0.098"/>
-  <testcase name="bad files are rejected and zip paths cannot escape" classname="com.sek789102.jotwai.BackupTest" time="0.037"/>
+  <testcase name="old FormulaNotes backup imports with formulas, tags and subjects kept" classname="com.sek789102.jotwai.BackupTest" time="4.709"/>
+  <testcase name="zip backup round-trips notes, checklist, folders, labels and photos" classname="com.sek789102.jotwai.BackupTest" time="0.189"/>
+  <testcase name="bad files are rejected and zip paths cannot escape" classname="com.sek789102.jotwai.BackupTest" time="0.069"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

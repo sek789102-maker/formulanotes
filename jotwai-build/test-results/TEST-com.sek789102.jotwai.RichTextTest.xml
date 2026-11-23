@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.sek789102.jotwai.RichTextTest" tests="16" skipped="0" failures="0" errors="0" timestamp="2026-11-23T11:49:17.646Z" hostname="runnervm0hi8g" time="0.028">
+  <properties/>
+  <testcase name="backspaceAtHeadingStartRemovesHeading" classname="com.sek789102.jotwai.RichTextTest" time="0.008"/>
+  <testcase name="headingCursorStartsAfterHiddenPrefix" classname="com.sek789102.jotwai.RichTextTest" time="0.0"/>
+  <testcase name="plainTextStripsEverything" classname="com.sek789102.jotwai.RichTextTest" time="0.0"/>
+  <testcase name="colourTagAppliesReplacesAndRemoves" classname="com.sek789102.jotwai.RichTextTest" time="0.002"/>
+  <testcase name="normalDeletionIsUntouched" classname="com.sek789102.jotwai.RichTextTest" time="0.001"/>
+  <testcase name="alignmentAndListsCombine" classname="com.sek789102.jotwai.RichTextTest" time="0.001"/>
+  <testcase name="clearFormattingRemovesAllMarkersAroundSelection" classname="com.sek789102.jotwai.RichTextTest" time="0.0"/>
+  <testcase name="mapsAreMonotonicAndInRange" classname="com.sek789102.jotwai.RichTextTest" time="0.001"/>
+  <testcase name="allMarkdownAndTagsAreHidden" classname="com.sek789102.jotwai.RichTextTest" time="0.012"/>
+  <testcase name="indentAndDivider" classname="com.sek789102.jotwai.RichTextTest" time="0.001"/>
+  <testcase name="backspaceOnHiddenMarkerDeletesVisibleText" classname="com.sek789102.jotwai.RichTextTest" time="0.0"/>
+  <testcase name="backspaceAfterBoxRemovesBox" classname="com.sek789102.jotwai.RichTextTest" time="0.0"/>
+  <testcase name="activeKindsAtCursor" classname="com.sek789102.jotwai.RichTextTest" time="0.0"/>
+  <testcase name="boldToggleWorksWhenSelectionIncludesHiddenMarkers" classname="com.sek789102.jotwai.RichTextTest" time="0.0"/>
+  <testcase name="markersAreHiddenAndCursorMapsInsideClosingMarker" classname="com.sek789102.jotwai.RichTextTest" time="0.0"/>
+  <testcase name="boldButtonLeavesTheRunAtItsEnd" classname="com.sek789102.jotwai.RichTextTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

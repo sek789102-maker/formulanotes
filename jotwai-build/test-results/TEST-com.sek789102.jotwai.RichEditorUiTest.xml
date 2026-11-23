@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.sek789102.jotwai.RichEditorUiTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-11-23T11:49:11.743Z" hostname="runnervm0hi8g" time="5.9">
+  <properties/>
+  <testcase name="typingWithToolbarProducesHiddenMarkers" classname="com.sek789102.jotwai.RichEditorUiTest" time="4.915"/>
+  <testcase name="showcase" classname="com.sek789102.jotwai.RichEditorUiTest" time="0.654"/>
+  <testcase name="showcaseLightAndFontPanel" classname="com.sek789102.jotwai.RichEditorUiTest" time="0.272"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

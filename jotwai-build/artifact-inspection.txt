@@ -1,4 +1,4 @@
-package: name='com.sek789102.jotwai' versionCode='4' versionName='1.1.0' platformBuildVersionName='16' platformBuildVersionCode='36' compileSdkVersion='36' compileSdkVersionCodename='16'
+package: name='com.sek789102.jotwai' versionCode='5' versionName='1.1.1' platformBuildVersionName='16' platformBuildVersionCode='36' compileSdkVersion='36' compileSdkVersionCodename='16'
 targetSdkVersion:'36'
 uses-permission: name='android.permission.POST_NOTIFICATIONS'
 uses-permission: name='android.permission.RECEIVE_BOOT_COMPLETED'
@@ -11,6 +11,6 @@ uses-permission: name='com.sek789102.jotwai.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMIS
 application-label:'จดไว้'
 
 20846279 /home/runner/work/formulanotes/formulanotes/jotwai-build/Jotwai-debug.apk
-3324106 /home/runner/work/formulanotes/formulanotes/jotwai-build/Jotwai-release-testsigned.apk
-6443304 /home/runner/work/formulanotes/formulanotes/jotwai-build/Jotwai-release-unsigned.aab
+3324102 /home/runner/work/formulanotes/formulanotes/jotwai-build/Jotwai-release-testsigned.apk
+6447880 /home/runner/work/formulanotes/formulanotes/jotwai-build/Jotwai-release-unsigned.aab
 3287786 /home/runner/work/formulanotes/formulanotes/jotwai-build/Jotwai-release-unsigned.apk

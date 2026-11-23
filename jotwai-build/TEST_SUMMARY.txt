@@ -1,1 +1,6 @@
-tests=43 failures=0 errors=0 skipped=0
+FAILED: com.sek789102.jotwai.RichTextTest > newStyleAtTheEndOfARunStartsAfterIt
+FAILED: com.sek789102.jotwai.BackupTest > classMethod
+FAILED: com.sek789102.jotwai.RepositoryTest > classMethod
+FAILED: com.sek789102.jotwai.RichEditorUiTest > classMethod
+FAILED: com.sek789102.jotwai.ListContinuationUiTest > classMethod
+tests=42 failures=5 errors=0 skipped=0

@@ -55,7 +55,7 @@ class NotesWidget : GlanceAppWidget() {
                     val preview = if (n.type == NoteType.CHECKLIST) {
                         n.checklist.filter { !it.checked }.take(3).joinToString("\n") { "☐ ${it.text}" }
                     } else {
-                        n.content.take(140)
+                        com.sek789102.jotwai.domain.TextEditing.toPlainText(n.content.take(400)).take(140)
                     }
                     WidgetNote(n.id, n.title, preview, n.color)
                 }

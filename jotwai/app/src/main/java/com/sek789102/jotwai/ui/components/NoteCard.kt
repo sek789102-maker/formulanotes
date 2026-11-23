@@ -48,7 +48,7 @@ import com.sek789102.jotwai.R
 import com.sek789102.jotwai.data.model.NoteType
 import com.sek789102.jotwai.data.model.NoteWithLabels
 import com.sek789102.jotwai.data.model.RepeatRule
-import com.sek789102.jotwai.domain.MarkdownStyle
+import com.sek789102.jotwai.domain.RichText
 import com.sek789102.jotwai.ui.theme.NoteColors
 import com.sek789102.jotwai.util.Dates
 
@@ -150,13 +150,18 @@ fun NoteCard(
                         }
                         note.type == NoteType.CHECKLIST -> ChecklistPreview(item, maxItems = (previewLines - 1).coerceAtLeast(1))
                         note.content.isNotBlank() -> Text(
-                            MarkdownStyle.style(
+                            RichText.render(
                                 note.content.take(1200),
-                                marker = scheme.onSurfaceVariant.copy(alpha = 0.45f),
-                                highlight = Color(0x66FFD54F),
-                                done = scheme.onSurfaceVariant
+                                RichText.Palette(
+                                    marker = scheme.primary,
+                                    highlight = Color(0x66FFD54F),
+                                    done = scheme.onSurfaceVariant,
+                                    codeBg = scheme.onSurface.copy(alpha = 0.08f),
+                                    quote = scheme.onSurfaceVariant,
+                                    rule = scheme.outlineVariant
+                                )
                             ),
-                            style = MaterialTheme.typography.bodyMedium,
+                            style = MaterialTheme.typography.bodyMedium.copy(lineHeight = androidx.compose.ui.unit.TextUnit.Unspecified),
                             maxLines = previewLines,
                             overflow = TextOverflow.Ellipsis
                         )

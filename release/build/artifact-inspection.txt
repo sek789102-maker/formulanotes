@@ -1,5 +1,5 @@
 ## Badging
-package: name='com.sek789102.lifekeep' versionCode='3' versionName='1.1.0' platformBuildVersionName='17' platformBuildVersionCode='37' compileSdkVersion='37' compileSdkVersionCodename='17'
+package: name='com.sek789102.lifekeep' versionCode='4' versionName='1.1.1' platformBuildVersionName='17' platformBuildVersionCode='37' compileSdkVersion='37' compileSdkVersionCodename='17'
 targetSdkVersion:'36'
 uses-permission: name='android.permission.POST_NOTIFICATIONS'
 uses-permission: name='android.permission.RECEIVE_BOOT_COMPLETED'
@@ -97,9 +97,9 @@ application-label-zu:'LIFEKEEP'
 native-code: 'arm64-v8a' 'armeabi-v7a' 'x86_64'
 
 ## Sizes
-62345478 /home/runner/work/formulanotes/formulanotes/release/build/LIFEKEEP-ci-debug-key.aab
-65107084 /home/runner/work/formulanotes/formulanotes/release/build/LIFEKEEP-ci-debug-key.apk
+61796825 /home/runner/work/formulanotes/formulanotes/release/build/LIFEKEEP-ci-debug-key.aab
+64386108 /home/runner/work/formulanotes/formulanotes/release/build/LIFEKEEP-ci-debug-key.apk
 
 ## SHA-256
-e0625b096599ea805e5cbc71a3ce858dc4f97b89d359322be388cafe1784d7ec  LIFEKEEP-ci-debug-key.aab
-092ca22b4cbb8a354377a78c9fb43f01f1178da01922b05d4910b9c0d4a68fda  LIFEKEEP-ci-debug-key.apk
+3a3a31823f0e775907e0dc137324aed8d3b9109c77a50251646791a3486c1950  LIFEKEEP-ci-debug-key.aab
+1f2105a04f61687ba17b3f7ae851edce03f70b1f7bb1b72acfcfc221a4ede215  LIFEKEEP-ci-debug-key.apk

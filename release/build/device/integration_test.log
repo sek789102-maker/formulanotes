@@ -14,11 +14,11 @@ Got dependencies!
 10 packages have newer versions incompatible with dependency constraints.
 Try `flutter pub outdated` for more information.
 00:00 +0: loading /home/runner/work/formulanotes/formulanotes/lifekeep/integration_test/app_test.dart
-Running Gradle task 'assembleDebug'...                            130.9s
+Running Gradle task 'assembleDebug'...                            100.7s
 ✓ Built build/app/outputs/flutter-apk/app-debug.apk
-Installing build/app/outputs/flutter-apk/app-debug.apk...        1,973ms
+Installing build/app/outputs/flutter-apk/app-debug.apk...          884ms
 00:00 +0: create, complete, search, persist (real Android storage)
-00:51 +1: local backup from Settings on real storage
+00:50 +1: local backup from Settings on real storage
 ══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
 The following StateError was thrown running a test:
 Bad state: No element
@@ -46,12 +46,12 @@ When the exception was thrown, this was the stack:
 The test description was:
   local backup from Settings on real storage
 ════════════════════════════════════════════════════════════════════════════════════════════════════
-01:09 +1 -1: local backup from Settings on real storage [E]
+01:07 +1 -1: local backup from Settings on real storage [E]
   Test failed. See exception logs above.
   The test description was: local backup from Settings on real storage
   
-01:09 +1 -1: (tearDownAll)
-01:09 +1 -1: Some tests failed.
+01:07 +1 -1: (tearDownAll)
+01:08 +1 -1: Some tests failed.
 
 Failing tests:
   /home/runner/work/formulanotes/formulanotes/lifekeep/integration_test/app_test.dart: local backup from Settings on real storage

@@ -2,6 +2,6 @@ Starting: Intent { cmp=com.sek789102.lifekeep/.MainActivity }
 Status: ok
 LaunchState: COLD
 Activity: com.sek789102.lifekeep/.MainActivity
-TotalTime: 1359
-WaitTime: 1365
+TotalTime: 1026
+WaitTime: 1030
 Complete

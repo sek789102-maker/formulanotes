@@ -82,7 +82,8 @@ class EditorViewModel(application: Application, val noteId: Long) : AndroidViewM
             }
             original = n
             title = TextFieldValue(n.title)
-            body = TextFieldValue(n.content, TextRange(n.content.length))
+            val content = com.sek789102.jotwai.domain.RichText.repairTags(n.content)
+            body = TextFieldValue(content, TextRange(content.length))
             type = n.type
             checklist = n.checklist
             images = n.imagePaths
@@ -111,7 +112,9 @@ class EditorViewModel(application: Application, val noteId: Long) : AndroidViewM
     }
 
     fun onBodyChange(v: TextFieldValue) {
-        val next = TextEditing.continueList(body, com.sek789102.jotwai.domain.RichText.fixDeletion(body, v))
+        val afterDelete = com.sek789102.jotwai.domain.RichText.fixDeletion(body, v)
+        val safe = if (afterDelete === v) com.sek789102.jotwai.domain.RichText.fixEdit(body, v) else afterDelete
+        val next = TextEditing.continueList(body, safe)
         val textChanged = next.text != body.text
         body = next
         if (textChanged) changed()

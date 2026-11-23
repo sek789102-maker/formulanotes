@@ -330,7 +330,7 @@ object RichText {
         }
     }
 
-    fun render(text: String, pal: Palette): AnnotatedString = annotate(parse(text), pal)
+    fun render(text: String, pal: Palette): AnnotatedString = annotate(parse(repairTags(text)), pal)
 
     class Transformation(private val pal: Palette) : VisualTransformation {
         override fun filter(text: AnnotatedString): TransformedText {
@@ -355,6 +355,10 @@ object RichText {
         val at = v.selection.min
         val res = HashMap<Kind, String>()
         for (s in p.spans) if ((at > s.start && at <= s.end) || (!v.selection.collapsed && at == s.start && s.end > s.start)) res[s.kind] = s.arg
+        // A style chosen at a bare cursor (nothing typed yet) counts too, innermost last.
+        if (v.selection.collapsed) {
+            for (pr in p.pairs.sortedBy { it.openEnd }) if (pr.openEnd == at && pr.closeStart == at) res[pr.kind] = pr.arg
+        }
         return res
     }
 
@@ -423,17 +427,95 @@ object RichText {
             val shift = newOpen.length - (exact.openEnd - exact.openStart)
             return TextFieldValue(text, TextRange(s + shift, e + shift))
         }
+        if (s == e && kind != null) return applyTagAtCursor(v, name, kind, arg)
         if (arg == null && kind != null && name in listOf("c", "h", "z", "f")) {
             // "Default" chosen: remove this kind of tag around/inside the selection.
             return removeKinds(v, setOf(kind))
         }
-        if (s == e && t.startsWith(close, s)) return v.copy(selection = TextRange(s + close.length))
         val o = open(name, arg)
         val text = t.substring(0, s) + o + t.substring(s, e) + close + t.substring(e)
         return TextFieldValue(text, TextRange(s + o.length, e + o.length))
     }
 
     private fun open(name: String, arg: String?) = if (arg.isNullOrEmpty()) "⟦$name⟧" else "⟦$name:$arg⟧"
+
+    /** Toggle-style tags (no argument): pressing again turns them off. */
+    private fun isToggle(name: String) = name == "u" || name == "sup" || name == "sub" || name == "b" || name == "i" || name == "s"
+
+    private fun replacePair(t: String, pr: MarkerPair, name: String, arg: String?, cursor: Int): TextFieldValue {
+        val remove = arg == null || (isToggle(name) && (arg.isEmpty() || pr.arg.equals(arg, ignoreCase = true)))
+        val newOpen = if (remove) "" else open(name, arg)
+        val newClose = if (remove) "" else "⟦/$name⟧"
+        val text = t.substring(0, pr.openStart) + newOpen + t.substring(pr.openEnd, pr.closeStart) + newClose + t.substring(pr.closeEnd)
+        val shift = newOpen.length - (pr.openEnd - pr.openStart)
+        val c = if (cursor >= pr.openEnd) cursor + shift else cursor
+        return TextFieldValue(text, TextRange(c.coerceIn(0, text.length)))
+    }
+
+    /**
+     * Style buttons with no selection:
+     *  - inside a run of the same style → change it (or turn it off),
+     *  - at the end of such a run → "leave" it (same / default) or start the new value right after it,
+     *  - inside a word → style the whole word,
+     *  - otherwise → the next typed text gets the style (an empty pair at the cursor, shown in the toolbar).
+     */
+    private fun applyTagAtCursor(v: TextFieldValue, name: String, kind: Kind, arg: String?): TextFieldValue {
+        val t = v.text
+        val c = v.selection.start
+        val p = parse(t)
+        val mine = p.pairs.filter { it.kind == kind && t.startsWith("⟦$name", it.openStart) }
+        // Pending (empty) style right here: change or drop it instead of nesting another one.
+        mine.filter { it.openEnd == c && it.closeStart == c }.maxByOrNull { it.openStart }?.let { return replacePair(t, it, name, arg, c) }
+        val run = mine.filter { it.openEnd <= c && c <= it.closeStart && it.closeStart > it.openEnd }.maxByOrNull { it.openEnd }
+        if (run != null) {
+            if (c == run.closeStart && c > run.openEnd) {
+                val same = arg == null || run.arg.equals(arg, ignoreCase = true) || (isToggle(name) && arg.isEmpty())
+                if (same) return v.copy(selection = TextRange(run.closeEnd), composition = null)
+                val o = open(name, arg)
+                val close = "⟦/$name⟧"
+                val text = t.substring(0, run.closeEnd) + o + close + t.substring(run.closeEnd)
+                return TextFieldValue(text, TextRange(run.closeEnd + o.length))
+            }
+            return replacePair(t, run, name, arg, c)
+        }
+        if (arg == null) return v
+        wordAt(p, c)?.let { (ws, we) ->
+            val o = open(name, arg)
+            val text = t.substring(0, ws) + o + t.substring(ws, we) + "⟦/$name⟧" + t.substring(we)
+            return TextFieldValue(text, TextRange(c + o.length))
+        }
+        val o = open(name, arg)
+        val text = t.substring(0, c) + o + "⟦/$name⟧" + t.substring(c)
+        return TextFieldValue(text, TextRange(c + o.length))
+    }
+
+    /**
+     * The word around a cursor that sits strictly inside it (letters on both sides), in original
+     * coordinates, or null. Thai words are found with the platform word breaker.
+     */
+    fun wordAt(p: Parsed, c: Int): Pair<Int, Int>? {
+        val d = p.o2d[c.coerceIn(0, p.text.length)]
+        val disp = p.display
+        if (d <= 0 || d >= disp.length) return null
+        if (!Character.isLetterOrDigit(disp[d - 1]) || !Character.isLetterOrDigit(disp[d])) return null
+        val bi = java.text.BreakIterator.getWordInstance(java.util.Locale.forLanguageTag("th"))
+        bi.setText(disp)
+        if (bi.isBoundary(d)) return null // cursor is on a word edge, not inside
+        val ds = bi.preceding(d)
+        val de = bi.following(d)
+        if (ds < 0 || de <= ds || de == java.text.BreakIterator.DONE) return null
+        // Map the display word back to original offsets of its first and last visible characters.
+        var os = -1
+        var oe = -1
+        for (o in 0 until p.text.length) {
+            if (p.isHidden(o)) continue
+            val od = p.o2d[o]
+            if (od == ds && os < 0) os = o
+            if (od == de - 1) oe = o + 1
+        }
+        if (os < 0 || oe <= os) return null
+        return os to oe
+    }
 
     /** Removes formatting (all inline kinds, or only [kinds]) whose content touches the selection / cursor. */
     fun removeKinds(v0: TextFieldValue, kinds: Set<Kind>? = null): TextFieldValue {
@@ -546,6 +628,92 @@ object RichText {
         return TextFieldValue(text, TextRange(from))
     }
 
+    /**
+     * Keeps hidden markers intact whatever the keyboard does. Text typed (or a word replaced by the
+     * keyboard's suggestions) inside a hidden tag or Markdown marker is moved just after it, and a
+     * deletion that only partly covers a hidden marker keeps the marker.
+     */
+    fun fixEdit(old: TextFieldValue, new: TextFieldValue): TextFieldValue {
+        val a = old.text
+        val b = new.text
+        if (a == b) return new
+        var pre = 0
+        val maxPre = minOf(a.length, b.length)
+        while (pre < maxPre && a[pre] == b[pre]) pre++
+        var suf = 0
+        while (suf < a.length - pre && suf < b.length - pre && a[a.length - 1 - suf] == b[b.length - 1 - suf]) suf++
+        val delStart = pre
+        val delEnd = a.length - suf
+        val ins = b.substring(pre, b.length - suf)
+        val p = parse(a)
+        val hidden = p.segs.filter { it.repl.isEmpty() && it.end - it.start > 1 }
+        fun inside(i: Int) = hidden.firstOrNull { i > it.start && i < it.end }
+        val partial = hidden.filter { sg -> delEnd > sg.start && delStart < sg.end && !(delStart <= sg.start && delEnd >= sg.end) }
+        if (inside(delStart) == null && inside(delEnd) == null && partial.isEmpty()) return new
+        // Characters of partly-covered markers are kept.
+        val keep = BooleanArray(a.length)
+        for (sg in partial) for (k in maxOf(sg.start, delStart) until minOf(sg.end, delEnd)) keep[k] = true
+        var insertAt = delStart
+        while (true) {
+            val sg = inside(insertAt) ?: break
+            insertAt = sg.end
+        }
+        val sb = StringBuilder()
+        sb.append(a, 0, delStart)
+        val stop = maxOf(delEnd, insertAt)
+        var cursor = -1
+        for (k in delStart until stop) {
+            if (k == insertAt) { sb.append(ins); cursor = sb.length }
+            if (k < delEnd) { if (keep[k]) sb.append(a[k]) } else sb.append(a[k])
+        }
+        if (cursor < 0) { sb.append(ins); cursor = sb.length }
+        sb.append(a, stop, a.length)
+        val text = sb.toString()
+        return TextFieldValue(text, TextRange(cursor.coerceIn(0, text.length)))
+    }
+
+    private val looseTag = Regex("""⟦[^⟦⟧\n]{1,60}⟧""")
+    private val validArg = mapOf(
+        "c" to Regex("[0-9A-Fa-f]{6}"),
+        "h" to Regex("[0-9A-Fa-f]{6}"),
+        "z" to Regex("""\d{1,2}(?:\.\d{1,3})?"""),
+        "f" to Regex("sans|serif|mono|hand"),
+        "al" to Regex("[lcrj]")
+    )
+
+    private fun validTag(tag: String): Boolean {
+        val m = Regex("""⟦(/?)([a-z]{1,3})(?::(.*))?⟧""").matchEntire(tag) ?: return false
+        val closing = m.groupValues[1] == "/"
+        val name = m.groupValues[2]
+        val arg = m.groups[3]?.value
+        if (name != "al" && kindOf(name) == null) return false
+        if (closing) return arg == null && name != "al"
+        val re = validArg[name]
+        return if (re == null) arg == null else arg != null && re.matches(arg)
+    }
+
+    /**
+     * Repairs tags broken by older versions (text that was typed into a tag, e.g. "⟦z:1.2ต5⟧"):
+     * the smallest run of foreign characters is taken out of the tag and kept right after it.
+     */
+    fun repairTags(text: String): String {
+        if (text.indexOf(OPEN) < 0) return text
+        return looseTag.replace(text) { m ->
+            val tag = m.value
+            if (validTag(tag)) return@replace tag
+            var best: Pair<String, String>? = null
+            for (len in 1 until tag.length - 1) {
+                for (k in 1 until tag.length - len) {
+                    val cand = tag.substring(0, k) + tag.substring(k + len)
+                    if (validTag(cand)) { best = cand to tag.substring(k, k + len); break }
+                }
+                if (best != null) break
+            }
+            val (fixed, extra) = best ?: return@replace tag
+            if (fixed.startsWith("⟦/")) extra + fixed else fixed + extra
+        }
+    }
+
     /** Removes every marker, for sharing, previews in plain places and the widget. */
-    fun stripTags(text: String): String = text.replace(tagRegex, "")
+    fun stripTags(text: String): String = repairTags(text).replace(tagRegex, "")
 }

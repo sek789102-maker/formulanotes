@@ -29,6 +29,8 @@ import com.sek789102.jotwai.domain.TextEditing
 import com.sek789102.jotwai.ui.components.FormatToolbar
 import com.sek789102.jotwai.ui.theme.JotwaiTheme
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -98,6 +100,31 @@ class RichEditorUiTest {
         assertEquals("สวัสดี ตัวหนา ปกติ", RichText.parse(value.text).display)
         rule.waitForIdle()
         shot("01-typing-color-panel")
+    }
+
+    @Test fun sizeAndFontButtonsWorkWithoutASelection() {
+        setUp()
+        rule.onNodeWithTag("body").performTextInput("ปกติ ")
+        rule.onNodeWithTag("fmt_bigger").performClick()
+        rule.onNodeWithTag("fmt_bigger").performClick()
+        rule.onNodeWithTag("body").performTextInput("ใหญ่")
+        assertEquals("ปกติ ⟦z:1.25⟧ใหญ่⟦/z⟧", value.text)
+        assertEquals("ปกติ ใหญ่", RichText.parse(value.text).display)
+
+        // Size chip on a selection
+        val s = value.text.indexOf("ปกติ")
+        value = value.copy(selection = TextRange(s, s + 4))
+        rule.onNodeWithTag("fmt_size").performClick()
+        rule.onNodeWithTag("size_10").performClick()
+        assertTrue(value.text.startsWith("⟦z:0.625⟧ปกติ⟦/z⟧"))
+
+        // Font at a bare cursor, then typing
+        value = value.copy(selection = TextRange(value.text.length))
+        rule.onNodeWithTag("fmt_font").performClick()
+        rule.onNodeWithTag("font_hand").performClick()
+        rule.onNodeWithTag("body").performTextInput("มือ")
+        assertTrue(value.text.endsWith("⟦f:hand⟧มือ⟦/f⟧"))
+        assertFalse(RichText.parse(value.text).display.contains("⟦"))
     }
 
     @Test fun showcase() {

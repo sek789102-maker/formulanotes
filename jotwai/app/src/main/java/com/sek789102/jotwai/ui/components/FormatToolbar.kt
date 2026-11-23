@@ -157,7 +157,7 @@ fun FormatToolbar(value: TextFieldValue, apply: ((TextFieldValue) -> TextFieldVa
             val hc = active[Kind.BG]?.let { RichText.parseColor(it) }
             b(Icons.Outlined.BorderColor, "สีไฮไลต์", "fmt_mark", Kind.MARK in active || hc != null, tint = hc) { panel = if (panel == Panel.HIGHLIGHT) Panel.NONE else Panel.HIGHLIGHT }
             sep()
-            b(Icons.Outlined.TextDecrease, "ลดขนาด", "fmt_smaller") { apply { RichText.applyTag(it, "z", emArg((curEm / 1.15f).coerceAtLeast(0.3f))) } }
+            b(Icons.Outlined.TextDecrease, "ลดขนาด", "fmt_smaller") { apply { RichText.applyTag(it, "z", stepSize(curEm, -1)) } }
             Box(
                 Modifier
                     .padding(horizontal = 2.dp)
@@ -168,7 +168,7 @@ fun FormatToolbar(value: TextFieldValue, apply: ((TextFieldValue) -> TextFieldVa
                     .testTag("fmt_size"),
                 contentAlignment = Alignment.Center
             ) { Text("${(curEm * BASE_PT).toInt()}", fontWeight = FontWeight.Bold, color = scheme.onSurface) }
-            b(Icons.Outlined.TextIncrease, "เพิ่มขนาด", "fmt_bigger") { apply { RichText.applyTag(it, "z", emArg((curEm * 1.15f).coerceAtMost(10f))) } }
+            b(Icons.Outlined.TextIncrease, "เพิ่มขนาด", "fmt_bigger") { apply { RichText.applyTag(it, "z", stepSize(curEm, +1)) } }
             b(Icons.Outlined.FontDownload, "ฟอนต์", "fmt_font", Kind.FONT in active) { panel = if (panel == Panel.FONT) Panel.NONE else Panel.FONT }
             sep()
             Box {
@@ -253,6 +253,14 @@ fun FormatToolbar(value: TextFieldValue, apply: ((TextFieldValue) -> TextFieldVa
             Panel.NONE -> Unit
         }
     }
+}
+
+/** A−/A+ move to the previous/next preset size (16 = normal, which removes the size code). */
+private fun stepSize(curEm: Float, dir: Int): String? {
+    val pt = curEm * BASE_PT
+    val next = if (dir > 0) sizePresets.firstOrNull { it > pt + 0.5f } ?: sizePresets.last()
+    else sizePresets.lastOrNull { it < pt - 0.5f } ?: sizePresets.first()
+    return if (next == BASE_PT.toInt()) null else emArg(next / BASE_PT)
 }
 
 private fun emArg(em: Float): String = String.format(Locale.US, "%.3f", em).trimEnd('0').trimEnd('.')

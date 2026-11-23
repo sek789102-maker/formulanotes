@@ -136,4 +136,107 @@ class RichTextTest {
         val c = RichText.activeKinds(v.copy(selection = TextRange(19)))
         assertEquals("E53935", c[Kind.COLOR])
     }
+
+    // ---- keyboard edits must never break hidden codes (bug from phone testing) ----
+
+    private fun typedInside(old: String, at: Int, typed: String): TextFieldValue {
+        val o = TextFieldValue(old, TextRange(old.length))
+        val n = TextFieldValue(old.substring(0, at) + typed + old.substring(at), TextRange(at + typed.length))
+        return RichText.fixEdit(o, n)
+    }
+
+    @Test fun typingInsideASizeTagGoesAfterIt() {
+        val old = "⟦z:1.25⟧⟦/z⟧"
+        val out = typedInside(old, 6, "ต") // where the phone put it: "⟦z:1.2" + "ต" + "5⟧"
+        assertEquals("⟦z:1.25⟧ต⟦/z⟧", out.text)
+        assertEquals("ต", RichText.parse(out.text).display)
+        assertEquals(TextRange(9), out.selection)
+    }
+
+    @Test fun keyboardWordReplacementInsideColourTagIsMovedOut() {
+        val old = "⟦c:00ACC1⟧⟦/c⟧"
+        val out = typedInside(old, 8, "ofkr")
+        assertEquals("⟦c:00ACC1⟧ofkr⟦/c⟧", out.text)
+        assertEquals("ofkr", RichText.parse(out.text).display)
+    }
+
+    @Test fun typingInsideAFontTagGoesAfterIt() {
+        val out = typedInside("⟦f:serif⟧⟦/f⟧", 7, "นย")
+        assertEquals("⟦f:serif⟧นย⟦/f⟧", out.text)
+    }
+
+    @Test fun typingInsideClosingTagOrBoldMarkerIsMovedOut() {
+        assertEquals("⟦u⟧ab⟦/u⟧c", typedInside("⟦u⟧ab⟦/u⟧", 7, "c").text)
+        assertEquals("**ab**c", typedInside("**ab**", 5, "c").text)
+    }
+
+    @Test fun normalTypingIsUntouched() {
+        val o = TextFieldValue("⟦c:E53935⟧แดง⟦/c⟧", TextRange(13))
+        val n = TextFieldValue("⟦c:E53935⟧แดงมาก⟦/c⟧", TextRange(16))
+        assertTrue(RichText.fixEdit(o, n) === n)
+    }
+
+    @Test fun deletionThatCutsIntoATagKeepsTheTag() {
+        val old = "x⟦c:E53935⟧แดง⟦/c⟧"
+        val o = TextFieldValue(old, TextRange(0, 6))
+        val n = TextFieldValue(old.substring(6), TextRange(0))
+        val out = RichText.fixEdit(o, n)
+        assertEquals("⟦c:E53935⟧แดง⟦/c⟧", out.text)
+        assertEquals("แดง", RichText.parse(out.text).display)
+    }
+
+    @Test fun brokenTagsFromOlderVersionAreRepaired() {
+        assertEquals("⟦z:1.25⟧ต⟦/z⟧", RichText.repairTags("⟦z:1.2ต5⟧⟦/z⟧"))
+        assertEquals("⟦c:00ACC1⟧ofkr⟦/c⟧", RichText.repairTags("⟦c:00ACCofkr1⟧⟦/c⟧"))
+        assertEquals("⟦f:serif⟧นย⟦/f⟧", RichText.repairTags("⟦f:seriนยf⟧⟦/f⟧"))
+        val ok = "⟦al:c⟧⟦c:E53935⟧แดง⟦/c⟧ ⟦z:2⟧ใหญ่⟦/z⟧ ⟦u⟧ขีด⟦/u⟧"
+        assertEquals(ok, RichText.repairTags(ok))
+        assertFalse(RichText.parse(RichText.repairTags("⟦z:1.2ต5⟧⟦/z⟧")).display.contains("⟦"))
+        assertEquals("ofkr", RichText.stripTags("⟦c:00ACCofkr1⟧⟦/c⟧"))
+    }
+
+    // ---- style buttons with no selection ----
+
+    @Test fun sizeButtonsAtABareCursorChangeTheNextTextAndDoNotNest() {
+        var v = TextFieldValue("ab ", TextRange(3))
+        v = RichText.applyTag(v, "z", "1.15")
+        assertEquals("ab ⟦z:1.15⟧⟦/z⟧", v.text)
+        assertEquals("1.15", RichText.activeKinds(v)[Kind.SIZE])
+        v = RichText.applyTag(v, "z", "1.323")                 // press A+ again
+        assertEquals("ab ⟦z:1.323⟧⟦/z⟧", v.text)
+        assertEquals("1.323", RichText.activeKinds(v)[Kind.SIZE])
+        v = RichText.applyTag(v, "z", null)                     // back to normal size
+        assertEquals("ab ", v.text)
+    }
+
+    @Test fun styleInsideAWordAppliesToTheWord() {
+        val v = RichText.applyTag(TextFieldValue("hello world", TextRange(2)), "c", "E53935")
+        assertEquals("⟦c:E53935⟧hello⟦/c⟧ world", v.text)
+        assertEquals("hello world", RichText.parse(v.text).display)
+    }
+
+    @Test fun styleInsideARunChangesTheRun() {
+        val t = "⟦c:E53935⟧hello⟦/c⟧"
+        val blue = RichText.applyTag(TextFieldValue(t, TextRange(13)), "c", "1E88E5")
+        assertEquals("⟦c:1E88E5⟧hello⟦/c⟧", blue.text)
+        assertEquals("hello", RichText.applyTag(TextFieldValue(t, TextRange(13)), "c", null).text)
+        val big = RichText.applyTag(TextFieldValue("⟦z:2⟧ใหญ่⟦/z⟧", TextRange(7)), "z", "3")
+        assertEquals("⟦z:3⟧ใหญ่⟦/z⟧", big.text)
+    }
+
+    @Test fun newStyleAtTheEndOfARunStartsAfterIt() {
+        val t = "⟦c:E53935⟧hello⟦/c⟧"
+        val v = RichText.applyTag(TextFieldValue(t, TextRange(15)), "c", "1E88E5")
+        assertEquals("⟦c:E53935⟧hello⟦/c⟧⟦c:1E88E5⟧⟦/c⟧", v.text)
+        assertEquals(TextRange(t.length + 11), v.selection)
+        val leave = RichText.applyTag(TextFieldValue(t, TextRange(15)), "c", "E53935")
+        assertEquals(t, leave.text)
+        assertEquals(TextRange(t.length), leave.selection)
+    }
+
+    @Test fun defaultAtAPlainCursorDoesNothing() {
+        val v = TextFieldValue("ab", TextRange(2))
+        assertEquals(v, RichText.applyTag(v, "z", null))
+        assertEquals(v, RichText.applyTag(v, "f", null))
+    }
 }

@@ -1,1 +1,1 @@
-built by CI from commit ae7eed8 (bundleRelease, R8 minified, unsigned), versionCode 5 / versionName 1.3.1; signed locally with the ChangKhamnuan upload key (jarsigner SHA256withRSA). 40/40 unit tests; release build installed and run on an emulator without crashes.
+built by CI from commit fc5ccf5 (bundleRelease, R8 minified, unsigned), versionCode 6 / versionName 1.3.2; signed locally with the ChangKhamnuan upload key (jarsigner SHA256withRSA). 40/40 unit tests; release build installed and run on an emulator without crashes.

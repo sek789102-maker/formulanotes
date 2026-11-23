@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.sek789102.changkhamnuan.ExtraCalculatorsTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-11-22T11:25:12.837Z" hostname="runnervm0hi8g" time="0.057">
+<testsuite name="com.sek789102.changkhamnuan.ExtraCalculatorsTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-11-23T03:42:03.641Z" hostname="runnervm0hi8g" time="0.034">
   <properties/>
-  <testcase name="gypsum ceiling and drywall" classname="com.sek789102.changkhamnuan.ExtraCalculatorsTest" time="0.005"/>
-  <testcase name="metal roof sheets per side" classname="com.sek789102.changkhamnuan.ExtraCalculatorsTest" time="0.004"/>
-  <testcase name="every calculator is on the home screen once" classname="com.sek789102.changkhamnuan.ExtraCalculatorsTest" time="0.005"/>
-  <testcase name="footings with pedestals" classname="com.sek789102.changkhamnuan.ExtraCalculatorsTest" time="0.001"/>
-  <testcase name="every option of every calculator gives finite results with priced materials" classname="com.sek789102.changkhamnuan.ExtraCalculatorsTest" time="0.04"/>
+  <testcase name="gypsum ceiling and drywall" classname="com.sek789102.changkhamnuan.ExtraCalculatorsTest" time="0.004"/>
+  <testcase name="metal roof sheets per side" classname="com.sek789102.changkhamnuan.ExtraCalculatorsTest" time="0.0"/>
+  <testcase name="every calculator is on the home screen once" classname="com.sek789102.changkhamnuan.ExtraCalculatorsTest" time="0.003"/>
+  <testcase name="footings with pedestals" classname="com.sek789102.changkhamnuan.ExtraCalculatorsTest" time="0.0"/>
+  <testcase name="every option of every calculator gives finite results with priced materials" classname="com.sek789102.changkhamnuan.ExtraCalculatorsTest" time="0.024"/>
   <testcase name="pipes count sticks fittings and glue" classname="com.sek789102.changkhamnuan.ExtraCalculatorsTest" time="0.001"/>
   <testcase name="earth fill and excavation trucks" classname="com.sek789102.changkhamnuan.ExtraCalculatorsTest" time="0.001"/>
   <testcase name="gable tile roof" classname="com.sek789102.changkhamnuan.ExtraCalculatorsTest" time="0.0"/>

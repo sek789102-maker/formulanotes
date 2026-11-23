@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.sek789102.changkhamnuan.MigrationTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-11-22T11:25:13.038Z" hostname="runnervm0hi8g" time="6.476">
+<testsuite name="com.sek789102.changkhamnuan.MigrationTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-11-23T03:42:03.807Z" hostname="runnervm0hi8g" time="6.21">
   <properties/>
-  <testcase name="version 1 database migrates to version 2" classname="com.sek789102.changkhamnuan.MigrationTest" time="4.279"/>
+  <testcase name="version 1 database migrates to version 2" classname="com.sek789102.changkhamnuan.MigrationTest" time="3.058"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

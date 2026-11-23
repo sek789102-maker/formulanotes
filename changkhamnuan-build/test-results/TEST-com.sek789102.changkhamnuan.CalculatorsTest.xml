@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.sek789102.changkhamnuan.CalculatorsTest" tests="13" skipped="0" failures="0" errors="0" timestamp="2026-11-22T11:25:12.720Z" hostname="runnervm0hi8g" time="0.079">
+<testsuite name="com.sek789102.changkhamnuan.CalculatorsTest" tests="13" skipped="0" failures="0" errors="0" timestamp="2026-11-23T03:42:03.550Z" hostname="runnervm0hi8g" time="0.062">
   <properties/>
-  <testcase name="concrete 1-2-4 matches about 6_3 bags per cubic metre" classname="com.sek789102.changkhamnuan.CalculatorsTest" time="0.045"/>
-  <testcase name="paint is bought as buckets and gallons" classname="com.sek789102.changkhamnuan.CalculatorsTest" time="0.003"/>
+  <testcase name="concrete 1-2-4 matches about 6_3 bags per cubic metre" classname="com.sek789102.changkhamnuan.CalculatorsTest" time="0.036"/>
+  <testcase name="paint is bought as buckets and gallons" classname="com.sek789102.changkhamnuan.CalculatorsTest" time="0.002"/>
   <testcase name="ready-mix is ordered by half cubic metre with waste" classname="com.sek789102.changkhamnuan.CalculatorsTest" time="0.001"/>
-  <testcase name="doors and windows are subtracted from the wall" classname="com.sek789102.changkhamnuan.CalculatorsTest" time="0.001"/>
-  <testcase name="empty or bad boxes count as zero, untouched fields use defaults" classname="com.sek789102.changkhamnuan.CalculatorsTest" time="0.005"/>
-  <testcase name="half-brick wall uses the standard table" classname="com.sek789102.changkhamnuan.CalculatorsTest" time="0.001"/>
+  <testcase name="doors and windows are subtracted from the wall" classname="com.sek789102.changkhamnuan.CalculatorsTest" time="0.0"/>
+  <testcase name="empty or bad boxes count as zero, untouched fields use defaults" classname="com.sek789102.changkhamnuan.CalculatorsTest" time="0.003"/>
+  <testcase name="half-brick wall uses the standard table" classname="com.sek789102.changkhamnuan.CalculatorsTest" time="0.0"/>
   <testcase name="thai baht text" classname="com.sek789102.changkhamnuan.CalculatorsTest" time="0.004"/>
   <testcase name="fields show only for the matching choice" classname="com.sek789102.changkhamnuan.CalculatorsTest" time="0.0"/>
   <testcase name="tiles round to whole boxes" classname="com.sek789102.changkhamnuan.CalculatorsTest" time="0.001"/>
   <testcase name="quote totals with overhead, discount, VAT and withholding" classname="com.sek789102.changkhamnuan.CalculatorsTest" time="0.001"/>
   <testcase name="rebar weight follows d squared over 162" classname="com.sek789102.changkhamnuan.CalculatorsTest" time="0.001"/>
-  <testcase name="thai land units" classname="com.sek789102.changkhamnuan.CalculatorsTest" time="0.007"/>
+  <testcase name="thai land units" classname="com.sek789102.changkhamnuan.CalculatorsTest" time="0.008"/>
   <testcase name="aac and block walls add waste" classname="com.sek789102.changkhamnuan.CalculatorsTest" time="0.001"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>

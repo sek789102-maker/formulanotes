@@ -15,7 +15,7 @@ Never open a pull request unless asked.
 |---|---|---|---|
 | `lifekeep/` | LIFEKEEP (documents, tasks, calendar) — **Flutter** | com.sek789102.lifekeep | 1.1.1 (versionCode 4) |
 | `jotwai/` | จดไว้ (notes) — Kotlin + Compose | com.sek789102.jotwai | 1.1.1 (versionCode 5) |
-| `changkhamnuan/` | ช่างคำนวณ (material calculator + contractor documents, paid app, no Pro tier) — Kotlin + Compose | com.sek789102.changkhamnuan | 1.3.1 (versionCode 5) |
+| `changkhamnuan/` | ช่างคำนวณ (material calculator + contractor documents, paid app, no Pro tier) — Kotlin + Compose | com.sek789102.changkhamnuan | 1.3.2 (versionCode 6) |
 
 Release files (docs, store listing, signed AAB, upload-cert fingerprint) live in `release/`, `release-jotwai/`, `release-changkhamnuan/`.
 Signing keys are NOT in the repo — the owner keeps them and attaches them when an AAB must be signed

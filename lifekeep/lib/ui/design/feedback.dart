@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+import 'fancy.dart';
+
 import 'package:provider/provider.dart';
 
 import '../../core/l10n/lang.dart';
@@ -9,7 +12,11 @@ import '../../state/app_controller.dart';
 
 /// Runs [action]; shows a friendly localized message on failure (never a
 /// stack trace) and an optional [success] message.
-Future<bool> runAction(BuildContext context, Future<void> Function() action, {String? success}) async {
+Future<bool> runAction(
+  BuildContext context,
+  Future<void> Function() action, {
+  String? success,
+}) async {
   final messenger = ScaffoldMessenger.maybeOf(context);
   final errorColor = Theme.of(context).colorScheme.error;
   try {
@@ -21,12 +28,19 @@ Future<bool> runAction(BuildContext context, Future<void> Function() action, {St
     return true;
   } catch (e) {
     messenger?.hideCurrentSnackBar();
-    messenger?.showSnackBar(SnackBar(content: Text(friendlyError(e)), backgroundColor: errorColor));
+    messenger?.showSnackBar(
+      SnackBar(content: Text(friendlyError(e)), backgroundColor: errorColor),
+    );
     return false;
   }
 }
 
-void showSnack(BuildContext context, String message, {bool error = false, SnackBarAction? action}) {
+void showSnack(
+  BuildContext context,
+  String message, {
+  bool error = false,
+  SnackBarAction? action,
+}) {
   final m = ScaffoldMessenger.maybeOf(context);
   m?.hideCurrentSnackBar();
   m?.showSnackBar(
@@ -50,11 +64,16 @@ Future<bool> confirmDialog(
   final r = await showDialog<bool>(
     context: context,
     builder: (ctx) => AlertDialog(
-      icon: icon == null ? null : Icon(icon, color: destructive ? scheme.error : scheme.primary),
+      icon: icon == null
+          ? null
+          : Icon(icon, color: destructive ? scheme.error : scheme.primary),
       title: Text(title),
       content: Text(message),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(ctx.tr('ยกเลิก', 'Cancel'))),
+        TextButton(
+          onPressed: () => Navigator.pop(ctx, false),
+          child: Text(ctx.tr('ยกเลิก', 'Cancel')),
+        ),
         FilledButton(
           style: destructive
               ? FilledButton.styleFrom(
@@ -62,7 +81,9 @@ Future<bool> confirmDialog(
                   foregroundColor: scheme.onError,
                   minimumSize: const Size(0, Sizes.buttonCompact),
                 )
-              : FilledButton.styleFrom(minimumSize: const Size(0, Sizes.buttonCompact)),
+              : FilledButton.styleFrom(
+                  minimumSize: const Size(0, Sizes.buttonCompact),
+                ),
           onPressed: () => Navigator.pop(ctx, true),
           child: Text(confirmLabel),
         ),
@@ -74,7 +95,13 @@ Future<bool> confirmDialog(
 
 /// One option in [showOptionSheet].
 class SheetOption<T> {
-  const SheetOption({required this.value, required this.label, required this.icon, this.subtitle, this.color});
+  const SheetOption({
+    required this.value,
+    required this.label,
+    required this.icon,
+    this.subtitle,
+    this.color,
+  });
   final T value;
   final String label;
   final String? subtitle;
@@ -83,7 +110,11 @@ class SheetOption<T> {
 }
 
 /// Bottom sheet with a list of options; returns the chosen value.
-Future<T?> showOptionSheet<T>(BuildContext context, {String? title, required List<SheetOption<T>> options}) {
+Future<T?> showOptionSheet<T>(
+  BuildContext context, {
+  String? title,
+  required List<SheetOption<T>> options,
+}) {
   return showModalBottomSheet<T>(
     context: context,
     builder: (ctx) {
@@ -98,7 +129,12 @@ Future<T?> showOptionSheet<T>(BuildContext context, {String? title, required Lis
             children: [
               if (title != null)
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(Space.md, 0, Space.md, Space.sm),
+                  padding: const EdgeInsets.fromLTRB(
+                    Space.md,
+                    0,
+                    Space.md,
+                    Space.sm,
+                  ),
                   child: Text(title, style: t.titleMedium),
                 ),
               for (final o in options)
@@ -107,7 +143,10 @@ Future<T?> showOptionSheet<T>(BuildContext context, {String? title, required Lis
                   leading: Icon(o.icon, color: o.color ?? scheme.primary),
                   title: Text(
                     o.label,
-                    style: t.bodyLarge?.copyWith(fontWeight: FontWeight.w500, color: o.color),
+                    style: t.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.w500,
+                      color: o.color,
+                    ),
                   ),
                   subtitle: o.subtitle == null ? null : Text(o.subtitle!),
                   onTap: () => Navigator.pop(ctx, o.value),
@@ -123,7 +162,13 @@ Future<T?> showOptionSheet<T>(BuildContext context, {String? title, required Lis
 /// Loads data with [load], re-runs when app data changes ([AppController.revision])
 /// or [deps] change, and keeps the previous result on screen while reloading.
 class DataBuilder<T> extends StatefulWidget {
-  const DataBuilder({super.key, required this.load, required this.builder, this.deps = const [], this.loading});
+  const DataBuilder({
+    super.key,
+    required this.load,
+    required this.builder,
+    this.deps = const [],
+    this.loading,
+  });
 
   final Future<T> Function(AppController c) load;
   final Widget Function(BuildContext context, T data) builder;
@@ -173,7 +218,10 @@ class _DataBuilderState<T> extends State<DataBuilder<T>> {
       WidgetsBinding.instance.addPostFrameCallback((_) => _reload(c));
     }
     if (_error != null && _data == null) {
-      return ErrorView(message: friendlyError(_error!), onRetry: () => _reload(c));
+      return ErrorView(
+        message: friendlyError(_error!),
+        onRetry: () => _reload(c),
+      );
     }
     final d = _data;
     if (d == null) {
@@ -181,7 +229,11 @@ class _DataBuilderState<T> extends State<DataBuilder<T>> {
           const Center(
             child: Padding(
               padding: EdgeInsets.all(Space.xxxl),
-              child: SizedBox(width: 26, height: 26, child: CircularProgressIndicator(strokeWidth: 2.5)),
+              child: SizedBox(
+                width: 26,
+                height: 26,
+                child: CircularProgressIndicator(strokeWidth: 2.5),
+              ),
             ),
           );
     }
@@ -221,8 +273,11 @@ class EmptyState extends StatelessWidget {
     this.onAction,
     this.compact = false,
     this.tone = EmptyTone.neutral,
+    this.illustration,
   });
 
+  /// Asset picture shown instead of the icon box.
+  final String? illustration;
   final IconData icon;
   final String title;
   final String? message;
@@ -238,23 +293,47 @@ class EmptyState extends StatelessWidget {
     final t = Theme.of(context).textTheme;
     final (Color fg, Color bg) = switch (tone) {
       EmptyTone.error => (scheme.error, context.status.dangerContainer),
-      EmptyTone.success => (context.status.success, context.status.successContainer),
-      EmptyTone.neutral => (scheme.primary, scheme.primaryContainer.withValues(alpha: 0.7)),
+      EmptyTone.success => (
+        context.status.success,
+        context.status.successContainer,
+      ),
+      EmptyTone.neutral => (
+        scheme.primary,
+        scheme.primaryContainer.withValues(alpha: 0.7),
+      ),
     };
     return Center(
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: Space.xxxl, vertical: compact ? Space.xl : 56),
+        padding: EdgeInsets.symmetric(
+          horizontal: Space.xxxl,
+          vertical: compact ? Space.xl : 56,
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              width: compact ? 48 : 64,
-              height: compact ? 48 : 64,
-              decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(compact ? 16 : 22)),
-              child: Icon(icon, size: compact ? 24 : 30, color: fg),
-            ),
+            if (illustration != null)
+              SoftIllustration(
+                asset: illustration!,
+                height: compact ? 150 : 210,
+              )
+            else
+              Container(
+                width: compact ? 48 : 64,
+                height: compact ? 48 : 64,
+                decoration: BoxDecoration(
+                  color: bg,
+                  borderRadius: BorderRadius.circular(compact ? 16 : 22),
+                ),
+                child: Icon(icon, size: compact ? 24 : 30, color: fg),
+              ),
             SizedBox(height: compact ? Space.md : Space.lg),
-            Text(title, style: t.titleMedium, textAlign: TextAlign.center),
+            Text(
+              title,
+              style: illustration != null
+                  ? t.headlineSmall?.copyWith(fontSize: 26)
+                  : t.titleMedium,
+              textAlign: TextAlign.center,
+            ),
             if (message != null) ...[
               const SizedBox(height: Space.xs),
               Text(
@@ -263,10 +342,24 @@ class EmptyState extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
             ],
-            if (actionLabel != null && onAction != null) ...[
+            if (actionLabel != null &&
+                onAction != null &&
+                illustration != null) ...[
+              const SizedBox(height: Space.xl),
+              SizedBox(
+                width: 260,
+                child: GradientButton(
+                  label: actionLabel!,
+                  icon: actionIcon,
+                  onPressed: onAction!,
+                ),
+              ),
+            ] else if (actionLabel != null && onAction != null) ...[
               const SizedBox(height: Space.lg),
               FilledButton.icon(
-                style: FilledButton.styleFrom(minimumSize: const Size(0, Sizes.buttonCompact)),
+                style: FilledButton.styleFrom(
+                  minimumSize: const Size(0, Sizes.buttonCompact),
+                ),
                 onPressed: onAction,
                 icon: Icon(actionIcon, size: 20),
                 label: Text(actionLabel!),

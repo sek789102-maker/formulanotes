@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/l10n/lang.dart';
 import '../calendar/calendar_screen.dart';
+import '../design/design.dart';
 import '../documents/documents_screen.dart';
 import '../home/home_screen.dart';
 import '../tasks/tasks_screen.dart';
@@ -29,40 +30,42 @@ class _MainShellState extends State<MainShell> {
         if (!didPop) setState(() => _index = 0);
       },
       child: Scaffold(
-        body: IndexedStack(
-          index: _index,
-          children: const [HomeScreen(), DocumentsScreen(), TasksScreen(), CalendarScreen()],
-        ),
-        bottomNavigationBar: DecoratedBox(
-          decoration: BoxDecoration(
-            border: Border(top: BorderSide(color: Theme.of(context).colorScheme.outlineVariant)),
-          ),
-          child: NavigationBar(
-            selectedIndex: _index,
-            onDestinationSelected: _select,
-            destinations: [
-              NavigationDestination(
-                icon: const Icon(Icons.home_outlined),
-                selectedIcon: const Icon(Icons.home_rounded),
-                label: context.tr('หน้าแรก', 'Home'),
-              ),
-              NavigationDestination(
-                icon: const Icon(Icons.folder_outlined),
-                selectedIcon: const Icon(Icons.folder_rounded),
-                label: context.tr('เอกสาร', 'Documents'),
-              ),
-              NavigationDestination(
-                icon: const Icon(Icons.check_circle_outline_rounded),
-                selectedIcon: const Icon(Icons.check_circle_rounded),
-                label: context.tr('งาน', 'Tasks'),
-              ),
-              NavigationDestination(
-                icon: const Icon(Icons.calendar_month_outlined),
-                selectedIcon: const Icon(Icons.calendar_month_rounded),
-                label: context.tr('ปฏิทิน', 'Calendar'),
-              ),
+        body: LkBackdrop(
+          child: IndexedStack(
+            index: _index,
+            children: const [
+              HomeScreen(),
+              DocumentsScreen(),
+              TasksScreen(),
+              CalendarScreen(),
             ],
           ),
+        ),
+        bottomNavigationBar: FloatingNavBar(
+          selected: _index,
+          onSelect: _select,
+          items: [
+            (
+              Icons.home_outlined,
+              Icons.home_rounded,
+              context.tr('หน้าแรก', 'Home'),
+            ),
+            (
+              Icons.folder_outlined,
+              Icons.folder_rounded,
+              context.tr('เอกสาร', 'Documents'),
+            ),
+            (
+              Icons.check_circle_outline_rounded,
+              Icons.check_circle_rounded,
+              context.tr('งาน', 'Tasks'),
+            ),
+            (
+              Icons.calendar_month_outlined,
+              Icons.calendar_month_rounded,
+              context.tr('ปฏิทิน', 'Calendar'),
+            ),
+          ],
         ),
       ),
     );

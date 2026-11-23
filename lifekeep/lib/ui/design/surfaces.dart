@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'fancy.dart';
+
 import '../../core/theme/tokens.dart';
 
 /// Centers content and caps its width on tablets / landscape.
@@ -19,7 +21,14 @@ class ContentWidth extends StatelessWidget {
 
 /// Small section label with optional trailing action ("See all").
 class LkSectionHeader extends StatelessWidget {
-  const LkSectionHeader({super.key, required this.title, this.actionLabel, this.onAction, this.count, this.padding});
+  const LkSectionHeader({
+    super.key,
+    required this.title,
+    this.actionLabel,
+    this.onAction,
+    this.count,
+    this.padding,
+  });
 
   final String title;
   final String? actionLabel;
@@ -32,7 +41,9 @@ class LkSectionHeader extends StatelessWidget {
     final t = Theme.of(context).textTheme;
     final scheme = Theme.of(context).colorScheme;
     return Padding(
-      padding: padding ?? const EdgeInsets.fromLTRB(Space.xs, Space.xl, Space.xs, Space.sm),
+      padding:
+          padding ??
+          const EdgeInsets.fromLTRB(Space.xs, Space.xl, Space.xs, Space.sm),
       child: Row(
         children: [
           // Expanded (not Flexible + Spacer, which would split the row 50/50)
@@ -41,11 +52,21 @@ class LkSectionHeader extends StatelessWidget {
             child: Row(
               children: [
                 Flexible(
-                  child: Text(title, style: t.titleSmall, maxLines: 1, overflow: TextOverflow.ellipsis),
+                  child: Text(
+                    title,
+                    style: t.titleSmall,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
                 if (count != null && count! > 0) ...[
                   const SizedBox(width: Space.sm),
-                  Text('$count', style: t.labelMedium?.copyWith(color: scheme.onSurfaceVariant)),
+                  Text(
+                    '$count',
+                    style: t.labelMedium?.copyWith(
+                      color: scheme.onSurfaceVariant,
+                    ),
+                  ),
                 ],
               ],
             ),
@@ -55,12 +76,22 @@ class LkSectionHeader extends StatelessWidget {
               borderRadius: Radii.brSm,
               onTap: onAction,
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: Space.xs, vertical: Space.xxs),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: Space.xs,
+                  vertical: Space.xxs,
+                ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(actionLabel!, style: t.labelMedium?.copyWith(color: scheme.primary)),
-                    Icon(Icons.chevron_right_rounded, size: 18, color: scheme.primary),
+                    Text(
+                      actionLabel!,
+                      style: t.labelMedium?.copyWith(color: scheme.primary),
+                    ),
+                    Icon(
+                      Icons.chevron_right_rounded,
+                      size: 18,
+                      color: scheme.primary,
+                    ),
                   ],
                 ),
               ),
@@ -90,20 +121,27 @@ class LkGroup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    return Material(
-      color: color ?? scheme.surface,
-      borderRadius: Radii.brLg,
-      clipBehavior: Clip.antiAlias,
-      child: Padding(
-        padding: padding,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            for (var i = 0; i < children.length; i++) ...[
-              if (i > 0) Divider(height: 1, indent: dividerIndent, endIndent: 0),
-              children[i],
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        borderRadius: Radii.brLg,
+        boxShadow: lkShadow(context),
+      ),
+      child: Material(
+        color: color ?? scheme.surface,
+        borderRadius: Radii.brLg,
+        clipBehavior: Clip.antiAlias,
+        child: Padding(
+          padding: padding,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              for (var i = 0; i < children.length; i++) ...[
+                if (i > 0)
+                  Divider(height: 1, indent: dividerIndent, endIndent: 0),
+                children[i],
+              ],
             ],
-          ],
+          ),
         ),
       ),
     );
@@ -129,13 +167,22 @@ class LkPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    return Material(
-      color: color ?? scheme.surface,
-      shape: RoundedRectangleBorder(borderRadius: Radii.brLg, side: side ?? BorderSide.none),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(padding: padding, child: child),
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        borderRadius: Radii.brLg,
+        boxShadow: color == null ? lkShadow(context) : const [],
+      ),
+      child: Material(
+        color: color ?? scheme.surface,
+        shape: RoundedRectangleBorder(
+          borderRadius: Radii.brLg,
+          side: side ?? BorderSide.none,
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          child: Padding(padding: padding, child: child),
+        ),
       ),
     );
   }
@@ -163,7 +210,12 @@ class LkBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
     return Container(
-      padding: const EdgeInsets.fromLTRB(Space.md, Space.md, Space.md, Space.md),
+      padding: const EdgeInsets.fromLTRB(
+        Space.md,
+        Space.md,
+        Space.md,
+        Space.md,
+      ),
       decoration: BoxDecoration(color: background, borderRadius: Radii.brMd),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -177,10 +229,14 @@ class LkBanner extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (title != null) Text(title!, style: t.labelLarge?.copyWith(color: color)),
+                if (title != null)
+                  Text(title!, style: t.labelLarge?.copyWith(color: color)),
                 Text(
                   message,
-                  style: t.bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8)),
+                  style: t.bodySmall?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurface
+                        .withValues(alpha: 0.8),
+                  ),
                 ),
               ],
             ),

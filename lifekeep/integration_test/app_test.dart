@@ -3,6 +3,7 @@
 // Uses the real app bootstrap: Android SQLite, file system, secure storage
 // and notification plugins - no fakes.
 import 'package:flutter/material.dart';
+import 'package:lifekeep/ui/design/fancy.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -24,10 +25,18 @@ Future<void> boot(WidgetTester t) async {
   await t.pumpWidget(const SizedBox());
   await t.pump(const Duration(milliseconds: 300));
   await t.pumpWidget(const BootstrapApp());
-  for (var i = 0; i < 100 && find.byType(NavigationBar).evaluate().isEmpty; i++) {
+  for (
+    var i = 0;
+    i < 100 && find.byType(FloatingNavBar).evaluate().isEmpty;
+    i++
+  ) {
     await t.pump(const Duration(milliseconds: 100));
   }
-  expect(find.byType(NavigationBar), findsOneWidget, reason: 'app did not finish starting');
+  expect(
+    find.byType(FloatingNavBar),
+    findsOneWidget,
+    reason: 'app did not finish starting',
+  );
   await settle(t, 1);
 }
 
@@ -37,7 +46,9 @@ void main() {
   final taskTitle = 'งานทดสอบ $stamp';
   final docTitle = 'เอกสารทดสอบ $stamp';
 
-  testWidgets('create, complete, search, persist (real Android storage)', (t) async {
+  testWidgets('create, complete, search, persist (real Android storage)', (
+    t,
+  ) async {
     await boot(t);
 
     // Add a task through the UI
@@ -46,7 +57,11 @@ void main() {
     await t.enterText(find.byType(TextFormField).first, taskTitle);
     await t.tap(find.text('บันทึกงาน'));
     await settle(t);
-    expect(find.text('ชื่องาน *'), findsNothing, reason: 'task form should close after save');
+    expect(
+      find.text('ชื่องาน *'),
+      findsNothing,
+      reason: 'task form should close after save',
+    );
 
     // Add a document through the UI, choosing a category from the sheet
     await t.tap(find.text('เพิ่มเอกสาร').first);
@@ -78,8 +93,15 @@ void main() {
     await settle(t);
     await t.tap(find.text('ถัดไป'));
     await settle(t);
-    await t.scrollUntilVisible(find.text(taskTitle), 300, scrollable: find.byType(Scrollable).last);
-    final row = find.ancestor(of: find.text(taskTitle), matching: find.byType(TaskRow));
+    await t.scrollUntilVisible(
+      find.text(taskTitle),
+      300,
+      scrollable: find.byType(Scrollable).last,
+    );
+    final row = find.ancestor(
+      of: find.text(taskTitle),
+      matching: find.byType(TaskRow),
+    );
     await t.tap(find.descendant(of: row, matching: find.byType(TaskCheck)));
     await settle(t);
     await t.tap(find.text('เสร็จแล้ว').first);
@@ -110,14 +132,22 @@ void main() {
     await settle(t);
     await t.enterText(find.byType(TextField).first, stamp);
     await settle(t);
-    expect(find.text(docTitle), findsOneWidget, reason: 'document must persist');
+    expect(
+      find.text(docTitle),
+      findsOneWidget,
+      reason: 'document must persist',
+    );
   });
 
   testWidgets('local backup from Settings on real storage', (t) async {
     await boot(t);
     await t.tap(find.byTooltip('ตั้งค่า'));
     await settle(t);
-    await t.scrollUntilVisible(find.text('สำรองและกู้คืนข้อมูล'), 200, scrollable: find.byType(Scrollable).first);
+    await t.scrollUntilVisible(
+      find.text('สำรองและกู้คืนข้อมูล'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
     await settle(t, 1);
     await t.tap(find.text('สำรองและกู้คืนข้อมูล'));
     await settle(t);
@@ -127,6 +157,10 @@ void main() {
     expect(find.text('ข้อมูลได้รับการสำรองแล้ว'), findsOneWidget);
     await t.drag(find.byType(Scrollable).first, const Offset(0, -600));
     await settle(t, 1);
-    expect(find.textContaining('ด้วยตนเอง'), findsWidgets, reason: 'manual backup listed in history');
+    expect(
+      find.textContaining('ด้วยตนเอง'),
+      findsWidgets,
+      reason: 'manual backup listed in history',
+    );
   });
 }

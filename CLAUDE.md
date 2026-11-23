@@ -10,12 +10,12 @@ Never open a pull request unless asked.
 - If something needs the owner's own information (price, contact, privacy-policy URL, tax/bank), say so — never invent it.
 - Keep answers short; the owner dislikes long waits — report progress honestly with times.
 
-## Apps in this repo (all Android, Kotlin + Jetpack Compose, offline, no permissions)
+## Apps in this repo (Android, offline)
 | Folder | App | Package | Latest |
 |---|---|---|---|
-| `lifekeep/` | LIFEKEEP (documents & tasks) | — | AAB versionCode 2 |
-| `jotwai/` | จดไว้ (notes) | com.sek789102.jotwai | 1.0.2 (versionCode 3) |
-| `changkhamnuan/` | ช่างคำนวณ (material calculator + contractor documents, paid app, no Pro tier) | com.sek789102.changkhamnuan | 1.3.1 (versionCode 5) |
+| `lifekeep/` | LIFEKEEP (documents, tasks, calendar) — **Flutter** | com.sek789102.lifekeep | 1.1.0 (versionCode 3) |
+| `jotwai/` | จดไว้ (notes) — Kotlin + Compose | com.sek789102.jotwai | 1.0.2 (versionCode 3) |
+| `changkhamnuan/` | ช่างคำนวณ (material calculator + contractor documents, paid app, no Pro tier) — Kotlin + Compose | com.sek789102.changkhamnuan | 1.3.1 (versionCode 5) |
 
 Release files (docs, store listing, signed AAB, upload-cert fingerprint) live in `release/`, `release-jotwai/`, `release-changkhamnuan/`.
 Signing keys are NOT in the repo — the owner keeps them and attaches them when an AAB must be signed
@@ -27,6 +27,7 @@ Signing keys are NOT in the repo — the owner keeps them and attaches them when
   (`changkhamnuan/ci/emulator_smoke.sh`) and store screenshots (`ci/store_screenshots.sh`), then commits outputs to
   `changkhamnuan-build/` with message `CI ChangKhamnuan build <sha> (emulator: ...)`.
 - Sign the AAB locally with jarsigner (SHA256withRSA) using the owner's key, then verify the fingerprint.
+- LIFEKEEP (Flutter 3.47.9): the Flutter SDK can be downloaded from storage.googleapis.com and `flutter analyze` / `flutter test` run locally (CI fails on any analyzer info). Don't run `dart format` on the whole tree.
 - Pure-Kotlin domain tests can be compiled and run locally with kotlin-compiler-embeddable from Maven Central (fast check before pushing).
 
 ## ช่างคำนวณ — what exists (1.3.1)

@@ -4,6 +4,7 @@ library;
 export '../../core/theme/app_theme.dart';
 export '../../core/theme/tokens.dart';
 export 'badges.dart';
+export 'fancy.dart';
 export 'feedback.dart';
 export 'inputs.dart';
 export 'motion.dart';

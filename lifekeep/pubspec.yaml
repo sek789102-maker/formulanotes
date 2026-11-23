@@ -1,7 +1,7 @@
 name: lifekeep
 description: "LIFEKEEP - offline-first, privacy-first life organizer (documents, tasks, calendar, reminders)."
 publish_to: 'none'
-version: 1.0.0+2
+version: 1.1.0+3
 
 environment:
   sdk: ^3.13.7
@@ -38,6 +38,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/fonts/OFL.txt
+    - assets/illustrations/
   fonts:
     - family: IBMPlexSansThai
       fonts:

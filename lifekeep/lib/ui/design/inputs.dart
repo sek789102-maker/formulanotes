@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'fancy.dart';
+
 import '../../core/l10n/lang.dart';
 import '../../core/theme/tokens.dart';
 import 'badges.dart';
@@ -85,7 +87,12 @@ class PickerField extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(Space.md, Space.sm, Space.xs, Space.sm),
+          padding: const EdgeInsets.fromLTRB(
+            Space.md,
+            Space.sm,
+            Space.xs,
+            Space.sm,
+          ),
           child: Row(
             children: [
               leading ?? Icon(icon, size: 20, color: scheme.onSurfaceVariant),
@@ -100,8 +107,12 @@ class PickerField extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: t.bodyMedium?.copyWith(
-                        fontWeight: value == null ? FontWeight.w400 : FontWeight.w500,
-                        color: value == null ? scheme.onSurfaceVariant : scheme.onSurface,
+                        fontWeight: value == null
+                            ? FontWeight.w400
+                            : FontWeight.w500,
+                        color: value == null
+                            ? scheme.onSurfaceVariant
+                            : scheme.onSurface,
                       ),
                     ),
                   ],
@@ -116,7 +127,11 @@ class PickerField extends StatelessWidget {
               else
                 Padding(
                   padding: const EdgeInsets.all(Space.sm),
-                  child: Icon(Icons.expand_more_rounded, size: 20, color: scheme.onSurfaceVariant),
+                  child: Icon(
+                    Icons.expand_more_rounded,
+                    size: 20,
+                    color: scheme.onSurfaceVariant,
+                  ),
                 ),
             ],
           ),
@@ -128,7 +143,13 @@ class PickerField extends StatelessWidget {
 
 /// Titled block of form controls on a surface.
 class FormBlock extends StatelessWidget {
-  const FormBlock({super.key, required this.title, required this.children, this.icon, this.trailing});
+  const FormBlock({
+    super.key,
+    required this.title,
+    required this.children,
+    this.icon,
+    this.trailing,
+  });
   final String title;
   final IconData? icon;
   final List<Widget> children;
@@ -144,19 +165,30 @@ class FormBlock extends StatelessWidget {
         color: scheme.surface,
         borderRadius: Radii.brLg,
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(Space.lg, Space.md, Space.lg, Space.lg),
+          padding: const EdgeInsets.fromLTRB(
+            Space.lg,
+            Space.md,
+            Space.lg,
+            Space.lg,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Row(
                 children: [
-                  if (icon != null) ...[Icon(icon, size: 18, color: scheme.primary), const SizedBox(width: Space.sm)],
+                  if (icon != null) ...[
+                    Icon(icon, size: 18, color: scheme.primary),
+                    const SizedBox(width: Space.sm),
+                  ],
                   Expanded(child: Text(title, style: t.titleSmall)),
                   ?trailing,
                 ],
               ),
               const SizedBox(height: Space.md),
-              for (var i = 0; i < children.length; i++) ...[if (i > 0) const SizedBox(height: Space.md), children[i]],
+              for (var i = 0; i < children.length; i++) ...[
+                if (i > 0) const SizedBox(height: Space.md),
+                children[i],
+              ],
             ],
           ),
         ),
@@ -167,37 +199,76 @@ class FormBlock extends StatelessWidget {
 
 /// Compact tonal action button with icon (quick add).
 class QuickActionButton extends StatelessWidget {
-  const QuickActionButton({super.key, required this.icon, required this.label, required this.onTap});
+  const QuickActionButton({
+    super.key,
+    required this.icon,
+    required this.label,
+    required this.onTap,
+    this.color,
+  });
   final IconData icon;
   final String label;
   final VoidCallback onTap;
 
+  /// Icon colour (defaults to the brand blue).
+  final Color? color;
+
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final c = color ?? scheme.primary;
     return Pressable(
-      child: Material(
-        color: scheme.surface,
-        borderRadius: Radii.brMd,
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: onTap,
-          child: SizedBox(
-            height: 44,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(icon, size: 19, color: scheme.primary),
-                const SizedBox(width: 6),
-                Flexible(
-                  child: Text(
-                    label,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.labelMedium?.copyWith(color: scheme.onSurface),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          borderRadius: Radii.brLg,
+          boxShadow: lkShadow(context),
+        ),
+        child: Material(
+          color: scheme.surface,
+          borderRadius: Radii.brLg,
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            onTap: onTap,
+            child: SizedBox(
+              height: 104,
+              child: Stack(
+                children: [
+                  Positioned(
+                    right: 6,
+                    top: 0,
+                    bottom: 18,
+                    child: Icon(
+                      Icons.chevron_right_rounded,
+                      size: 22,
+                      color: scheme.onSurfaceVariant.withValues(alpha: 0.6),
+                    ),
                   ),
-                ),
-              ],
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(
+                      Space.md,
+                      Space.lg,
+                      Space.md,
+                      Space.md,
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Icon(icon, size: 36, color: c),
+                        Text(
+                          label,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.titleSmall
+                              ?.copyWith(
+                                color: scheme.onSurface,
+                                fontWeight: FontWeight.w700,
+                              ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -209,61 +280,102 @@ class QuickActionButton extends StatelessWidget {
 /// Equal-width segmented tab bar (with counters) bound to a [TabController].
 /// Labels scale down instead of overflowing on narrow phones.
 class SegmentTabs extends StatelessWidget implements PreferredSizeWidget {
-  const SegmentTabs({super.key, required this.controller, required this.labels, this.counts, this.alertIndex});
+  const SegmentTabs({
+    super.key,
+    required this.controller,
+    required this.labels,
+    this.counts,
+    this.alertIndex,
+    this.icons,
+  });
   final TabController controller;
   final List<String> labels;
   final List<int>? counts;
   final int? alertIndex;
+  final List<IconData>? icons;
 
   @override
-  Size get preferredSize => const Size.fromHeight(48);
+  Size get preferredSize => const Size.fromHeight(64);
 
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(Space.page, Space.xs, Space.page, Space.xs),
-      child: Container(
-        height: 40,
-        padding: const EdgeInsets.all(3),
-        decoration: BoxDecoration(color: scheme.surfaceContainerHigh, borderRadius: Radii.brMd),
-        child: AnimatedBuilder(
-          animation: controller,
-          builder: (context, _) => TabBar(
-            controller: controller,
-            isScrollable: false,
-            labelPadding: const EdgeInsets.symmetric(horizontal: 2),
-            indicator: BoxDecoration(
-              color: scheme.surface,
-              borderRadius: BorderRadius.circular(Radii.sm),
-              boxShadow: [
-                BoxShadow(color: scheme.shadow.withValues(alpha: 0.08), blurRadius: 6, offset: const Offset(0, 1)),
+    final t = Theme.of(context).textTheme;
+    return SizedBox(
+      height: 64,
+      child: AnimatedBuilder(
+        animation: controller,
+        builder: (context, _) => Padding(
+          padding: const EdgeInsets.fromLTRB(
+            Space.page,
+            Space.xs,
+            Space.page,
+            Space.sm,
+          ),
+          child: Row(
+            children: [
+              for (var i = 0; i < labels.length; i++) ...[
+                if (i > 0) const SizedBox(width: 6),
+                Expanded(child: _pill(context, i, scheme, t)),
               ],
-            ),
-            splashBorderRadius: BorderRadius.circular(Radii.sm),
-            tabs: [
-              for (var i = 0; i < labels.length; i++)
-                Tab(
-                  height: 34,
-                  child: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(labels[i]),
-                        if (counts != null && counts![i] > 0) ...[
-                          const SizedBox(width: 5),
-                          CountBadge(
-                            count: counts![i],
-                            alert: i == alertIndex,
-                            selected: controller.index == i && i != alertIndex,
-                          ),
-                        ],
-                      ],
-                    ),
-                  ),
-                ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _pill(BuildContext context, int i, ColorScheme scheme, TextTheme t) {
+    final on = controller.index == i;
+    final fg = on ? Colors.white : scheme.onSurface;
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        gradient: on ? lkGradient : null,
+        color: on ? null : scheme.surface,
+        borderRadius: BorderRadius.circular(Radii.pill),
+        boxShadow: on
+            ? [
+                BoxShadow(
+                  color: lkBlue.withValues(alpha: 0.3),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ]
+            : lkShadow(context),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(Radii.pill),
+          onTap: () => controller.animateTo(i),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: Space.sm),
+            child: Center(
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (icons != null) ...[
+                      Icon(
+                        icons![i],
+                        size: 20,
+                        color: on ? Colors.white : scheme.onSurfaceVariant,
+                      ),
+                      const SizedBox(width: 6),
+                    ],
+                    Text(labels[i], style: t.labelLarge?.copyWith(color: fg)),
+                    if (counts != null && counts![i] > 0) ...[
+                      const SizedBox(width: 6),
+                      CountBadge(
+                        count: counts![i],
+                        alert: i == alertIndex && !on,
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
           ),
         ),
       ),

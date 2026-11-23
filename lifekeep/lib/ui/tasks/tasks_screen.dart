@@ -17,7 +17,8 @@ class TasksScreen extends StatefulWidget {
   State<TasksScreen> createState() => _TasksScreenState();
 }
 
-class _TasksScreenState extends State<TasksScreen> with SingleTickerProviderStateMixin {
+class _TasksScreenState extends State<TasksScreen>
+    with SingleTickerProviderStateMixin {
   late final TabController _tabs = TabController(length: 4, vsync: this);
   final _search = TextEditingController();
   bool _searching = false;
@@ -36,7 +37,9 @@ class _TasksScreenState extends State<TasksScreen> with SingleTickerProviderStat
     final q = _query.trim().toLowerCase();
     if (q.isEmpty) return true;
     final cat = c.maybeCategory(t.categoryId)?.name.toLowerCase() ?? '';
-    return t.title.toLowerCase().contains(q) || t.description.toLowerCase().contains(q) || cat.contains(q);
+    return t.title.toLowerCase().contains(q) ||
+        t.description.toLowerCase().contains(q) ||
+        cat.contains(q);
   }
 
   Future<void> _toggle(TaskItem t, bool v) async {
@@ -52,7 +55,10 @@ class _TasksScreenState extends State<TasksScreen> with SingleTickerProviderStat
     messenger.showSnackBar(
       SnackBar(
         content: Text(msg, maxLines: 1, overflow: TextOverflow.ellipsis),
-        action: SnackBarAction(label: undo, onPressed: () => c.setTaskCompleted(t, !v)),
+        action: SnackBarAction(
+          label: undo,
+          onPressed: () => c.setTaskCompleted(t, !v),
+        ),
       ),
     );
   }
@@ -80,10 +86,21 @@ class _TasksScreenState extends State<TasksScreen> with SingleTickerProviderStat
     final cat = c.maybeCategory(_categoryId);
     final scheme = Theme.of(context).colorScheme;
     return Scaffold(
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
-        title: Text(context.tr('งาน', 'Tasks')),
+        backgroundColor: Colors.transparent,
+        toolbarHeight: 96,
+        title: TabTitle(
+          icon: Icons.task_alt_rounded,
+          title: context.tr('งาน', 'Tasks'),
+          subtitle: context.tr(
+            'จัดการงานของคุณให้เป็นระบบ ✨',
+            'Keep your tasks in order ✨',
+          ),
+        ),
         actions: [
           IconButton(
+            style: lkHeaderButtonStyle(context),
             tooltip: context.tr('ค้นหา', 'Search'),
             isSelected: _searching,
             icon: const Icon(Icons.search_rounded),
@@ -96,7 +113,9 @@ class _TasksScreenState extends State<TasksScreen> with SingleTickerProviderStat
               }
             }),
           ),
+          const SizedBox(width: Space.sm),
           IconButton(
+            style: lkHeaderButtonStyle(context),
             tooltip: context.tr('กรองหมวดหมู่', 'Filter category'),
             icon: Badge(
               isLabelVisible: cat != null,
@@ -114,14 +133,15 @@ class _TasksScreenState extends State<TasksScreen> with SingleTickerProviderStat
               if (r != null) setState(() => _categoryId = r.isEmpty ? null : r);
             },
           ),
-          const SizedBox(width: Space.xs),
+          const SizedBox(width: Space.page),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        heroTag: 'fab_tasks',
+      floatingActionButton: GradientFab(
         tooltip: context.tr('เพิ่มงาน', 'Add task'),
-        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TaskFormScreen())),
-        child: const Icon(Icons.add_rounded),
+        onPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const TaskFormScreen()),
+        ),
       ),
       body: ContentWidth(
         child: DataBuilder<List<TaskItem>>(
@@ -129,15 +149,29 @@ class _TasksScreenState extends State<TasksScreen> with SingleTickerProviderStat
           builder: (context, all) {
             final now = DateTime.now();
             final filtered = all.where((t) => _matches(c, t)).toList();
-            final groups = <TaskGroup, List<TaskItem>>{for (final g in TaskGroup.values) g: []};
+            final groups = <TaskGroup, List<TaskItem>>{
+              for (final g in TaskGroup.values) g: [],
+            };
             for (final t in filtered) {
-              groups[TaskGrouping.classify(completed: t.isCompleted, dueAt: t.dueAt, hasTime: t.hasTime, now: now)]!
+              groups[TaskGrouping.classify(
+                    completed: t.isCompleted,
+                    dueAt: t.dueAt,
+                    hasTime: t.hasTime,
+                    now: now,
+                  )]!
                   .add(t);
             }
             groups[TaskGroup.completed]!.sort(
-              (a, b) => (b.completedAt ?? b.updatedAt).compareTo(a.completedAt ?? a.updatedAt),
+              (a, b) => (b.completedAt ?? b.updatedAt).compareTo(
+                a.completedAt ?? a.updatedAt,
+              ),
             );
-            final order = [TaskGroup.today, TaskGroup.upcoming, TaskGroup.overdue, TaskGroup.completed];
+            final order = [
+              TaskGroup.today,
+              TaskGroup.upcoming,
+              TaskGroup.overdue,
+              TaskGroup.completed,
+            ];
             return Column(
               children: [
                 AnimatedSize(
@@ -145,7 +179,12 @@ class _TasksScreenState extends State<TasksScreen> with SingleTickerProviderStat
                   curve: Motion.curve,
                   child: _searching
                       ? Padding(
-                          padding: const EdgeInsets.fromLTRB(Space.page, 0, Space.page, Space.xs),
+                          padding: const EdgeInsets.fromLTRB(
+                            Space.page,
+                            0,
+                            Space.page,
+                            Space.xs,
+                          ),
                           child: SearchField(
                             controller: _search,
                             autofocus: true,
@@ -157,7 +196,12 @@ class _TasksScreenState extends State<TasksScreen> with SingleTickerProviderStat
                 ),
                 if (cat != null)
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(Space.page, 0, Space.page, Space.xs),
+                    padding: const EdgeInsets.fromLTRB(
+                      Space.page,
+                      0,
+                      Space.page,
+                      Space.xs,
+                    ),
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: InputChip(
@@ -178,6 +222,12 @@ class _TasksScreenState extends State<TasksScreen> with SingleTickerProviderStat
                   ],
                   counts: [for (final g in order) groups[g]!.length],
                   alertIndex: 2,
+                  icons: const [
+                    Icons.event_available_rounded,
+                    Icons.schedule_rounded,
+                    Icons.calendar_month_rounded,
+                    Icons.check_circle_outline_rounded,
+                  ],
                 ),
                 Expanded(
                   child: TabBarView(
@@ -229,6 +279,7 @@ class _TaskList extends StatelessWidget {
     if (tasks.isEmpty) {
       if (!hasAnyTask) {
         return EmptyState(
+          illustration: 'assets/illustrations/empty_tasks.png',
           icon: Icons.task_alt_rounded,
           title: context.tr('ยังไม่มีงาน', 'No tasks yet'),
           message: context.tr(
@@ -236,11 +287,18 @@ class _TaskList extends StatelessWidget {
             'Add to-dos with due dates and reminders',
           ),
           actionLabel: context.tr('เพิ่มงาน', 'Add task'),
-          onAction: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TaskFormScreen())),
+          onAction: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const TaskFormScreen()),
+          ),
         );
       }
       final (IconData icon, String title, EmptyTone tone) = filtering
-          ? (Icons.search_off_rounded, context.tr('ไม่พบงานที่ค้นหา', 'No matching tasks'), EmptyTone.neutral)
+          ? (
+              Icons.search_off_rounded,
+              context.tr('ไม่พบงานที่ค้นหา', 'No matching tasks'),
+              EmptyTone.neutral,
+            )
           : switch (group) {
               TaskGroup.today => (
                 Icons.wb_sunny_outlined,
@@ -272,7 +330,10 @@ class _TaskList extends StatelessWidget {
       task: t,
       showDate: showDate,
       highlight: query,
-      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => TaskFormScreen(task: t))),
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => TaskFormScreen(task: t)),
+      ),
       onToggle: (v) => onToggle(t, v),
       onDelete: () => onDelete(t),
     );
@@ -284,7 +345,9 @@ class _TaskList extends StatelessWidget {
       final byDay = <String, List<TaskItem>>{};
       final labels = <String, String>{};
       for (final t in tasks) {
-        final key = t.dueAt == null ? 'zzz' : Dates.startOfDay(t.dueAt!).toIso8601String();
+        final key = t.dueAt == null
+            ? 'zzz'
+            : Dates.startOfDay(t.dueAt!).toIso8601String();
         byDay.putIfAbsent(key, () => []).add(t);
         labels[key] = dateGroupLabel(context, t.dueAt, now);
       }
@@ -294,22 +357,40 @@ class _TaskList extends StatelessWidget {
           LkSectionHeader(
             title: labels[k]!,
             count: byDay[k]!.length,
-            padding: const EdgeInsets.fromLTRB(Space.xs, Space.md, Space.xs, Space.sm),
+            padding: const EdgeInsets.fromLTRB(
+              Space.xs,
+              Space.md,
+              Space.xs,
+              Space.sm,
+            ),
           ),
         );
-        children.add(LkGroup(dividerIndent: 52, children: [for (final t in byDay[k]!) row(t, showDate: false)]));
+        children.add(
+          LkGroup(
+            dividerIndent: 52,
+            children: [for (final t in byDay[k]!) row(t, showDate: false)],
+          ),
+        );
       }
     } else {
       children.add(const SizedBox(height: Space.sm));
       children.add(
-        LkGroup(dividerIndent: 52, children: [for (final t in tasks) row(t, showDate: group != TaskGroup.today)]),
+        LkGroup(
+          dividerIndent: 52,
+          children: [
+            for (final t in tasks) row(t, showDate: group != TaskGroup.today),
+          ],
+        ),
       );
       if (group == TaskGroup.completed) {
         children.add(
           Padding(
             padding: const EdgeInsets.only(top: Space.md),
             child: Text(
-              context.tr('ปัดขวาเพื่อเปิดงานอีกครั้ง · ปัดซ้ายเพื่อลบ', 'Swipe right to reopen · left to delete'),
+              context.tr(
+                'ปัดขวาเพื่อเปิดงานอีกครั้ง · ปัดซ้ายเพื่อลบ',
+                'Swipe right to reopen · left to delete',
+              ),
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.labelSmall,
             ),
@@ -322,7 +403,10 @@ class _TaskList extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(top: Space.md),
           child: Text(
-            context.tr('ปัดขวาเพื่อทำเสร็จ · ปัดซ้ายเพื่อลบ', 'Swipe right to complete · left to delete'),
+            context.tr(
+              'ปัดขวาเพื่อทำเสร็จ · ปัดซ้ายเพื่อลบ',
+              'Swipe right to complete · left to delete',
+            ),
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.labelSmall,
           ),
@@ -333,7 +417,10 @@ class _TaskList extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(Space.page, 0, Space.page, 96),
       children: [
         FadeSlideIn(
-          child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: children),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: children,
+          ),
         ),
       ],
     );

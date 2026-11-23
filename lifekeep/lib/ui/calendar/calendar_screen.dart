@@ -20,9 +20,12 @@ class _MonthData {
   final List<TaskItem> tasks;
   final List<DocumentItem> docs;
 
-  List<EventItem> eventsOn(DateTime d) => events.where((e) => e.occursOn(d)).toList();
-  List<TaskItem> tasksOn(DateTime d) => tasks.where((t) => Dates.isSameDay(t.dueAt!, d)).toList();
-  List<DocumentItem> docsOn(DateTime d) => docs.where((x) => Dates.isSameDay(x.expiryDate!, d)).toList();
+  List<EventItem> eventsOn(DateTime d) =>
+      events.where((e) => e.occursOn(d)).toList();
+  List<TaskItem> tasksOn(DateTime d) =>
+      tasks.where((t) => Dates.isSameDay(t.dueAt!, d)).toList();
+  List<DocumentItem> docsOn(DateTime d) =>
+      docs.where((x) => Dates.isSameDay(x.expiryDate!, d)).toList();
 }
 
 class CalendarScreen extends StatefulWidget {
@@ -42,12 +45,18 @@ class _CalendarScreenState extends State<CalendarScreen> {
     setState(() {
       _direction = delta;
       if (_weekMode) {
-        _selected = DateTime(_selected.year, _selected.month, _selected.day + 7 * delta);
+        _selected = DateTime(
+          _selected.year,
+          _selected.month,
+          _selected.day + 7 * delta,
+        );
         _month = Dates.firstDayOfMonth(_selected);
       } else {
         _month = Dates.addMonths(_month, delta);
         final today = DateTime.now();
-        _selected = (_month.year == today.year && _month.month == today.month) ? Dates.startOfDay(today) : _month;
+        _selected = (_month.year == today.year && _month.month == today.month)
+            ? Dates.startOfDay(today)
+            : _month;
       }
     });
   }
@@ -64,8 +73,14 @@ class _CalendarScreenState extends State<CalendarScreen> {
   Future<_MonthData> _load(AppController c) async {
     // Load the visible grid plus the selected week (week mode may cross months).
     final grid = Dates.monthGrid(_month);
-    final from = grid.first.isBefore(_selected) ? grid.first : _selected.subtract(const Duration(days: 7));
-    final to = Dates.endOfDay(grid.last.isAfter(_selected) ? grid.last : _selected.add(const Duration(days: 7)));
+    final from = grid.first.isBefore(_selected)
+        ? grid.first
+        : _selected.subtract(const Duration(days: 7));
+    final to = Dates.endOfDay(
+      grid.last.isAfter(_selected)
+          ? grid.last
+          : _selected.add(const Duration(days: 7)),
+    );
     return _MonthData(
       await c.s.events.between(from, to),
       await c.s.tasks.dueBetween(from, to),
@@ -78,15 +93,25 @@ class _CalendarScreenState extends State<CalendarScreen> {
       context,
       title: Fmt.fullDate(_selected),
       options: [
-        SheetOption(value: 0, icon: Icons.event_available_outlined, label: context.tr('เพิ่มกิจกรรม', 'Add event')),
-        SheetOption(value: 1, icon: Icons.add_task_rounded, label: context.tr('เพิ่มงาน', 'Add task')),
+        SheetOption(
+          value: 0,
+          icon: Icons.event_available_outlined,
+          label: context.tr('เพิ่มกิจกรรม', 'Add event'),
+        ),
+        SheetOption(
+          value: 1,
+          icon: Icons.add_task_rounded,
+          label: context.tr('เพิ่มงาน', 'Add task'),
+        ),
       ],
     );
     if (!mounted || r == null) return;
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => r == 0 ? EventFormScreen(initialDate: _selected) : TaskFormScreen(initialDate: _selected),
+        builder: (_) => r == 0
+            ? EventFormScreen(initialDate: _selected)
+            : TaskFormScreen(initialDate: _selected),
       ),
     );
   }
@@ -97,8 +122,18 @@ class _CalendarScreenState extends State<CalendarScreen> {
     final t = Theme.of(context).textTheme;
     final isToday = Dates.isSameDay(_selected, DateTime.now());
     return Scaffold(
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
-        title: Text(context.tr('ปฏิทิน', 'Calendar')),
+        backgroundColor: Colors.transparent,
+        toolbarHeight: 96,
+        title: TabTitle(
+          icon: Icons.calendar_month_rounded,
+          title: context.tr('ปฏิทิน', 'Calendar'),
+          subtitle: context.tr(
+            'จัดการกิจกรรมและนัดหมายของคุณ ✨',
+            'Your events and appointments ✨',
+          ),
+        ),
         actions: [
           if (!isToday || _month != Dates.firstDayOfMonth(DateTime.now()))
             TextButton.icon(
@@ -109,11 +144,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
           const SizedBox(width: Space.sm),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        heroTag: 'fab_cal',
+      floatingActionButton: GradientFab(
         tooltip: context.tr('เพิ่ม', 'Add'),
         onPressed: _addMenu,
-        child: const Icon(Icons.add_rounded),
       ),
       body: ContentWidth(
         child: DataBuilder<_MonthData>(
@@ -129,7 +162,12 @@ class _CalendarScreenState extends State<CalendarScreen> {
               padding: const EdgeInsets.fromLTRB(Space.page, 0, Space.page, 96),
               children: [
                 LkPanel(
-                  padding: const EdgeInsets.fromLTRB(Space.sm, Space.xs, Space.sm, Space.sm),
+                  padding: const EdgeInsets.fromLTRB(
+                    Space.sm,
+                    Space.xs,
+                    Space.sm,
+                    Space.sm,
+                  ),
                   child: Column(
                     children: [
                       Row(
@@ -170,7 +208,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                   Fmt.weekdayShort(wd),
                                   style: t.labelSmall?.copyWith(
                                     color: wd == 7
-                                        ? context.status.danger.withValues(alpha: 0.8)
+                                        ? context.status.danger.withValues(
+                                            alpha: 0.8,
+                                          )
                                         : scheme.onSurfaceVariant,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -188,8 +228,12 @@ class _CalendarScreenState extends State<CalendarScreen> {
                         },
                         onVerticalDragEnd: (d) {
                           final v = d.primaryVelocity ?? 0;
-                          if (v < -250 && !_weekMode) setState(() => _weekMode = true);
-                          if (v > 250 && _weekMode) setState(() => _weekMode = false);
+                          if (v < -250 && !_weekMode) {
+                            setState(() => _weekMode = true);
+                          }
+                          if (v > 250 && _weekMode) {
+                            setState(() => _weekMode = false);
+                          }
                         },
                         child: AnimatedSize(
                           duration: Motion.medium,
@@ -200,7 +244,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
                             transitionBuilder: (child, anim) => FadeTransition(
                               opacity: anim,
                               child: SlideTransition(
-                                position: Tween(begin: Offset(0.05 * _direction, 0), end: Offset.zero).animate(anim),
+                                position: Tween(
+                                  begin: Offset(0.05 * _direction, 0),
+                                  end: Offset.zero,
+                                ).animate(anim),
                                 child: child,
                               ),
                             ),
@@ -214,7 +261,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
                               data: data,
                               onSelect: (d) => setState(() {
                                 _selected = d;
-                                if (d.month != _month.month || d.year != _month.year) {
+                                if (d.month != _month.month ||
+                                    d.year != _month.year) {
                                   _direction = d.isAfter(_month) ? 1 : -1;
                                   _month = Dates.firstDayOfMonth(d);
                                 }
@@ -228,12 +276,17 @@ class _CalendarScreenState extends State<CalendarScreen> {
                         borderRadius: Radii.brSm,
                         onTap: () => setState(() => _weekMode = !_weekMode),
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: Space.xs, horizontal: Space.md),
+                          padding: const EdgeInsets.symmetric(
+                            vertical: Space.xs,
+                            horizontal: Space.md,
+                          ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Icon(
-                                _weekMode ? Icons.expand_more_rounded : Icons.expand_less_rounded,
+                                _weekMode
+                                    ? Icons.expand_more_rounded
+                                    : Icons.expand_less_rounded,
                                 size: 18,
                                 color: scheme.onSurfaceVariant,
                               ),
@@ -254,7 +307,12 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 const SizedBox(height: Space.md),
                 const _Legend(),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(Space.xs, Space.lg, Space.xs, Space.sm),
+                  padding: const EdgeInsets.fromLTRB(
+                    Space.xs,
+                    Space.lg,
+                    Space.xs,
+                    Space.sm,
+                  ),
                   child: Row(
                     children: [
                       Expanded(
@@ -269,7 +327,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
                             ),
                             Text(
                               total == 0
-                                  ? context.tr('ไม่มีรายการ', 'Nothing scheduled')
+                                  ? context.tr(
+                                      'ไม่มีรายการ',
+                                      'Nothing scheduled',
+                                    )
                                   : context.tr('$total รายการ', '$total items'),
                               style: t.bodySmall,
                             ),
@@ -287,19 +348,50 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 ),
                 if (total == 0)
                   LkPanel(
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => EventFormScreen(initialDate: _selected)),
+                    padding: const EdgeInsets.fromLTRB(
+                      Space.lg,
+                      Space.md,
+                      Space.lg,
+                      Space.xl,
                     ),
-                    padding: const EdgeInsets.symmetric(horizontal: Space.lg, vertical: Space.lg),
-                    child: Row(
+                    child: Column(
                       children: [
-                        IconBadge(icon: Icons.add_rounded, color: scheme.primary, size: 32),
-                        const SizedBox(width: Space.md),
-                        Expanded(
-                          child: Text(
-                            context.tr('เพิ่มกิจกรรมในวันนี้', 'Add an event on this day'),
-                            style: t.bodyMedium,
+                        const SoftIllustration(
+                          asset: 'assets/illustrations/empty_calendar.png',
+                          height: 130,
+                        ),
+                        Text(
+                          context.tr(
+                            'ยังไม่มีการนัดหมายในวันนี้',
+                            'Nothing scheduled this day',
+                          ),
+                          textAlign: TextAlign.center,
+                          style: t.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        const SizedBox(height: Space.xs),
+                        Text(
+                          context.tr(
+                            'เพิ่มกิจกรรมหรือดูปฏิทินในวันอื่นได้เลย',
+                            'Add an event or pick another day',
+                          ),
+                          textAlign: TextAlign.center,
+                          style: t.bodySmall,
+                        ),
+                        const SizedBox(height: Space.lg),
+                        SizedBox(
+                          width: 240,
+                          child: GradientButton(
+                            height: 50,
+                            label: context.tr('เพิ่มกิจกรรม', 'Add event'),
+                            onPressed: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    EventFormScreen(initialDate: _selected),
+                              ),
+                            ),
                           ),
                         ),
                       ],
@@ -320,7 +412,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                   showDate: false,
                                   onTap: () => Navigator.push(
                                     context,
-                                    MaterialPageRoute(builder: (_) => EventFormScreen(event: e)),
+                                    MaterialPageRoute(
+                                      builder: (_) => EventFormScreen(event: e),
+                                    ),
                                   ),
                                 ),
                             ],
@@ -329,7 +423,12 @@ class _CalendarScreenState extends State<CalendarScreen> {
                           LkSectionHeader(
                             title: context.tr('งาน', 'Tasks'),
                             count: tasks.length,
-                            padding: const EdgeInsets.fromLTRB(Space.xs, Space.md, Space.xs, Space.sm),
+                            padding: const EdgeInsets.fromLTRB(
+                              Space.xs,
+                              Space.md,
+                              Space.xs,
+                              Space.sm,
+                            ),
                           ),
                           LkGroup(
                             dividerIndent: 52,
@@ -340,19 +439,33 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                   showDate: false,
                                   onTap: () => Navigator.push(
                                     context,
-                                    MaterialPageRoute(builder: (_) => TaskFormScreen(task: tk)),
+                                    MaterialPageRoute(
+                                      builder: (_) => TaskFormScreen(task: tk),
+                                    ),
                                   ),
-                                  onToggle: (v) =>
-                                      runAction(context, () => context.read<AppController>().setTaskCompleted(tk, v)),
+                                  onToggle: (v) => runAction(
+                                    context,
+                                    () => context
+                                        .read<AppController>()
+                                        .setTaskCompleted(tk, v),
+                                  ),
                                 ),
                             ],
                           ),
                         ],
                         if (docs.isNotEmpty) ...[
                           LkSectionHeader(
-                            title: context.tr('เอกสารหมดอายุ', 'Documents expiring'),
+                            title: context.tr(
+                              'เอกสารหมดอายุ',
+                              'Documents expiring',
+                            ),
                             count: docs.length,
-                            padding: const EdgeInsets.fromLTRB(Space.xs, Space.md, Space.xs, Space.sm),
+                            padding: const EdgeInsets.fromLTRB(
+                              Space.xs,
+                              Space.md,
+                              Space.xs,
+                              Space.sm,
+                            ),
                           ),
                           LkGroup(
                             dividerIndent: 72,
@@ -362,7 +475,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                   doc: d,
                                   onTap: () => Navigator.push(
                                     context,
-                                    MaterialPageRoute(builder: (_) => DocumentDetailScreen(documentId: d.id)),
+                                    MaterialPageRoute(
+                                      builder: (_) => DocumentDetailScreen(
+                                        documentId: d.id,
+                                      ),
+                                    ),
                                   ),
                                 ),
                             ],
@@ -400,11 +517,20 @@ class _Grid extends StatelessWidget {
     final today = DateTime.now();
     List<DateTime> days;
     if (weekMode) {
-      final start = DateTime(selected.year, selected.month, selected.day - selected.weekday % 7);
-      days = List.generate(7, (i) => DateTime(start.year, start.month, start.day + i));
+      final start = DateTime(
+        selected.year,
+        selected.month,
+        selected.day - selected.weekday % 7,
+      );
+      days = List.generate(
+        7,
+        (i) => DateTime(start.year, start.month, start.day + i),
+      );
     } else {
       days = Dates.monthGrid(month);
-      if (days.sublist(35).every((d) => d.month != month.month)) days = days.sublist(0, 35);
+      if (days.sublist(35).every((d) => d.month != month.month)) {
+        days = days.sublist(0, 35);
+      }
     }
     final weeks = days.length ~/ 7;
     return Column(
@@ -420,8 +546,12 @@ class _Grid extends StatelessWidget {
                     isToday: Dates.isSameDay(d, today),
                     isSelected: Dates.isSameDay(d, selected),
                     hasEvent: data.events.any((e) => e.occursOn(d)),
-                    hasTask: data.tasks.any((t) => !t.isCompleted && Dates.isSameDay(t.dueAt!, d)),
-                    hasDoc: data.docs.any((x) => Dates.isSameDay(x.expiryDate!, d)),
+                    hasTask: data.tasks.any(
+                      (t) => !t.isCompleted && Dates.isSameDay(t.dueAt!, d),
+                    ),
+                    hasDoc: data.docs.any(
+                      (x) => Dates.isSameDay(x.expiryDate!, d),
+                    ),
                     onTap: () => onSelect(d),
                   ),
                 ),
@@ -452,7 +582,9 @@ class _DayCell extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final status = context.status;
-    final Color bg = isSelected ? scheme.primary : (isToday ? scheme.primaryContainer : Colors.transparent);
+    final Color bg = isSelected
+        ? scheme.primary
+        : (isToday ? scheme.primaryContainer : Colors.transparent);
     final Color fg = isSelected
         ? scheme.onPrimary
         : (!inMonth
@@ -463,7 +595,9 @@ class _DayCell extends StatelessWidget {
       height: 5,
       margin: const EdgeInsets.symmetric(horizontal: 1.2),
       decoration: BoxDecoration(
-        color: isSelected ? scheme.onPrimary : (inMonth ? c : c.withValues(alpha: 0.4)),
+        color: isSelected
+            ? scheme.onPrimary
+            : (inMonth ? c : c.withValues(alpha: 0.4)),
         shape: BoxShape.circle,
       ),
     );
@@ -493,7 +627,9 @@ class _DayCell extends StatelessWidget {
                     style: TextStyle(
                       fontFamily: AppTheme.fontFamily,
                       color: fg,
-                      fontWeight: isToday || isSelected ? FontWeight.w700 : FontWeight.w500,
+                      fontWeight: isToday || isSelected
+                          ? FontWeight.w700
+                          : FontWeight.w500,
                       fontSize: 14.5,
                       height: 1.3,
                     ),

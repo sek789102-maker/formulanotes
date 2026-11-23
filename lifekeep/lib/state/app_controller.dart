@@ -86,8 +86,11 @@ class AppController extends ChangeNotifier {
         return ThemeMode.light;
       case 'dark':
         return ThemeMode.dark;
-      default:
+      case 'system':
         return ThemeMode.system;
+      default:
+        // New installs start in the light (white) theme.
+        return ThemeMode.light;
     }
   }
 

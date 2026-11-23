@@ -13,7 +13,7 @@ Never open a pull request unless asked.
 ## Apps in this repo (Android, offline)
 | Folder | App | Package | Latest |
 |---|---|---|---|
-| `lifekeep/` | LIFEKEEP (documents, tasks, calendar) — **Flutter** | com.sek789102.lifekeep | 1.1.2 (versionCode 5) |
+| `lifekeep/` | LIFEKEEP (documents, tasks, calendar) — **Flutter** | com.sek789102.lifekeep | 1.1.3 (versionCode 6) |
 | `jotwai/` | จดไว้ (notes) — Kotlin + Compose | com.sek789102.jotwai | 1.1.1 (versionCode 5) |
 | `changkhamnuan/` | ช่างคำนวณ (material calculator + contractor documents, paid app, no Pro tier) — Kotlin + Compose | com.sek789102.changkhamnuan | 1.3.2 (versionCode 6) |
 

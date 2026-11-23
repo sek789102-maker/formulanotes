@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -88,6 +90,9 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+/** "-1,200.00" for a cost, plain "0.00" when there is none. */
+private fun minus(v: Double) = if (v > 0.004) "-" + Fmt.money(v) else Fmt.money(0.0)
+
 private val thaiDate = SimpleDateFormat("d MMM yyyy", Locale.forLanguageTag("th-TH"))
 
 /** Starts a share sheet for an intent built off the main thread. */
@@ -112,25 +117,35 @@ fun DocFormatDialog(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+    var busy by remember { mutableStateOf(false) }
+    // The dialog closes only after the file is built: closing first would cancel this scope.
     fun go(asImage: Boolean) {
-        onDismiss()
-        scope.launch { startShare(context, vm, vm.docShareIntent(projectId, type, asImage, stageId), "ส่ง${type.th}") }
+        if (busy) return
+        busy = true
+        scope.launch {
+            val intent = vm.docShareIntent(projectId, type, asImage, stageId)
+            onDismiss()
+            startShare(context, vm, intent, "ส่ง${type.th}")
+        }
     }
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(type.th + titleSuffix) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                Button(onClick = { go(true) }, modifier = Modifier.fillMaxWidth().testTag("doc_image")) {
+                if (busy) Text("กำลังสร้างไฟล์…", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.secondary)
+                Button(onClick = { go(true) }, enabled = !busy, modifier = Modifier.fillMaxWidth().testTag("doc_image")) {
                     Icon(Icons.Outlined.Image, null); Spacer(Modifier.width(8.dp)); Text("ส่งเป็นรูป (LINE)")
                 }
-                OutlinedButton(onClick = { go(false) }, modifier = Modifier.fillMaxWidth().testTag("doc_pdf")) {
+                OutlinedButton(onClick = { go(false) }, enabled = !busy, modifier = Modifier.fillMaxWidth().testTag("doc_pdf")) {
                     Icon(Icons.Outlined.PictureAsPdf, null); Spacer(Modifier.width(8.dp)); Text("ส่งเป็น PDF")
                 }
                 if (type == DocType.BOQ) {
                     OutlinedButton(onClick = {
-                        onDismiss()
-                        scope.launch { startShare(context, vm, vm.boqCsvIntent(projectId), "ส่งไฟล์ BOQ") }
+                        if (!busy) {
+                            busy = true
+                            scope.launch { val intent = vm.boqCsvIntent(projectId); onDismiss(); startShare(context, vm, intent, "ส่งไฟล์ BOQ") }
+                        }
                     }, modifier = Modifier.fillMaxWidth().testTag("doc_csv")) {
                         Icon(Icons.Outlined.TableChart, null); Spacer(Modifier.width(8.dp)); Text("ไฟล์ Excel (CSV)")
                     }
@@ -188,7 +203,7 @@ fun StagesScreen(projectId: Long, vm: AppViewModel, snackbar: SnackbarHostState,
             }
             item {
                 GoldSection("แบ่งงวดอัตโนมัติ")
-                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                     Contractor.presets.forEachIndexed { idx, preset ->
                         AssistChip(onClick = { presetAsk = preset }, label = { Text(preset.first, maxLines = 1) }, modifier = Modifier.testTag("preset_$idx"))
                     }
@@ -315,9 +330,9 @@ fun CostsScreen(projectId: Long, vm: AppViewModel, snackbar: SnackbarHostState, 
                     Column(Modifier.padding(16.dp)) {
                         Text("กำไรงานนี้", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                         KeyValueRow("รายรับ (มูลค่างานก่อนภาษี)", Fmt.money(profit.revenue))
-                        KeyValueRow("ค่าแรงจ่ายจริง", "-" + Fmt.money(profit.labor))
-                        KeyValueRow("ค่าวัสดุจ่ายจริง", "-" + Fmt.money(profit.materials))
-                        KeyValueRow("ค่าใช้จ่ายอื่น", "-" + Fmt.money(profit.other))
+                        KeyValueRow("ค่าแรงจ่ายจริง", minus(profit.labor))
+                        KeyValueRow("ค่าวัสดุจ่ายจริง", minus(profit.materials))
+                        KeyValueRow("ค่าใช้จ่ายอื่น", minus(profit.other))
                         HorizontalDivider(Modifier.padding(vertical = 6.dp))
                         KeyValueRow(if (profit.profit >= 0) "กำไร" else "ขาดทุน", "${Fmt.money(profit.profit)} บาท (${Fmt.n(profit.marginPercent, 1)}%)", bold = true)
                         Text(
@@ -368,7 +383,7 @@ fun CostsScreen(projectId: Long, vm: AppViewModel, snackbar: SnackbarHostState, 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun CostDialog(kind: ItemKind, c: CostEntity?, onDismiss: () -> Unit, onDelete: (() -> Unit)? = null, onSave: (CostEntity) -> Unit) {
+fun CostDialog(kind: ItemKind, c: CostEntity?, onDismiss: () -> Unit, onDelete: (() -> Unit)? = null, onSave: (CostEntity) -> Unit) {
     val labor = kind == ItemKind.LABOR
     var title by rememberSaveable { mutableStateOf(c?.title ?: "") }
     var qty by rememberSaveable { mutableStateOf(c?.let { Fmt.n(it.qty).replace(",", "") } ?: "1") }
@@ -386,7 +401,7 @@ private fun CostDialog(kind: ItemKind, c: CostEntity?, onDismiss: () -> Unit, on
                     singleLine = true, modifier = Modifier.fillMaxWidth().testTag("cost_title"))
                 if (labor) {
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        NumberInput(qty, { qty = it }, "จำนวนแรง (คน × วัน)", "แรง", Modifier.weight(1f), tag = "cost_qty")
+                        NumberInput(qty, { qty = it }, "จำนวนแรง", "แรง", Modifier.weight(1f), help = "คน × วัน", tag = "cost_qty")
                         NumberInput(cost, { cost = it }, "ค่าแรงต่อแรง", "บาท", Modifier.weight(1f), tag = "cost_value")
                     }
                 } else {

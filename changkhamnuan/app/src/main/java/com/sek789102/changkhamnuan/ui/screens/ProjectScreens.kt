@@ -7,6 +7,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.material3.FilterChip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.CompositingStrategy
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
 import com.sek789102.changkhamnuan.R
 import com.sek789102.changkhamnuan.ui.components.ArtHeader
@@ -229,6 +233,7 @@ fun ProjectScreen(
     var busy by remember { mutableStateOf(false) }
     var docType by rememberSaveable { mutableStateOf(DocType.QUOTE) }
     var docDialog by remember { mutableStateOf<DocType?>(null) }
+    var quickLabor by remember { mutableStateOf(false) }
     val stages by remember(projectId) { vm.observeInstallments(projectId) }.collectAsState(initial = emptyList())
     val costs by remember(projectId) { vm.observeCosts(projectId) }.collectAsState(initial = emptyList())
 
@@ -293,7 +298,7 @@ fun ProjectScreen(
                         ToolCard(R.drawable.art_c_docs, "ใบแจ้งหนี้ / ใบเสร็จ", "ทั้งงาน หรือรายงวด", "tool_docs", Modifier.weight(1f)) { docDialog = DocType.INVOICE }
                     }
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        ToolCard(R.drawable.art_c_labor, "ค่าแรงรายวัน", "${Fmt.money(profit.labor)} บาท", "tool_labor", Modifier.weight(1f), onOpenCosts)
+                        ToolCard(R.drawable.art_c_labor, "ค่าแรงรายวัน", if (profit.labor > 0) "+ บันทึก · รวม ${Fmt.money(profit.labor)}" else "+ บันทึกค่าแรงวันนี้", "tool_labor", Modifier.weight(1f)) { quickLabor = true }
                         ToolCard(R.drawable.art_c_profit, "กำไรงานนี้", if (costs.isEmpty()) "บันทึกต้นทุนจริง" else "${Fmt.money(profit.profit)} (${Fmt.n(profit.marginPercent, 0)}%)", "tool_profit", Modifier.weight(1f), onOpenCosts)
                     }
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -378,6 +383,12 @@ fun ProjectScreen(
     }
 
     docDialog?.let { t -> DocFormatDialog(vm, projectId, t, null, " · ทั้งงาน") { docDialog = null } }
+    if (quickLabor) {
+        CostDialog(ItemKind.LABOR, null, onDismiss = { quickLabor = false }) { c ->
+            vm.addCost(c.copy(projectId = projectId)); quickLabor = false
+            vm.say("บันทึกค่าแรงแล้ว ${Fmt.money(c.amount)} บาท")
+        }
+    }
     if (editInfo && p != null) {
         ProjectInfoDialog(p, onDismiss = { editInfo = false }) { name, customer, phone, site ->
             editInfo = false
@@ -420,9 +431,15 @@ fun ProjectScreen(
 @Composable
 private fun ToolCard(art: Int, title: String, sub: String, tag: String, modifier: Modifier, onClick: () -> Unit) {
     Panel(modifier.height(104.dp).testTag(tag), radius = 18.dp, onClick = onClick) {
-        val base = MaterialTheme.colorScheme.surfaceContainerHigh
-        Image(painterResource(art), null, contentScale = ContentScale.Crop, modifier = Modifier.align(Alignment.CenterEnd).fillMaxWidth(0.55f).fillMaxHeight())
-        Box(Modifier.matchParentSize().background(Brush.horizontalGradient(0.35f to base, 0.75f to base.copy(alpha = 0.4f), 1f to Color.Transparent)))
+        Image(
+            painterResource(art), null, contentScale = ContentScale.Crop,
+            modifier = Modifier.align(Alignment.CenterEnd).fillMaxWidth(0.6f).fillMaxHeight()
+                .graphicsLayer(compositingStrategy = CompositingStrategy.Offscreen)
+                .drawWithContent {
+                    drawContent()
+                    drawRect(Brush.horizontalGradient(0f to Color.Transparent, 0.55f to Color.Black.copy(alpha = 0.55f), 1f to Color.Black), blendMode = BlendMode.DstIn)
+                }
+        )
         Column(Modifier.padding(12.dp).fillMaxWidth(0.75f)) {
             Text(title, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold, maxLines = 2)
             Spacer(Modifier.height(4.dp))

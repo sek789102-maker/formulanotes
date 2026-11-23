@@ -1,4 +1,4 @@
-# LIFEKEEP 1.0.0 — ชุดไฟล์ Release สำหรับ Google Play
+# LIFEKEEP 1.1.2 — ชุดไฟล์ Release สำหรับ Google Play
 
 ## โครงสร้างโฟลเดอร์
 
@@ -7,7 +7,7 @@ release/
 ├── README.md                     ← ไฟล์นี้ (วิธีติดตั้ง/Build/อัปโหลด)
 ├── RELEASE_AUDIT_REPORT.md       ← รายงานผลตรวจสอบก่อน Release (อ่านก่อนอัปโหลด)
 ├── signed/
-│   ├── LIFEKEEP-1.0.0-2-release.aab   ← ไฟล์สำหรับอัปโหลด Play Console (เซ็นด้วย Upload key)
+│   ├── LIFEKEEP-1.1.2-5-release.aab   ← ไฟล์สำหรับอัปโหลด Play Console (เซ็นด้วย Upload key)
 │   ├── upload-certificate-sha256.txt  ← ลายนิ้วมือใบรับรอง Upload key (ข้อมูลสาธารณะ)
 │   └── verification/                  ← ผลตรวจลายเซ็น + ติดตั้งบน emulator
 ├── apk/
@@ -34,7 +34,7 @@ release/
 ## อัปโหลดขึ้น Google Play
 ดูขั้นตอนเต็มใน `docs/PLAY_CONSOLE_CHECKLIST.md` — โดยย่อ:
 1. สร้างแอปใน Play Console → ภาษาเริ่มต้น ไทย → ประเภท App → ฟรี
-2. Release → Testing → **Internal testing** → Create release → เปิดใช้ **Play App Signing** (Google-generated key) → อัปโหลด `signed/LIFEKEEP-1.0.0-2-release.aab` → ใส่ Release notes จาก `docs/RELEASE_NOTES.md`
+2. Release → Testing → **Internal testing** → Create release → เปิดใช้ **Play App Signing** (Google-generated key) → อัปโหลด `signed/LIFEKEEP-1.1.2-5-release.aab` → ใส่ Release notes จาก `docs/RELEASE_NOTES.md`
 3. กรอก Store listing / App content ตาม Checklist
 4. Closed testing (≥12 คน 14 วัน หากเป็นบัญชีส่วนตัวใหม่) → Apply for production
 

@@ -19,16 +19,16 @@
 > Task :app:checkDebugAarMetadata UP-TO-DATE
 > Task :app:mapDebugSourceSetPaths UP-TO-DATE
 > Task :app:compileDebugNavigationResources UP-TO-DATE
-> Task :app:checkDebugDuplicateClasses
 > Task :app:mergeDebugResources UP-TO-DATE
-> Task :app:mergeDebugJavaResource
-> Task :app:mergeExtDexDebug
 > Task :app:createDebugCompatibleScreenManifests UP-TO-DATE
 > Task :app:extractDeepLinksDebug UP-TO-DATE
-> Task :app:mergeLibDexDebug
 > Task :app:processDebugMainManifest UP-TO-DATE
+> Task :app:checkDebugDuplicateClasses
 > Task :app:processDebugManifest UP-TO-DATE
+> Task :app:mergeDebugJavaResource
+> Task :app:mergeExtDexDebug
 > Task :app:processDebugManifestForPackage UP-TO-DATE
+> Task :app:mergeLibDexDebug
 > Task :app:processDebugResources UP-TO-DATE
 > Task :app:dexBuilderDebug
 > Task :app:mergeDebugJniLibFolders
@@ -54,8 +54,8 @@ Unable to strip the following libraries, packaging them as they are: libandroidx
 > Task :app:generateReleaseRFile FROM-CACHE
 > Task :app:javaPreCompileRelease FROM-CACHE
 > Task :app:mergeReleaseArtProfile
-> Task :app:checkReleaseAarMetadata
 > Task :app:mapReleaseSourceSetPaths
+> Task :app:checkReleaseAarMetadata
 > Task :app:compileReleaseNavigationResources FROM-CACHE
 > Task :app:createReleaseCompatibleScreenManifests
 > Task :app:extractDeepLinksRelease FROM-CACHE
@@ -77,6 +77,9 @@ Unable to strip the following libraries, packaging them as they are: libandroidx
 > Task :app:parseReleaseIntegrityConfig FROM-CACHE
 > Task :app:mergeReleaseResources
 > Task :app:processReleaseResources
+> Task :app:packageDebug
+> Task :app:createDebugApkListingFileRedirect
+> Task :app:assembleDebug
 Exception in thread "AWT-EventQueue-0" java.lang.NullPointerException: Cannot invoke "ksp.com.intellij.openapi.application.Application.getService(java.lang.Class)" because the return value of "ksp.com.intellij.openapi.application.ApplicationManager.getApplication()" is null
 	at ksp.com.intellij.openapi.fileEditor.FileDocumentManager.getInstance(FileDocumentManager.java:35)
 	at ksp.com.intellij.openapi.fileTypes.BinaryFileTypeDecompilers.lambda$notifyDecompilerSetChange$1(BinaryFileTypeDecompilers.java:29)
@@ -93,11 +96,7 @@ Exception in thread "AWT-EventQueue-0" java.lang.NullPointerException: Cannot in
 	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:109)
 	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:101)
 	at java.desktop/java.awt.EventDispatchThread.run(EventDispatchThread.java:90)
-> Task :app:packageDebug
 > Task :app:kspReleaseKotlin
-> Task :app:createDebugApkListingFileRedirect
-> Task :app:assembleDebug
-
 > Task :app:compileReleaseKotlin
 w: file:///home/runner/work/formulanotes/formulanotes/jotwai/app/src/main/java/com/sek789102/jotwai/ui/components/FormatToolbar.kt:270:54 'val Icons.Outlined.FormatAlignRight: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Outlined.FormatAlignRight.
 w: file:///home/runner/work/formulanotes/formulanotes/jotwai/app/src/main/java/com/sek789102/jotwai/ui/components/FormatToolbar.kt:272:28 'val Icons.Outlined.FormatAlignLeft: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Outlined.FormatAlignLeft.
@@ -121,9 +120,9 @@ w: file:///home/runner/work/formulanotes/formulanotes/jotwai/app/src/main/java/c
 > Task :app:produceReleaseBundleIdeListingFile
 > Task :app:createReleaseBundleListingFileRedirect
 > Task :app:bundleRelease
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_2-1795440455844.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_2-1795441171941.json
 
-BUILD SUCCESSFUL in 3m 19s
+BUILD SUCCESSFUL in 4m 49s
 87 actionable tasks: 56 executed, 9 from cache, 22 up-to-date
 > Task :app:preBuild UP-TO-DATE
 > Task :app:preReleaseBuild UP-TO-DATE
@@ -178,7 +177,7 @@ BUILD SUCCESSFUL in 3m 19s
 > Task :app:packageRelease
 > Task :app:createReleaseApkListingFileRedirect
 > Task :app:assembleRelease
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_2-1795440655395.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_2-1795441461976.json
 
-BUILD SUCCESSFUL in 57s
+BUILD SUCCESSFUL in 1m 35s
 48 actionable tasks: 11 executed, 1 from cache, 36 up-to-date

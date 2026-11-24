@@ -13,35 +13,35 @@ Starting a Gradle Daemon (subsequent builds will be faster)
 > Task :app:checkDebugAarMetadata
 > Task :app:createDebugCompatibleScreenManifests
 > Task :app:extractDeepLinksDebug
-> Task :app:processDebugMainManifest
 > Task :app:mergeDebugResources
+> Task :app:processDebugMainManifest
 > Task :app:processDebugManifest
 > Task :app:preDebugUnitTestBuild UP-TO-DATE
-> Task :app:javaPreCompileDebugUnitTest
-> Task :app:processDebugManifestForPackage
 > Task :app:generateDebugAssets UP-TO-DATE
+> Task :app:javaPreCompileDebugUnitTest
 > Task :app:mergeDebugAssets
+> Task :app:processDebugManifestForPackage
 > Task :app:processDebugResources
 > Task :app:processDebugUnitTestManifest
 > Task :app:packageDebugUnitTestForUnitTest
 > Task :app:generateDebugUnitTestConfig
 > Task :app:kspDebugKotlin
 > Task :app:compileDebugKotlin
-w: file:///home/runner/work/formulanotes/formulanotes/jotwai/app/src/main/java/com/sek789102/jotwai/ui/components/FormatToolbar.kt:270:54 'val Icons.Outlined.FormatAlignRight: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Outlined.FormatAlignRight.
-w: file:///home/runner/work/formulanotes/formulanotes/jotwai/app/src/main/java/com/sek789102/jotwai/ui/components/FormatToolbar.kt:272:28 'val Icons.Outlined.FormatAlignLeft: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Outlined.FormatAlignLeft.
+w: file:///home/runner/work/formulanotes/formulanotes/jotwai/app/src/main/java/com/sek789102/jotwai/ui/components/FormatToolbar.kt:271:54 'val Icons.Outlined.FormatAlignRight: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Outlined.FormatAlignRight.
+w: file:///home/runner/work/formulanotes/formulanotes/jotwai/app/src/main/java/com/sek789102/jotwai/ui/components/FormatToolbar.kt:273:28 'val Icons.Outlined.FormatAlignLeft: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Outlined.FormatAlignLeft.
 w: file:///home/runner/work/formulanotes/formulanotes/jotwai/app/src/main/java/com/sek789102/jotwai/ui/screens/EditorScreen.kt:333:111 'val Icons.Outlined.Notes: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Outlined.Notes.
 w: file:///home/runner/work/formulanotes/formulanotes/jotwai/app/src/main/java/com/sek789102/jotwai/ui/screens/EditorScreen.kt:500:95 'val Icons.Outlined.Notes: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Outlined.Notes.
 
 > Task :app:compileDebugJavaWithJavac
 > Task :app:bundleDebugClassesToCompileJar
-> Task :app:processDebugJavaRes
 > Task :app:bundleDebugClassesToRuntimeJar
+> Task :app:processDebugJavaRes
 > Task :app:kspDebugUnitTestKotlin
 > Task :app:compileDebugUnitTestKotlin
 > Task :app:compileDebugUnitTestJavaWithJavac NO-SOURCE
 > Task :app:processDebugUnitTestJavaRes
 > Task :app:testDebugUnitTest
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run-1795486518671.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run-1795489296861.json
 
-BUILD SUCCESSFUL in 2m 9s
+BUILD SUCCESSFUL in 2m 15s
 32 actionable tasks: 30 executed, 2 from cache

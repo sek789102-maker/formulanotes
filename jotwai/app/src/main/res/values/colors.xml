@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="brand">#FFE8871E</color>
+    <color name="brand">#FFFFC21A</color>
     <color name="brand_dark">#FFC8650A</color>
-    <color name="splash_background">#FFFFFBF7</color>
+    <color name="splash_background">#FF120C05</color>
     <color name="notification">#FFE8871E</color>
 </resources>

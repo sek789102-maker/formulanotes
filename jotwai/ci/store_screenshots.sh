@@ -45,11 +45,13 @@ home
 open_note 1; sleep 3; adb shell input keyevent 111; shot 3-checklist 2
 home
 
-tap_tag open_drawer; shot 4-drawer 2; adb shell input keyevent 4; sleep 1
-adb shell am start -n $ACT > /dev/null; sleep 1
+tap_tag tab_reminders; shot 4-reminders 2
+tap_tag tab_folders; shot 4b-folders 2
+tap_tag tab_settings; shot 4c-settings 2
+tap_tag tab_home; sleep 1
 
-tap_tag search_input; adb shell input text "tom"; sleep 1; adb shell input keyevent 111; shot 7-search 2
-tap_tag search_clear; sleep 1
+tap_tag home_search; sleep 2; adb shell input text "tom"; sleep 1; adb shell input keyevent 111; shot 7-search 2
+adb shell input keyevent 4; sleep 1; adb shell input keyevent 4; sleep 1
 
 adb shell cmd uimode night yes; sleep 3
 adb shell am force-stop $PKG; adb shell cmd statusbar collapse; adb shell am start -n $ACT > /dev/null

@@ -242,11 +242,11 @@ class NotesRepository(
         onDataChanged()
     }
 
-    suspend fun createFolder(name: String): Long? {
+    suspend fun createFolder(name: String, color: Int = 0): Long? {
         val clean = name.trim().take(MAX_NAME)
         if (clean.isEmpty()) return null
         val order = (dao.getFolders().maxOfOrNull { it.sortOrder } ?: 0) + 1
-        return dao.insertFolder(FolderEntity(name = clean, sortOrder = order))
+        return dao.insertFolder(FolderEntity(name = clean, sortOrder = order, color = color.coerceIn(0, 3)))
     }
 
     suspend fun renameFolder(folder: FolderEntity, name: String): Boolean {
@@ -254,6 +254,46 @@ class NotesRepository(
         if (clean.isEmpty()) return false
         dao.updateFolder(folder.copy(name = clean))
         return true
+    }
+
+    suspend fun setFolderColor(folder: FolderEntity, color: Int) {
+        dao.updateFolder(folder.copy(color = color.coerceIn(0, 3)))
+    }
+
+    /** Removes one-off reminders whose time has passed (repeating ones keep their next time). */
+    suspend fun clearPastReminders(now: Long = System.currentTimeMillis()): Int {
+        val past = dao.getAllNotes().map { it.note }
+            .filter { it.reminderAt != null && it.reminderAt < now && it.reminderRepeat == RepeatRule.NONE }
+        past.forEach { setReminder(it.id, null) }
+        return past.size
+    }
+
+    /** All notes (not in the trash) as one plain-text file. */
+    suspend fun exportText(out: OutputStream) = withContext(Dispatchers.IO) {
+        val notes = dao.getAllNotes().map { it.note }.filter { !it.isTrashed }.sortedByDescending { it.updatedAt }
+        out.bufferedWriter(Charsets.UTF_8).apply {
+            notes.forEachIndexed { i, n ->
+                if (i > 0) write("\n\n==========\n\n")
+                if (n.title.isNotBlank()) write(n.title.trim() + "\n\n")
+                if (n.type == NoteType.CHECKLIST) {
+                    n.checklist.filter { it.text.isNotBlank() }.forEach { write((if (it.checked) "[x] " else "[ ] ") + it.text + "\n") }
+                } else {
+                    write(com.sek789102.jotwai.domain.RichText.stripTags(n.content).trimEnd() + "\n")
+                }
+            }
+            flush()
+        }
+        notes.size
+    }
+
+    /** Each text file becomes one note: the first line is the title when the file has several lines. */
+    suspend fun importTextNote(name: String, raw: String): Long? {
+        val text = raw.replace("\r\n", "\n").trim().take(200_000)
+        if (text.isEmpty()) return null
+        val lines = text.lines()
+        val title = if (lines.size > 1 && lines.first().length <= 80) lines.first().trim() else name.substringBeforeLast('.').take(MAX_NAME)
+        val body = if (lines.size > 1 && lines.first().length <= 80) lines.drop(1).joinToString("\n").trim() else text
+        return createNote(NoteEntity(title = title, content = body))
     }
 
     /** Deletes the folder only; its notes stay and move to "no folder". */

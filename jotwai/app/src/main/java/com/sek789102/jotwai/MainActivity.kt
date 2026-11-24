@@ -34,7 +34,8 @@ import com.sek789102.jotwai.ui.screens.EditorScreen
 import com.sek789102.jotwai.ui.screens.HistoryScreen
 import com.sek789102.jotwai.ui.screens.HomeScreen
 import com.sek789102.jotwai.ui.screens.LabelsScreen
-import com.sek789102.jotwai.ui.screens.SettingsScreen
+import com.sek789102.jotwai.ui.screens.MainTabs
+import com.sek789102.jotwai.domain.Section
 import com.sek789102.jotwai.ui.theme.JotwaiTheme
 import com.sek789102.jotwai.ui.theme.isDarkTheme
 import com.sek789102.jotwai.ui.viewmodel.AppViewModel
@@ -50,14 +51,14 @@ sealed interface Route {
     data object Home : Route
     data class Editor(val id: Long, val focusBody: Boolean = false) : Route
     data class History(val id: Long) : Route
-    data object Settings : Route
+    data class NoteList(val section: String, val focusSearch: Boolean = false) : Route
     data object Labels : Route
 
     fun encode(): String = when (this) {
         Home -> "home"
         is Editor -> "editor:$id:$focusBody"
         is History -> "history:$id"
-        Settings -> "settings"
+        is NoteList -> "list:$section:$focusSearch"
         Labels -> "labels"
     }
 
@@ -67,7 +68,7 @@ sealed interface Route {
             return when (p[0]) {
                 "editor" -> Editor(p.getOrNull(1)?.toLongOrNull() ?: 0L, p.getOrNull(2) == "true")
                 "history" -> History(p.getOrNull(1)?.toLongOrNull() ?: 0L)
-                "settings" -> Settings
+                "list" -> NoteList(p.getOrNull(1) ?: "notes", p.getOrNull(2) == "true")
                 "labels" -> Labels
                 else -> Home
             }
@@ -175,6 +176,7 @@ class MainActivity : ComponentActivity() {
         }
 
         fun newNote(type: NoteType, text: String = "", title: String = "", images: List<String> = emptyList()) {
+            if (current is Route.Home) appVm.openSection(Section.Notes)
             appVm.createNote(type, content = text, title = title, images = images) { id ->
                 push(Route.Editor(id, focusBody = type == NoteType.TEXT && text.isEmpty()))
             }
@@ -222,16 +224,35 @@ class MainActivity : ComponentActivity() {
         BackHandler(enabled = stack.size > 1 && current !is Route.Editor) { pop() }
 
         when (val r = current) {
-            Route.Home -> HomeScreen(
+            Route.Home -> MainTabs(
                 vm = appVm,
                 prefs = p,
                 darkTheme = dark,
                 snackbar = snackbar,
                 onOpenNote = { openNote(it) },
-                onNewNote = { newNote(it) },
-                onOpenSettings = { push(Route.Settings) },
+                onNewNote = { type, _ -> newNote(type) },
+                onOpenList = { section, focus ->
+                    appVm.clearFilter()
+                    appVm.openSection(section)
+                    push(Route.NoteList(section.encode(), focus))
+                },
                 onManageLabels = { push(Route.Labels) }
             )
+            is Route.NoteList -> {
+                LaunchedEffect(r.section) { appVm.openSection(Section.decode(r.section)) }
+                HomeScreen(
+                    vm = appVm,
+                    prefs = p,
+                    darkTheme = dark,
+                    snackbar = snackbar,
+                    onOpenNote = { openNote(it) },
+                    onNewNote = { newNote(it) },
+                    onOpenSettings = { stack.removeAll { it != Route.Home } },
+                    onManageLabels = { push(Route.Labels) },
+                    onBack = { appVm.clearFilter(); pop() },
+                    focusSearch = r.focusSearch
+                )
+            }
             is Route.Editor -> EditorScreen(
                 noteId = r.id,
                 appVm = appVm,
@@ -244,7 +265,6 @@ class MainActivity : ComponentActivity() {
                 onOpenNote = { id -> openNote(id, replace = true) }
             )
             is Route.History -> HistoryScreen(noteId = r.id, onBack = { pop() }, onRestored = { pop() })
-            Route.Settings -> SettingsScreen(vm = appVm, prefs = p, snackbar = snackbar, onBack = { pop() })
             Route.Labels -> LabelsScreen(vm = appVm, onBack = { pop() })
         }
     }

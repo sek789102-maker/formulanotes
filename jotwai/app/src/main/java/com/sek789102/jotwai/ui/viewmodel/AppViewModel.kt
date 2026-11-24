@@ -170,8 +170,13 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     // ---- folders & labels ----
-    fun createFolder(name: String, onCreated: (Long) -> Unit = {}) = viewModelScope.launch { repo.createFolder(name)?.let(onCreated) }
+    fun createFolder(name: String, color: Int = 0, onCreated: (Long) -> Unit = {}) = viewModelScope.launch { repo.createFolder(name, color)?.let(onCreated) }
     fun renameFolder(folder: FolderEntity, name: String) = viewModelScope.launch { repo.renameFolder(folder, name) }
+    fun setFolderColor(folder: FolderEntity, color: Int) = viewModelScope.launch { repo.setFolderColor(folder, color) }
+    fun clearPastReminders() = viewModelScope.launch {
+        val n = repo.clearPastReminders()
+        say(if (n > 0) "ล้างการแจ้งเตือนที่ผ่านไปแล้ว $n รายการ" else "ไม่มีการแจ้งเตือนที่ผ่านไปแล้ว")
+    }
     fun deleteFolder(id: Long) = viewModelScope.launch {
         if ((section.value as? Section.Folder)?.id == id) openSection(Section.Notes)
         repo.deleteFolder(id)
@@ -193,6 +198,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     fun setSortOrder(v: SortOrder) = viewModelScope.launch { prefsRepo.setSortOrder(v) }
     fun setTextSize(v: TextSize) = viewModelScope.launch { prefsRepo.setTextSize(v) }
     fun setChecklistAddToBottom(v: Boolean) = viewModelScope.launch { prefsRepo.setChecklistAddToBottom(v) }
+    fun setRemindersEnabled(v: Boolean) = viewModelScope.launch { prefsRepo.setRemindersEnabled(v) }
     fun setChecklistMoveCheckedDown(v: Boolean) = viewModelScope.launch { prefsRepo.setChecklistMoveCheckedDown(v) }
 
     // ---- backup ----
@@ -215,6 +221,17 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                     }
                 )
             }
+    }
+
+    suspend fun exportText(out: OutputStream): Boolean = runCatching { repo.exportText(out) }
+        .onSuccess { say("ส่งออกโน้ต $it รายการแล้ว") }
+        .onFailure { say("ส่งออกไม่สำเร็จ") }
+        .isSuccess
+
+    suspend fun importTextNotes(files: List<Pair<String, String>>) {
+        var n = 0
+        files.forEach { (name, text) -> if (repo.importTextNote(name, text) != null) n++ }
+        say(if (n > 0) "นำเข้าโน้ต $n รายการแล้ว" else "ไม่พบข้อความในไฟล์ที่เลือก")
     }
 
     fun notify(text: String) = say(text)

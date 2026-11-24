@@ -20,7 +20,7 @@ import java.io.IOException
 private val Context.dataStore by preferencesDataStore(name = "jotwai_prefs")
 
 data class UserPreferences(
-    val themeMode: ThemeMode = ThemeMode.SYSTEM,
+    val themeMode: ThemeMode = ThemeMode.DARK,
     val dynamicColor: Boolean = false,
     val viewMode: ViewMode = ViewMode.GRID,
     val sortOrder: SortOrder = SortOrder.UPDATED,
@@ -29,7 +29,9 @@ data class UserPreferences(
     val checklistAddToBottom: Boolean = true,
     /** Ticked items move to a "done" section at the bottom. */
     val checklistMoveCheckedDown: Boolean = true,
-    val lastBackupAt: Long = 0L
+    val lastBackupAt: Long = 0L,
+    /** Reminder notifications on/off (the reminders stay saved either way). */
+    val remindersEnabled: Boolean = true
 )
 
 class UserPreferencesRepository(private val context: Context) {
@@ -43,6 +45,7 @@ class UserPreferencesRepository(private val context: Context) {
         val CHECK_BOTTOM = booleanPreferencesKey("checklist_add_bottom")
         val CHECK_MOVE = booleanPreferencesKey("checklist_move_checked")
         val LAST_BACKUP = longPreferencesKey("last_backup_at")
+        val REMINDERS_ON = booleanPreferencesKey("reminders_enabled")
     }
 
     val preferences: Flow<UserPreferences> = context.dataStore.data
@@ -50,14 +53,15 @@ class UserPreferencesRepository(private val context: Context) {
         .map { it.toUserPreferences() }
 
     private fun Preferences.toUserPreferences() = UserPreferences(
-        themeMode = enumOr(this[Keys.THEME], ThemeMode.SYSTEM),
+        themeMode = enumOr(this[Keys.THEME], ThemeMode.DARK),
         dynamicColor = this[Keys.DYNAMIC] ?: false,
         viewMode = enumOr(this[Keys.VIEW], ViewMode.GRID),
         sortOrder = enumOr(this[Keys.SORT], SortOrder.UPDATED),
         textSize = enumOr(this[Keys.TEXT_SIZE], TextSize.NORMAL),
         checklistAddToBottom = this[Keys.CHECK_BOTTOM] ?: true,
         checklistMoveCheckedDown = this[Keys.CHECK_MOVE] ?: true,
-        lastBackupAt = this[Keys.LAST_BACKUP] ?: 0L
+        lastBackupAt = this[Keys.LAST_BACKUP] ?: 0L,
+        remindersEnabled = this[Keys.REMINDERS_ON] ?: true
     )
 
     suspend fun setThemeMode(v: ThemeMode) = context.dataStore.edit { it[Keys.THEME] = v.name }
@@ -67,6 +71,7 @@ class UserPreferencesRepository(private val context: Context) {
     suspend fun setTextSize(v: TextSize) = context.dataStore.edit { it[Keys.TEXT_SIZE] = v.name }
     suspend fun setChecklistAddToBottom(v: Boolean) = context.dataStore.edit { it[Keys.CHECK_BOTTOM] = v }
     suspend fun setChecklistMoveCheckedDown(v: Boolean) = context.dataStore.edit { it[Keys.CHECK_MOVE] = v }
+    suspend fun setRemindersEnabled(v: Boolean) = context.dataStore.edit { it[Keys.REMINDERS_ON] = v }
     suspend fun setLastBackupAt(v: Long) = context.dataStore.edit { it[Keys.LAST_BACKUP] = v }
 
     private inline fun <reified E : Enum<E>> enumOr(raw: String?, default: E): E =

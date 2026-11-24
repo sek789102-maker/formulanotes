@@ -87,6 +87,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -127,7 +129,10 @@ fun HomeScreen(
     onOpenNote: (Long) -> Unit,
     onNewNote: (NoteType) -> Unit,
     onOpenSettings: () -> Unit,
-    onManageLabels: () -> Unit
+    onManageLabels: () -> Unit,
+    /** Set when the list is opened from a tab: shows a back arrow instead of the drawer. */
+    onBack: (() -> Unit)? = null,
+    focusSearch: Boolean = false
 ) {
     val home by vm.home.collectAsStateWithLifecycle()
     val section by vm.section.collectAsStateWithLifecycle()
@@ -152,14 +157,14 @@ fun HomeScreen(
     val selecting = selection.isNotEmpty()
     androidx.activity.compose.BackHandler(enabled = selecting) { vm.clearSelection() }
     androidx.activity.compose.BackHandler(enabled = !selecting && drawer.isOpen) { scope.launch { drawer.close() } }
-    androidx.activity.compose.BackHandler(enabled = !selecting && !drawer.isOpen && (filter.isActive || section != Section.Notes)) {
+    androidx.activity.compose.BackHandler(enabled = !selecting && !drawer.isOpen && (filter.isActive || (onBack == null && section != Section.Notes))) {
         if (filter.isActive) vm.clearFilter() else vm.openSection(Section.Notes)
         focusManager.clearFocus()
     }
 
     ModalNavigationDrawer(
         drawerState = drawer,
-        gesturesEnabled = !selecting,
+        gesturesEnabled = !selecting && onBack == null,
         drawerContent = {
             AppDrawer(
                 section = section,
@@ -200,7 +205,9 @@ fun HomeScreen(
                         filter = filter,
                         viewMode = prefs.viewMode,
                         sortOrder = prefs.sortOrder,
-                        onMenu = { scope.launch { drawer.open() } },
+                        onMenu = { if (onBack != null) onBack() else scope.launch { drawer.open() } },
+                        backArrow = onBack != null,
+                        focusSearch = focusSearch,
                         onQuery = { vm.setFilter(filter.copy(query = it)) },
                         onClear = { vm.clearFilter(); focusManager.clearFocus() },
                         onToggleView = { vm.setViewMode(if (prefs.viewMode == ViewMode.GRID) ViewMode.LIST else ViewMode.GRID) },
@@ -263,6 +270,7 @@ fun HomeScreen(
                         } else {
                             val (icon, t, m) = when (section) {
                                 Section.Notes -> Triple(Icons.Outlined.Lightbulb, R.string.empty_notes_title, R.string.empty_notes_message)
+                                Section.Favorites -> Triple(Icons.Outlined.Lightbulb, R.string.empty_favorites_title, R.string.empty_favorites_message)
                                 Section.Reminders -> Triple(Icons.Outlined.Alarm, R.string.empty_reminders_title, R.string.empty_reminders_message)
                                 Section.Archive -> Triple(Icons.Outlined.Archive, R.string.empty_archive_title, R.string.empty_archive_message)
                                 Section.Trash -> Triple(Icons.Outlined.Delete, R.string.empty_trash_title, R.string.empty_trash_message)
@@ -386,6 +394,7 @@ fun HomeScreen(
 @Composable
 private fun sectionHeader(section: Section, folderName: String?, labelName: String?): String? = when (section) {
     Section.Notes -> null
+    Section.Favorites -> stringResource(R.string.nav_favorites)
     Section.Reminders -> stringResource(R.string.nav_reminders)
     Section.Archive -> stringResource(R.string.nav_archive)
     Section.Trash -> stringResource(R.string.nav_trash)
@@ -478,6 +487,8 @@ private fun SearchBarTop(
     viewMode: ViewMode,
     sortOrder: SortOrder,
     onMenu: () -> Unit,
+    backArrow: Boolean,
+    focusSearch: Boolean,
     onQuery: (String) -> Unit,
     onClear: () -> Unit,
     onToggleView: () -> Unit,
@@ -492,7 +503,12 @@ private fun SearchBarTop(
                 .padding(horizontal = 4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = onMenu, modifier = Modifier.testTag("open_drawer")) { Icon(Icons.Outlined.Menu, stringResource(R.string.action_menu)) }
+            IconButton(onClick = onMenu, modifier = Modifier.testTag(if (backArrow) "list_back" else "open_drawer")) {
+                if (backArrow) Icon(Icons.AutoMirrored.Outlined.ArrowBack, stringResource(R.string.action_back))
+                else Icon(Icons.Outlined.Menu, stringResource(R.string.action_menu))
+            }
+            val focus = androidx.compose.runtime.remember { androidx.compose.ui.focus.FocusRequester() }
+            androidx.compose.runtime.LaunchedEffect(focusSearch) { if (focusSearch) runCatching { focus.requestFocus() } }
             val style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurface)
             BasicTextField(
                 value = filter.query,
@@ -500,7 +516,7 @@ private fun SearchBarTop(
                 singleLine = true,
                 textStyle = style,
                 cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
-                modifier = Modifier.weight(1f).testTag("search_input"),
+                modifier = Modifier.weight(1f).focusRequester(focus).testTag("search_input"),
                 decorationBox = { inner ->
                     Box {
                         if (filter.query.isEmpty()) Text(stringResource(R.string.search_hint), style = style, color = MaterialTheme.colorScheme.onSurfaceVariant)

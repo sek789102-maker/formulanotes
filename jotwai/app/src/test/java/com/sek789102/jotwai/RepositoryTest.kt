@@ -177,4 +177,61 @@ class RepositoryTest {
         assertTrue("just-added photo is kept", fresh.exists())
         assertFalse(orphan.exists())
     }
+
+    // ---- 1.2.0: folder colours, past reminders, text export/import, list sections ----
+
+    @Test fun `folders keep their colour`() = runBlocking {
+        val id = repo.createFolder("เรียน", 1)!!
+        assertEquals(1, repo.folders.first().single { it.id == id }.color)
+        repo.setFolderColor(repo.folders.first().single { it.id == id }, 3)
+        val f = repo.folders.first().single { it.id == id }
+        assertEquals(3, f.color)
+        assertEquals("เรียน", f.name)
+        repo.setFolderColor(f, 9)
+        assertEquals(3, repo.folders.first().single { it.id == id }.color)
+    }
+
+    @Test fun `clearing past reminders keeps upcoming and repeating ones`() = runBlocking {
+        val now = System.currentTimeMillis()
+        val past = repo.createNote(NoteEntity(title = "past"))
+        val future = repo.createNote(NoteEntity(title = "future"))
+        val repeat = repo.createNote(NoteEntity(title = "repeat"))
+        repo.setReminder(past, now - 60_000)
+        repo.setReminder(future, now + 3_600_000)
+        repo.setReminder(repeat, now - 60_000, RepeatRule.DAILY)
+        assertEquals(1, repo.clearPastReminders(now))
+        assertNull(note(past).reminderAt)
+        assertNotNull(note(future).reminderAt)
+        assertNotNull(note(repeat).reminderAt)
+    }
+
+    @Test fun `notes export to text and text files import as notes`() = runBlocking {
+        repo.createNote(NoteEntity(title = "ซื้อของ", content = "⟦c:E53935⟧นม⟧ ไข่".replace("⟧ ไข่", "⟦/c⟧ ไข่")))
+        val trashed = repo.createNote(NoteEntity(title = "ทิ้ง"))
+        repo.moveToTrash(listOf(trashed))
+        val out = java.io.ByteArrayOutputStream()
+        assertEquals(1, repo.exportText(out))
+        val text = out.toString("UTF-8")
+        assertTrue(text.contains("ซื้อของ"))
+        assertTrue(text.contains("นม ไข่"))
+        assertFalse(text.contains("⟦"))
+        assertFalse(text.contains("ทิ้ง"))
+
+        val id = repo.importTextNote("plan.txt", "แผนงาน\nข้อ 1\nข้อ 2")!!
+        assertEquals("แผนงาน", note(id).title)
+        assertEquals("ข้อ 1\nข้อ 2", note(id).content)
+        val one = repo.importTextNote("memo.txt", "บรรทัดเดียว")!!
+        assertEquals("memo", note(one).title)
+        assertNull(repo.importTextNote("empty.txt", "   "))
+    }
+
+    @Test fun `list sections survive encoding`() {
+        val all = listOf(
+            com.sek789102.jotwai.domain.Section.Notes, com.sek789102.jotwai.domain.Section.Favorites,
+            com.sek789102.jotwai.domain.Section.Reminders, com.sek789102.jotwai.domain.Section.Archive,
+            com.sek789102.jotwai.domain.Section.Trash, com.sek789102.jotwai.domain.Section.Folder(7),
+            com.sek789102.jotwai.domain.Section.Label(9)
+        )
+        all.forEach { assertEquals(it, com.sek789102.jotwai.domain.Section.decode(it.encode())) }
+    }
 }

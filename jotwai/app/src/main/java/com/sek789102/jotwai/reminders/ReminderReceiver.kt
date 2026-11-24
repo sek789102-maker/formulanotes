@@ -20,6 +20,7 @@ import com.sek789102.jotwai.data.model.RepeatRule
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 /** Shows a note's reminder and handles its "Done" and "Snooze" buttons. */
@@ -37,7 +38,8 @@ class ReminderReceiver : BroadcastReceiver() {
                     ACTION_FIRE -> {
                         val note = repo.getNote(noteId)?.note
                         if (note != null && !note.isTrashed && note.reminderAt != null) {
-                            show(context, note)
+                            val on = app.preferences.preferences.first().remindersEnabled
+                            if (on) show(context, note)
                             // One-off reminders are cleared; repeating ones move to the next time.
                             repo.advanceReminder(noteId)
                         }

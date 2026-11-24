@@ -7,11 +7,34 @@ import com.sek789102.jotwai.data.model.SortOrder
 /** Which list the home screen shows. */
 sealed interface Section {
     data object Notes : Section
+    data object Favorites : Section
     data object Reminders : Section
     data object Archive : Section
     data object Trash : Section
     data class Folder(val id: Long) : Section
     data class Label(val id: Long) : Section
+
+    fun encode(): String = when (this) {
+        Notes -> "notes"
+        Favorites -> "fav"
+        Reminders -> "reminders"
+        Archive -> "archive"
+        Trash -> "trash"
+        is Folder -> "folder-$id"
+        is Label -> "label-$id"
+    }
+
+    companion object {
+        fun decode(s: String): Section = when {
+            s == "fav" -> Favorites
+            s == "reminders" -> Reminders
+            s == "archive" -> Archive
+            s == "trash" -> Trash
+            s.startsWith("folder-") -> Folder(s.removePrefix("folder-").toLongOrNull() ?: 0L)
+            s.startsWith("label-") -> Label(s.removePrefix("label-").toLongOrNull() ?: 0L)
+            else -> Notes
+        }
+    }
 }
 
 data class SearchFilter(
@@ -30,6 +53,7 @@ object NoteQuery {
         val note = n.note
         return when (section) {
             Section.Notes -> !note.isTrashed && !note.isArchived
+            Section.Favorites -> !note.isTrashed && note.isPinned
             Section.Reminders -> !note.isTrashed && note.reminderAt != null
             Section.Archive -> !note.isTrashed && note.isArchived
             Section.Trash -> note.isTrashed

@@ -57,7 +57,9 @@ data class FolderEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0L,
     val name: String,
     val sortOrder: Int = 0,
-    val createdAt: Long = System.currentTimeMillis()
+    val createdAt: Long = System.currentTimeMillis(),
+    /** Folder art: 0 yellow, 1 blue, 2 purple, 3 green. */
+    val color: Int = 0
 )
 
 @Entity(tableName = "labels", indices = [Index(value = ["name"], unique = true)])

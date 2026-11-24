@@ -45,6 +45,9 @@
     <!-- Navigation -->
     <string name="nav_notes">โน้ต</string>
     <string name="nav_reminders">การเตือน</string>
+    <string name="nav_favorites">รายการโปรด</string>
+    <string name="empty_favorites_title">ยังไม่มีรายการโปรด</string>
+    <string name="empty_favorites_message">กดดาวในเมนูของโน้ต เพื่อเก็บไว้ที่นี่</string>
     <string name="nav_folders">โฟลเดอร์</string>
     <string name="nav_labels">ป้ายกำกับ</string>
     <string name="nav_archive">เก็บถาวร</string>

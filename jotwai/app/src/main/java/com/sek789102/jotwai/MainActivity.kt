@@ -106,6 +106,10 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(com.sek789102.jotwai.util.Lang.wrap(newBase))
+    }
+
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         incoming.value = intent

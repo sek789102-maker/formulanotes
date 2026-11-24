@@ -157,7 +157,7 @@ fun HomeScreen(
     val selecting = selection.isNotEmpty()
     androidx.activity.compose.BackHandler(enabled = selecting) { vm.clearSelection() }
     androidx.activity.compose.BackHandler(enabled = !selecting && drawer.isOpen) { scope.launch { drawer.close() } }
-    androidx.activity.compose.BackHandler(enabled = !selecting && !drawer.isOpen && (filter.isActive || (onBack == null && section != Section.Notes))) {
+    androidx.activity.compose.BackHandler(enabled = !selecting && !drawer.isOpen && ((filter.isActive && !(onBack != null && focusSearch)) || (onBack == null && section != Section.Notes))) {
         if (filter.isActive) vm.clearFilter() else vm.openSection(Section.Notes)
         focusManager.clearFocus()
     }

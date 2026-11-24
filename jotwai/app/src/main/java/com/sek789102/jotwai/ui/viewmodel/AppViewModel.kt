@@ -1,5 +1,6 @@
 package com.sek789102.jotwai.ui.viewmodel
 
+import com.sek789102.jotwai.util.t
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -175,7 +176,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     fun setFolderColor(folder: FolderEntity, color: Int) = viewModelScope.launch { repo.setFolderColor(folder, color) }
     fun clearPastReminders() = viewModelScope.launch {
         val n = repo.clearPastReminders()
-        say(if (n > 0) "ล้างการแจ้งเตือนที่ผ่านไปแล้ว $n รายการ" else "ไม่มีการแจ้งเตือนที่ผ่านไปแล้ว")
+        say(if (n > 0) t("ล้างการแจ้งเตือนที่ผ่านไปแล้ว $n รายการ", "Cleared $n past reminders") else t("ไม่มีการแจ้งเตือนที่ผ่านไปแล้ว", "No past reminders"))
     }
     fun deleteFolder(id: Long) = viewModelScope.launch {
         if ((section.value as? Section.Folder)?.id == id) openSection(Section.Notes)
@@ -224,14 +225,14 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     suspend fun exportText(out: OutputStream): Boolean = runCatching { repo.exportText(out) }
-        .onSuccess { say("ส่งออกโน้ต $it รายการแล้ว") }
-        .onFailure { say("ส่งออกไม่สำเร็จ") }
+        .onSuccess { say(t("ส่งออกโน้ต $it รายการแล้ว", "Exported $it notes")) }
+        .onFailure { say(t("ส่งออกไม่สำเร็จ", "Export failed")) }
         .isSuccess
 
     suspend fun importTextNotes(files: List<Pair<String, String>>) {
         var n = 0
         files.forEach { (name, text) -> if (repo.importTextNote(name, text) != null) n++ }
-        say(if (n > 0) "นำเข้าโน้ต $n รายการแล้ว" else "ไม่พบข้อความในไฟล์ที่เลือก")
+        say(if (n > 0) t("นำเข้าโน้ต $n รายการแล้ว", "Imported $n notes") else t("ไม่พบข้อความในไฟล์ที่เลือก", "No text found in the chosen files"))
     }
 
     fun notify(text: String) = say(text)

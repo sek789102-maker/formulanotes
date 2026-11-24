@@ -1,5 +1,6 @@
 package com.sek789102.jotwai.ui.screens
 
+import com.sek789102.jotwai.util.t
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -137,10 +138,10 @@ fun MainTabs(
     var tab by rememberSaveable { mutableIntStateOf(0) }
     androidx.activity.compose.BackHandler(enabled = tab != 0) { tab = 0 }
     val tabs = listOf(
-        TabItem(Icons.Outlined.Home, Icons.Filled.Home, "หน้าหลัก", "tab_home"),
-        TabItem(Icons.Outlined.Notifications, Icons.Filled.Notifications, "การแจ้งเตือน", "tab_reminders"),
-        TabItem(Icons.Outlined.Folder, Icons.Filled.Folder, "โฟลเดอร์", "tab_folders"),
-        TabItem(Icons.Outlined.Settings, Icons.Filled.Settings, "ตั้งค่า", "tab_settings")
+        TabItem(Icons.Outlined.Home, Icons.Filled.Home, t("หน้าหลัก", "Home"), "tab_home"),
+        TabItem(Icons.Outlined.Notifications, Icons.Filled.Notifications, t("การแจ้งเตือน", "Reminders"), "tab_reminders"),
+        TabItem(Icons.Outlined.Folder, Icons.Filled.Folder, t("โฟลเดอร์", "Folders"), "tab_folders"),
+        TabItem(Icons.Outlined.Settings, Icons.Filled.Settings, t("ตั้งค่า", "Settings"), "tab_settings")
     )
     Scaffold(
         containerColor = Color.Transparent,
@@ -187,12 +188,12 @@ private fun DashboardTab(
         ) {
             item {
                 TabHeader(
-                    title = "จดไว้",
-                    subtitle = "บันทึกทุกไอเดียของคุณ ✨",
+                    title = t("จดไว้", "Jotwai"),
+                    subtitle = t("บันทึกทุกไอเดียของคุณ ✨", "Save every idea you have ✨"),
                     leading = { ArtImage(R.drawable.art_app_tile, 76.dp) },
                     actions = {
                         IconButton(onClick = onSettings, modifier = Modifier.size(56.dp).testTag("home_settings")) {
-                            Icon(Icons.Filled.Settings, "ตั้งค่า", Modifier.size(40.dp), tint = MaterialTheme.colorScheme.onBackground)
+                            Icon(Icons.Filled.Settings, t("ตั้งค่า", "Settings"), Modifier.size(40.dp), tint = MaterialTheme.colorScheme.onBackground)
                         }
                     }
                 )
@@ -202,28 +203,28 @@ private fun DashboardTab(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(Icons.Outlined.Search, null, tint = MaterialTheme.colorScheme.onSurface, modifier = Modifier.size(28.dp))
                         Spacer(Modifier.width(14.dp))
-                        Text("ค้นหาโน้ต...", style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(t("ค้นหาโน้ต...", "Search notes..."), style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
             }
             item {
                 Column(Modifier.padding(horizontal = 20.dp, vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
                     Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
-                        StatCard(Icons.AutoMirrored.Outlined.StickyNote2, "โน้ตทั้งหมด", "${notes.size} รายการ", Modifier.weight(1f).testTag("stat_all")) { onOpenList(Section.Notes, false) }
-                        StatCard(Icons.Filled.Star, "รายการโปรด", "$favorites รายการ", Modifier.weight(1f).testTag("stat_fav")) { onOpenList(Section.Favorites, false) }
+                        StatCard(Icons.AutoMirrored.Outlined.StickyNote2, t("โน้ตทั้งหมด", "All notes"), t("${notes.size} รายการ", "${notes.size} notes"), Modifier.weight(1f).testTag("stat_all")) { onOpenList(Section.Notes, false) }
+                        StatCard(Icons.Filled.Star, t("รายการโปรด", "Favourites"), t("$favorites รายการ", "$favorites notes"), Modifier.weight(1f).testTag("stat_fav")) { onOpenList(Section.Favorites, false) }
                     }
                     Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
-                        StatCard(Icons.Filled.Folder, "หมวดหมู่", "${folders.size} โฟลเดอร์", Modifier.weight(1f).testTag("stat_folders"), onClick = onFolders)
-                        StatCard(Icons.Outlined.AccessTime, "ล่าสุด", latest?.let { relativeDay(it) } ?: "-", Modifier.weight(1f).testTag("stat_recent")) {
+                        StatCard(Icons.Filled.Folder, t("หมวดหมู่", "Folders"), t("${folders.size} โฟลเดอร์", "${folders.size} folders"), Modifier.weight(1f).testTag("stat_folders"), onClick = onFolders)
+                        StatCard(Icons.Outlined.AccessTime, t("ล่าสุด", "Latest"), latest?.let { relativeDay(it) } ?: "-", Modifier.weight(1f).testTag("stat_recent")) {
                             recent.firstOrNull()?.let { onOpenNote(it.note.id) } ?: onOpenList(Section.Notes, false)
                         }
                     }
                 }
             }
             item {
-                SectionTitle("โน้ตล่าสุด") {
+                SectionTitle(t("โน้ตล่าสุด", "Recent notes")) {
                     Row(Modifier.clip(RoundedCornerShape(12.dp)).clickable { onOpenList(Section.Notes, false) }.padding(6.dp).testTag("see_all"), verticalAlignment = Alignment.CenterVertically) {
-                        Text("ดูทั้งหมด", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurface)
+                        Text(t("ดูทั้งหมด", "See all"), style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurface)
                         Icon(Icons.Outlined.ChevronRight, null, tint = MaterialTheme.colorScheme.onSurface)
                     }
                 }
@@ -234,8 +235,8 @@ private fun DashboardTab(
                         Column(Modifier.fillMaxWidth().padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                             ArtImage(R.drawable.art_note_thumb, 96.dp)
                             Spacer(Modifier.height(10.dp))
-                            Text("ยังไม่มีโน้ต", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                            Text("กดปุ่ม + เพื่อเริ่มจดโน้ตแรก", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(t("ยังไม่มีโน้ต", "No notes yet"), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                            Text(t("กดปุ่ม + เพื่อเริ่มจดโน้ตแรก", "Tap + to write your first note"), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                     }
                 }
@@ -276,30 +277,30 @@ private fun RecentNoteRow(n: NoteWithLabels, darkTheme: Boolean, vm: AppViewMode
             Spacer(Modifier.width(14.dp))
             Column(Modifier.weight(1f)) {
                 Text(
-                    note.title.ifBlank { preview(n).lineSequence().firstOrNull().orEmpty().ifBlank { "โน้ตไม่มีชื่อ" } },
+                    note.title.ifBlank { preview(n).lineSequence().firstOrNull().orEmpty().ifBlank { t("โน้ตไม่มีชื่อ", "Untitled note") } },
                     style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    if (note.isLocked) "🔒 โน้ตที่ล็อกไว้" else preview(n).replace('\n', ' ').ifBlank { " " },
+                    if (note.isLocked) t("🔒 โน้ตที่ล็อกไว้", "🔒 Locked note") else preview(n).replace('\n', ' ').ifBlank { " " },
                     style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis
                 )
                 Text(dateLine(note.updatedAt), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 when {
-                    note.isPinned -> Icon(Icons.Filled.Star, "รายการโปรด", tint = Gold, modifier = Modifier.size(24.dp))
+                    note.isPinned -> Icon(Icons.Filled.Star, t("รายการโปรด", "Favourites"), tint = Gold, modifier = Modifier.size(24.dp))
                     note.color != 0 -> Box(Modifier.padding(4.dp).size(18.dp).clip(CircleShape).background(NoteColors.of(note.color, false)).border(1.dp, Color.White.copy(alpha = 0.4f), CircleShape))
                 }
                 Box {
-                    IconButton(onClick = { menu = true }, modifier = Modifier.testTag("recent_menu_${note.id}")) { Icon(Icons.Outlined.MoreVert, "เพิ่มเติม") }
+                    IconButton(onClick = { menu = true }, modifier = Modifier.testTag("recent_menu_${note.id}")) { Icon(Icons.Outlined.MoreVert, t("เพิ่มเติม", "More")) }
                     DropdownMenu(expanded = menu, onDismissRequest = { menu = false }) {
                         DropdownMenuItem(
-                            text = { Text(if (note.isPinned) "เอาออกจากรายการโปรด" else "เพิ่มในรายการโปรด") },
+                            text = { Text(if (note.isPinned) t("เอาออกจากรายการโปรด", "Remove from favourites") else t("เพิ่มในรายการโปรด", "Add to favourites")) },
                             leadingIcon = { Icon(if (note.isPinned) Icons.Outlined.StarBorder else Icons.Outlined.Star, null) },
                             onClick = { menu = false; vm.setPinned(setOf(note.id), !note.isPinned) }
                         )
-                        DropdownMenuItem(text = { Text("ทำสำเนา") }, leadingIcon = { Icon(Icons.Outlined.ContentCopy, null) }, onClick = { menu = false; vm.duplicate(note.id) })
-                        DropdownMenuItem(text = { Text("ย้ายไปถังขยะ") }, leadingIcon = { Icon(Icons.Outlined.Delete, null) }, onClick = { menu = false; vm.moveToTrash(setOf(note.id)) })
+                        DropdownMenuItem(text = { Text(t("ทำสำเนา", "Make a copy")) }, leadingIcon = { Icon(Icons.Outlined.ContentCopy, null) }, onClick = { menu = false; vm.duplicate(note.id) })
+                        DropdownMenuItem(text = { Text(t("ย้ายไปถังขยะ", "Move to trash")) }, leadingIcon = { Icon(Icons.Outlined.Delete, null) }, onClick = { menu = false; vm.moveToTrash(setOf(note.id)) })
                     }
                 }
             }
@@ -314,44 +315,30 @@ private fun preview(n: NoteWithLabels): String {
     else RichText.stripTags(note.content.take(600)).replace(Regex("""[*_~`#>]+"""), "").trim()
 }
 
-private val thaiMonths = listOf("ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค.")
-
-private fun daysAgo(millis: Long, now: Long = System.currentTimeMillis()): Int {
-    fun noon(t: Long) = Calendar.getInstance().apply { timeInMillis = t; set(Calendar.HOUR_OF_DAY, 12); set(Calendar.MINUTE, 0) }.timeInMillis
-    return Math.round((noon(now) - noon(millis)) / 86_400_000.0).toInt()
-}
-
-private fun thaiDate(millis: Long): String {
-    val c = Calendar.getInstance().apply { timeInMillis = millis }
-    return "${c.get(Calendar.DAY_OF_MONTH)} ${thaiMonths[c.get(Calendar.MONTH)]} ${c.get(Calendar.YEAR) + 543}"
-}
-
-/** "วันนี้", "เมื่อวานนี้", "3 วันที่แล้ว", or a date. */
-private fun relativeDay(millis: Long): String = when (val d = daysAgo(millis)) {
-    0 -> "วันนี้"
-    1 -> "เมื่อวานนี้"
-    in 2..6 -> "$d วันที่แล้ว"
-    else -> thaiDate(millis)
-}
+/** "Today", "Yesterday", "3 days ago", or a date. */
+private fun relativeDay(millis: Long): String = Dates.relativeDay(millis)
 
 /** "เมื่อวานนี้ • 21:42" / "22 พ.ย. 2568 • 19:20". */
-private fun dateLine(millis: Long): String = "${relativeDay(millis).let { if (it.endsWith("วันที่แล้ว")) thaiDate(millis) else it }} • ${Dates.time(millis)}"
+private fun dateLine(millis: Long): String = Dates.dayLine(millis)
 
 @Composable
 private fun NewNoteFab(modifier: Modifier, onNew: (NoteType) -> Unit) {
     var menu by remember { mutableStateOf(false) }
     Box(modifier) {
-        GoldFab(onClick = { menu = true }, modifier = Modifier.testTag("fab_new"), description = "สร้างโน้ต")
+        GoldFab(onClick = { menu = true }, modifier = Modifier.testTag("fab_new"), description = t("สร้างโน้ต", "New note"))
         DropdownMenu(expanded = menu, onDismissRequest = { menu = false }) {
-            DropdownMenuItem(text = { Text("โน้ตใหม่") }, leadingIcon = { Icon(Icons.Outlined.Description, null) }, onClick = { menu = false; onNew(NoteType.TEXT) }, modifier = Modifier.testTag("fab_note"))
-            DropdownMenuItem(text = { Text("เช็กลิสต์ใหม่") }, leadingIcon = { Icon(Icons.Outlined.CheckBox, null) }, onClick = { menu = false; onNew(NoteType.CHECKLIST) }, modifier = Modifier.testTag("fab_checklist"))
+            DropdownMenuItem(text = { Text(t("โน้ตใหม่", "New note")) }, leadingIcon = { Icon(Icons.Outlined.Description, null) }, onClick = { menu = false; onNew(NoteType.TEXT) }, modifier = Modifier.testTag("fab_note"))
+            DropdownMenuItem(text = { Text(t("เช็กลิสต์ใหม่", "New checklist")) }, leadingIcon = { Icon(Icons.Outlined.CheckBox, null) }, onClick = { menu = false; onNew(NoteType.CHECKLIST) }, modifier = Modifier.testTag("fab_checklist"))
         }
     }
 }
 
 // ------------------------------------------------------------------ reminders
 
-private enum class RemFilter(val label: String) { ALL("ทั้งหมด"), NOTE("โน้ต"), FOLDER("โฟลเดอร์"), SYSTEM("ระบบ") }
+private enum class RemFilter(private val th: String, private val en: String) {
+    ALL("ทั้งหมด", "All"), NOTE("โน้ต", "Notes"), FOLDER("โฟลเดอร์", "Folders"), SYSTEM("ระบบ", "System");
+    val label: String get() = t(th, en)
+}
 
 @Composable
 private fun RemindersTab(vm: AppViewModel, onOpenNote: (Long) -> Unit) {
@@ -379,24 +366,24 @@ private fun RemindersTab(vm: AppViewModel, onOpenNote: (Long) -> Unit) {
 
     Column(Modifier.fillMaxSize().statusBarsPadding()) {
         TabHeader(
-            title = "การแจ้งเตือน",
+            title = t("การแจ้งเตือน", "Reminders"),
             leading = { com.sek789102.jotwai.ui.design.GoldTile(Icons.Filled.Notifications, 64.dp, glass = true) },
             actions = {
                 IconButton(onClick = { searching = !searching; if (!searching) query = "" }, modifier = Modifier.size(52.dp).testTag("rem_search")) {
-                    Icon(if (searching) Icons.Outlined.Close else Icons.Outlined.Search, "ค้นหา", Modifier.size(34.dp))
+                    Icon(if (searching) Icons.Outlined.Close else Icons.Outlined.Search, t("ค้นหา", "Search"), Modifier.size(34.dp))
                 }
                 Box {
-                    IconButton(onClick = { menu = true }, modifier = Modifier.size(52.dp).testTag("rem_more")) { Icon(Icons.Outlined.MoreVert, "เพิ่มเติม", Modifier.size(34.dp)) }
+                    IconButton(onClick = { menu = true }, modifier = Modifier.size(52.dp).testTag("rem_more")) { Icon(Icons.Outlined.MoreVert, t("เพิ่มเติม", "More"), Modifier.size(34.dp)) }
                     DropdownMenu(expanded = menu, onDismissRequest = { menu = false }) {
-                        DropdownMenuItem(text = { Text("ล้างการแจ้งเตือนที่ผ่านไปแล้ว") }, leadingIcon = { Icon(Icons.Outlined.Delete, null) }, onClick = { menu = false; vm.clearPastReminders() })
-                        DropdownMenuItem(text = { Text("ตั้งค่าการแจ้งเตือน") }, leadingIcon = { Icon(Icons.Outlined.Settings, null) }, onClick = { menu = false; filter = RemFilter.SYSTEM })
+                        DropdownMenuItem(text = { Text(t("ล้างการแจ้งเตือนที่ผ่านไปแล้ว", "Clear past reminders")) }, leadingIcon = { Icon(Icons.Outlined.Delete, null) }, onClick = { menu = false; vm.clearPastReminders() })
+                        DropdownMenuItem(text = { Text(t("ตั้งค่าการแจ้งเตือน", "Reminder settings")) }, leadingIcon = { Icon(Icons.Outlined.Settings, null) }, onClick = { menu = false; filter = RemFilter.SYSTEM })
                     }
                 }
             }
         )
         if (searching) {
             GoldSearchBox(Modifier.padding(horizontal = 20.dp, vertical = 4.dp)) {
-                SearchField(query, "ค้นหาการแจ้งเตือน...", focus) { query = it }
+                SearchField(query, t("ค้นหาการแจ้งเตือน...", "Search reminders..."), focus) { query = it }
             }
             androidx.compose.runtime.LaunchedEffect(Unit) { runCatching { focus.requestFocus() } }
         }
@@ -415,7 +402,7 @@ private fun RemindersTab(vm: AppViewModel, onOpenNote: (Long) -> Unit) {
             Column(Modifier.padding(horizontal = 20.dp, vertical = 8.dp)) {
                 GlassCard(Modifier.fillMaxWidth()) {
                     Column(Modifier.padding(16.dp)) {
-                        Text("ความพร้อมของการแจ้งเตือน", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                        Text(t("ความพร้อมของการแจ้งเตือน", "Reminder readiness"), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                         Spacer(Modifier.height(6.dp))
                         ReminderReliabilityCard()
                     }
@@ -425,30 +412,30 @@ private fun RemindersTab(vm: AppViewModel, onOpenNote: (Long) -> Unit) {
             Column(Modifier.fillMaxWidth().weight(1f).padding(horizontal = 32.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
                 ArtImage(R.drawable.art_bell, 240.dp)
                 Spacer(Modifier.height(18.dp))
-                Text(if (query.isBlank()) "ยังไม่มีการแจ้งเตือน" else "ไม่พบการแจ้งเตือน", fontSize = 26.sp, fontWeight = FontWeight.Bold)
+                Text(if (query.isBlank()) t("ยังไม่มีการแจ้งเตือน", "No reminders yet") else t("ไม่พบการแจ้งเตือน", "No reminders found"), fontSize = 26.sp, fontWeight = FontWeight.Bold)
                 Spacer(Modifier.height(8.dp))
                 Text(
-                    "คุณจะเห็นการแจ้งเตือนที่นี่\nเมื่อตั้งเตือนในโน้ต (เปิดโน้ต แล้วกดรูปกระดิ่ง)",
+                    t("คุณจะเห็นการแจ้งเตือนที่นี่\nเมื่อตั้งเตือนในโน้ต (เปิดโน้ต แล้วกดรูปกระดิ่ง)", "Reminders you set in notes show here\n(open a note and tap the bell)"),
                     style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = androidx.compose.ui.text.style.TextAlign.Center
                 )
                 Spacer(Modifier.height(22.dp))
                 Row(
                     Modifier.clip(RoundedCornerShape(30.dp)).background(com.sek789102.jotwai.ui.design.GoldBrush)
-                        .clickable { tick++; query = ""; android.widget.Toast.makeText(context, "อัปเดตแล้ว", android.widget.Toast.LENGTH_SHORT).show() }
+                        .clickable { tick++; query = ""; android.widget.Toast.makeText(context, t("อัปเดตแล้ว", "Updated"), android.widget.Toast.LENGTH_SHORT).show() }
                         .padding(horizontal = 40.dp, vertical = 16.dp).testTag("rem_retry"),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(Icons.Outlined.Refresh, null, tint = Color(0xFF1A1206))
                     Spacer(Modifier.width(10.dp))
-                    Text("ลองใหม่", fontWeight = FontWeight.Bold, fontSize = 18.sp, color = Color(0xFF1A1206))
+                    Text(t("ลองใหม่", "Refresh"), fontWeight = FontWeight.Bold, fontSize = 18.sp, color = Color(0xFF1A1206))
                 }
             }
         } else {
             LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(start = 20.dp, end = 20.dp, bottom = 24.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                if (upcoming.isNotEmpty()) item { Text("กำลังจะมาถึง", style = MaterialTheme.typography.titleMedium, color = Gold, modifier = Modifier.padding(top = 4.dp)) }
+                if (upcoming.isNotEmpty()) item { Text(t("กำลังจะมาถึง", "Upcoming"), style = MaterialTheme.typography.titleMedium, color = com.sek789102.jotwai.ui.design.goldText(), modifier = Modifier.padding(top = 4.dp)) }
                 items(upcoming, key = { "u${it.note.id}" }) { ReminderRow(it, folders, false) { onOpenNote(it.note.id) } }
-                if (past.isNotEmpty()) item { Text("ผ่านไปแล้ว", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 8.dp)) }
+                if (past.isNotEmpty()) item { Text(t("ผ่านไปแล้ว", "Past"), style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 8.dp)) }
                 items(past, key = { "p${it.note.id}" }) { ReminderRow(it, folders, true) { onOpenNote(it.note.id) } }
             }
         }
@@ -464,9 +451,9 @@ private fun ReminderRow(n: NoteWithLabels, folders: List<FolderEntity>, past: Bo
             com.sek789102.jotwai.ui.design.GoldTile(Icons.Outlined.Alarm, 48.dp, glass = past)
             Spacer(Modifier.width(14.dp))
             Column(Modifier.weight(1f)) {
-                Text(note.title.ifBlank { if (note.isLocked) "โน้ตที่ล็อกไว้" else preview(n).take(60).ifBlank { "โน้ตไม่มีชื่อ" } }, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                Text(note.title.ifBlank { if (note.isLocked) t("โน้ตที่ล็อกไว้", "Locked note") else preview(n).take(60).ifBlank { t("โน้ตไม่มีชื่อ", "Untitled note") } }, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 val repeat = if (note.reminderRepeat != com.sek789102.jotwai.data.model.RepeatRule.NONE) " · " + Dates.repeatLabel(context, note.reminderRepeat) else ""
-                Text(Dates.dayAndTime(context, note.reminderAt ?: 0L) + repeat, style = MaterialTheme.typography.bodyMedium, color = if (past) MaterialTheme.colorScheme.onSurfaceVariant else Gold)
+                Text(Dates.dayAndTime(context, note.reminderAt ?: 0L) + repeat, style = MaterialTheme.typography.bodyMedium, color = if (past) MaterialTheme.colorScheme.onSurfaceVariant else com.sek789102.jotwai.ui.design.goldText())
                 folders.firstOrNull { it.id == note.folderId }?.let {
                     Text("📁 ${it.name}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1)
                 }
@@ -496,7 +483,7 @@ private fun SearchField(value: String, hint: String, focus: FocusRequester, onCh
                 }
             }
         )
-        if (value.isNotEmpty()) IconButton(onClick = { onChange("") }) { Icon(Icons.Outlined.Close, "ล้าง") }
+        if (value.isNotEmpty()) IconButton(onClick = { onChange("") }) { Icon(Icons.Outlined.Close, t("ล้าง", "Clear")) }
     }
 }
 
@@ -504,10 +491,13 @@ private fun SearchField(value: String, hint: String, focus: FocusRequester, onCh
 
 private class Cell(val key: String, val content: @Composable (Modifier) -> Unit)
 
-private enum class FolderSort(val label: String) { ORDER("ตามลำดับที่สร้าง"), NAME("ชื่อ ก-ฮ"), COUNT("จำนวนโน้ต") }
+private enum class FolderSort(private val th: String, private val en: String) {
+    ORDER("ตามลำดับที่สร้าง", "Order created"), NAME("ชื่อ ก-ฮ", "Name A–Z"), COUNT("จำนวนโน้ต", "Number of notes");
+    val label: String get() = t(th, en)
+}
 
 val folderArt = listOf(R.drawable.art_folder_yellow, R.drawable.art_folder_blue, R.drawable.art_folder_purple, R.drawable.art_folder_green)
-private val folderColorNames = listOf("เหลือง", "ฟ้า", "ม่วง", "เขียว")
+private val folderColorNames: List<String> get() = listOf(t("เหลือง", "Yellow"), t("ฟ้า", "Blue"), t("ม่วง", "Purple"), t("เขียว", "Green"))
 
 @Composable
 private fun FoldersTab(
@@ -541,28 +531,28 @@ private fun FoldersTab(
             FolderSort.COUNT -> l.sortedByDescending { countIn(it.id) }
         }
     }
-    val showFav = query.isBlank() || "รายการโปรด".contains(query, true)
-    val showTrash = query.isBlank() || "ถังขยะ".contains(query, true)
+    val showFav = query.isBlank() || t("รายการโปรด", "Favourites").contains(query, true)
+    val showTrash = query.isBlank() || t("ถังขยะ", "Trash").contains(query, true)
 
     val cells = buildList {
         if (showFav) add(Cell("fav") { m ->
-            FolderCard(R.drawable.art_folder_fav, "รายการโปรด", "$favCount โน้ต", m.testTag("folder_fav"), onClick = { onOpenList(Section.Favorites, false) }) { close ->
-                DropdownMenuItem(text = { Text("เปิดดู") }, onClick = { close(); onOpenList(Section.Favorites, false) })
+            FolderCard(R.drawable.art_folder_fav, t("รายการโปรด", "Favourites"), t("$favCount โน้ต", "$favCount notes"), m.testTag("folder_fav"), onClick = { onOpenList(Section.Favorites, false) }) { close ->
+                DropdownMenuItem(text = { Text(t("เปิดดู", "Open")) }, onClick = { close(); onOpenList(Section.Favorites, false) })
             }
         })
         list.forEach { f ->
             add(Cell("f${f.id}") { m ->
-                FolderCard(folderArt[f.color.coerceIn(0, 3)], f.name, "${countIn(f.id)} โน้ต", m.testTag("folder_${f.id}"), onClick = { onOpenList(Section.Folder(f.id), false) }) { close ->
-                    DropdownMenuItem(text = { Text("เปลี่ยนชื่อ") }, leadingIcon = { Icon(Icons.Outlined.Edit, null) }, onClick = { close(); renameTarget = f })
-                    DropdownMenuItem(text = { Text("เปลี่ยนสี") }, leadingIcon = { Icon(Icons.Outlined.Palette, null) }, onClick = { close(); colorTarget = f })
-                    DropdownMenuItem(text = { Text("ลบโฟลเดอร์") }, leadingIcon = { Icon(Icons.Outlined.Delete, null) }, onClick = { close(); deleteTarget = f })
+                FolderCard(folderArt[f.color.coerceIn(0, 3)], f.name, t("${countIn(f.id)} โน้ต", "${countIn(f.id)} notes"), m.testTag("folder_${f.id}"), onClick = { onOpenList(Section.Folder(f.id), false) }) { close ->
+                    DropdownMenuItem(text = { Text(t("เปลี่ยนชื่อ", "Rename")) }, leadingIcon = { Icon(Icons.Outlined.Edit, null) }, onClick = { close(); renameTarget = f })
+                    DropdownMenuItem(text = { Text(t("เปลี่ยนสี", "Change colour")) }, leadingIcon = { Icon(Icons.Outlined.Palette, null) }, onClick = { close(); colorTarget = f })
+                    DropdownMenuItem(text = { Text(t("ลบโฟลเดอร์", "Delete folder")) }, leadingIcon = { Icon(Icons.Outlined.Delete, null) }, onClick = { close(); deleteTarget = f })
                 }
             })
         }
         if (showTrash) add(Cell("trash") { m ->
-            FolderCard(R.drawable.art_folder_trash, "ถังขยะ", "$trashCount โน้ต", m.testTag("folder_trash"), onClick = { onOpenList(Section.Trash, false) }) { close ->
-                DropdownMenuItem(text = { Text("เปิดดู") }, onClick = { close(); onOpenList(Section.Trash, false) })
-                if (trashCount > 0) DropdownMenuItem(text = { Text("ล้างถังขยะ") }, leadingIcon = { Icon(Icons.Outlined.Delete, null) }, onClick = { close(); confirmEmptyTrash = true })
+            FolderCard(R.drawable.art_folder_trash, t("ถังขยะ", "Trash"), t("$trashCount โน้ต", "$trashCount notes"), m.testTag("folder_trash"), onClick = { onOpenList(Section.Trash, false) }) { close ->
+                DropdownMenuItem(text = { Text(t("เปิดดู", "Open")) }, onClick = { close(); onOpenList(Section.Trash, false) })
+                if (trashCount > 0) DropdownMenuItem(text = { Text(t("ล้างถังขยะ", "Empty trash")) }, leadingIcon = { Icon(Icons.Outlined.Delete, null) }, onClick = { close(); confirmEmptyTrash = true })
             }
         })
         add(Cell("new") { m -> NewFolderCard(m.testTag("folder_new")) { createDialog = true } })
@@ -572,26 +562,26 @@ private fun FoldersTab(
         LazyColumn(Modifier.fillMaxSize().statusBarsPadding(), contentPadding = PaddingValues(bottom = 110.dp)) {
             item {
                 TabHeader(
-                    title = "โฟลเดอร์",
+                    title = t("โฟลเดอร์", "Folders"),
                     leading = { ArtImage(R.drawable.art_folder_yellow, 76.dp) },
                     actions = {
-                        IconButton(onClick = { runCatching { focus.requestFocus() } }, modifier = Modifier.size(52.dp)) { Icon(Icons.Outlined.Search, "ค้นหา", Modifier.size(34.dp)) }
+                        IconButton(onClick = { runCatching { focus.requestFocus() } }, modifier = Modifier.size(52.dp)) { Icon(Icons.Outlined.Search, t("ค้นหา", "Search"), Modifier.size(34.dp)) }
                         Box {
-                            IconButton(onClick = { moreMenu = true }, modifier = Modifier.size(52.dp).testTag("folders_more")) { Icon(Icons.Outlined.MoreVert, "เพิ่มเติม", Modifier.size(34.dp)) }
+                            IconButton(onClick = { moreMenu = true }, modifier = Modifier.size(52.dp).testTag("folders_more")) { Icon(Icons.Outlined.MoreVert, t("เพิ่มเติม", "More"), Modifier.size(34.dp)) }
                             DropdownMenu(expanded = moreMenu, onDismissRequest = { moreMenu = false }) {
-                                DropdownMenuItem(text = { Text("สร้างโฟลเดอร์ใหม่") }, leadingIcon = { Icon(Icons.Outlined.CreateNewFolder, null) }, onClick = { moreMenu = false; createDialog = true })
-                                DropdownMenuItem(text = { Text("คลังเก็บ") }, leadingIcon = { Icon(Icons.Outlined.Archive, null) }, onClick = { moreMenu = false; onOpenList(Section.Archive, false) })
-                                DropdownMenuItem(text = { Text("จัดการป้ายกำกับ") }, leadingIcon = { Icon(Icons.AutoMirrored.Outlined.Label, null) }, onClick = { moreMenu = false; onManageLabels() })
+                                DropdownMenuItem(text = { Text(t("สร้างโฟลเดอร์ใหม่", "Create new folder")) }, leadingIcon = { Icon(Icons.Outlined.CreateNewFolder, null) }, onClick = { moreMenu = false; createDialog = true })
+                                DropdownMenuItem(text = { Text(t("คลังเก็บ", "Archive")) }, leadingIcon = { Icon(Icons.Outlined.Archive, null) }, onClick = { moreMenu = false; onOpenList(Section.Archive, false) })
+                                DropdownMenuItem(text = { Text(t("จัดการป้ายกำกับ", "Manage labels")) }, leadingIcon = { Icon(Icons.AutoMirrored.Outlined.Label, null) }, onClick = { moreMenu = false; onManageLabels() })
                             }
                         }
                     }
                 )
             }
             item {
-                GoldSearchBox(Modifier.padding(horizontal = 20.dp, vertical = 6.dp)) { SearchField(query, "ค้นหาโฟลเดอร์...", focus) { query = it } }
+                GoldSearchBox(Modifier.padding(horizontal = 20.dp, vertical = 6.dp)) { SearchField(query, t("ค้นหาโฟลเดอร์...", "Search folders..."), focus) { query = it } }
             }
             item {
-                SectionTitle("โฟลเดอร์ของฉัน") {
+                SectionTitle(t("โฟลเดอร์ของฉัน", "My folders")) {
                     Box {
                         Row(
                             Modifier.clip(RoundedCornerShape(22.dp)).background(MaterialTheme.colorScheme.surfaceContainerHigh)
@@ -600,7 +590,7 @@ private fun FoldersTab(
                         ) {
                             Icon(Icons.AutoMirrored.Outlined.Sort, null, Modifier.size(22.dp))
                             Spacer(Modifier.width(8.dp))
-                            Text("เรียงลำดับ", style = MaterialTheme.typography.labelLarge)
+                            Text(t("เรียงลำดับ", "Sort"), style = MaterialTheme.typography.labelLarge)
                             Icon(Icons.Outlined.ExpandMore, null, Modifier.size(20.dp))
                         }
                         DropdownMenu(expanded = sortMenu, onDismissRequest = { sortMenu = false }) {
@@ -623,15 +613,15 @@ private fun FoldersTab(
                     }
                 }
             }
-            item { SectionTitle("โน้ตทั้งหมด", Icons.Outlined.BarChart, Modifier.padding(top = 10.dp)) }
+            item { SectionTitle(t("โน้ตทั้งหมด", "All notes"), Icons.Outlined.BarChart, Modifier.padding(top = 10.dp)) }
             item {
                 GlassCard(Modifier.fillMaxWidth().padding(horizontal = 20.dp).testTag("folders_all_notes"), onClick = { onOpenList(Section.Notes, false) }) {
                     Row(Modifier.fillMaxWidth().padding(18.dp), verticalAlignment = Alignment.CenterVertically) {
                         Icon(Icons.AutoMirrored.Outlined.StickyNote2, null, tint = Gold, modifier = Modifier.size(56.dp))
                         Spacer(Modifier.width(16.dp))
                         Column(Modifier.weight(1f)) {
-                            Text("ดูโน้ตทั้งหมด", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                            Text("มีทั้งหมด ${live.count { !it.note.isArchived }} โน้ต", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(t("ดูโน้ตทั้งหมด", "See all notes"), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                            Text(t("มีทั้งหมด ${live.count { !it.note.isArchived }} โน้ต", "${live.count { !it.note.isArchived }} notes in total"), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                         Icon(Icons.Outlined.ChevronRight, null)
                     }
@@ -642,30 +632,30 @@ private fun FoldersTab(
     }
 
     if (createDialog) {
-        FolderDialog(title = "สร้างโฟลเดอร์ใหม่", initialName = "", initialColor = 0, onDismiss = { createDialog = false }) { name, color ->
+        FolderDialog(title = t("สร้างโฟลเดอร์ใหม่", "Create new folder"), initialName = "", initialColor = 0, onDismiss = { createDialog = false }) { name, color ->
             createDialog = false
             vm.createFolder(name, color)
         }
     }
     renameTarget?.let { f ->
-        NameDialog(title = "เปลี่ยนชื่อโฟลเดอร์", initial = f.name, onDismiss = { renameTarget = null }, onConfirm = { vm.renameFolder(f, it); renameTarget = null })
+        NameDialog(title = t("เปลี่ยนชื่อโฟลเดอร์", "Rename folder"), initial = f.name, onDismiss = { renameTarget = null }, onConfirm = { vm.renameFolder(f, it); renameTarget = null })
     }
     colorTarget?.let { f ->
-        FolderDialog(title = "สีของโฟลเดอร์", initialName = f.name, initialColor = f.color, nameEditable = false, onDismiss = { colorTarget = null }) { _, c ->
+        FolderDialog(title = t("สีของโฟลเดอร์", "Folder colour"), initialName = f.name, initialColor = f.color, nameEditable = false, onDismiss = { colorTarget = null }) { _, c ->
             vm.setFolderColor(f, c); colorTarget = null
         }
     }
     deleteTarget?.let { f ->
         ConfirmDialog(
-            title = "ลบโฟลเดอร์",
-            message = "ลบโฟลเดอร์ \"${f.name}\" ? โน้ตข้างในจะไม่ถูกลบ แต่จะย้ายออกจากโฟลเดอร์",
-            confirmLabel = "ลบ",
+            title = t("ลบโฟลเดอร์", "Delete folder"),
+            message = t("ลบโฟลเดอร์ \"${f.name}\" ? โน้ตข้างในจะไม่ถูกลบ แต่จะย้ายออกจากโฟลเดอร์", "Delete folder \"${f.name}\"? Its notes are kept and moved out of the folder."),
+            confirmLabel = t("ลบ", "Delete"),
             onDismiss = { deleteTarget = null },
             onConfirm = { vm.deleteFolder(f.id) }
         )
     }
     if (confirmEmptyTrash) {
-        ConfirmDialog(title = "ล้างถังขยะ", message = "ลบโน้ตในถังขยะทั้งหมดถาวร กู้คืนไม่ได้", confirmLabel = "ล้างถังขยะ", onDismiss = { confirmEmptyTrash = false }, onConfirm = { vm.emptyTrash() })
+        ConfirmDialog(title = t("ล้างถังขยะ", "Empty trash"), message = t("ลบโน้ตในถังขยะทั้งหมดถาวร กู้คืนไม่ได้", "Delete every note in the trash for good. This cannot be undone."), confirmLabel = t("ล้างถังขยะ", "Empty trash"), onDismiss = { confirmEmptyTrash = false }, onConfirm = { vm.emptyTrash() })
     }
 }
 
@@ -683,7 +673,7 @@ private fun FolderCard(art: Int, name: String, count: String, modifier: Modifier
                     Text(count, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
                 Box {
-                    IconButton(onClick = { menu = true }, modifier = Modifier.width(30.dp)) { Icon(Icons.Outlined.MoreVert, "เพิ่มเติม") }
+                    IconButton(onClick = { menu = true }, modifier = Modifier.width(30.dp)) { Icon(Icons.Outlined.MoreVert, t("เพิ่มเติม", "More")) }
                     DropdownMenu(expanded = menu, onDismissRequest = { menu = false }) { menuItems { menu = false } }
                 }
             }
@@ -707,7 +697,7 @@ private fun NewFolderCard(modifier: Modifier, onClick: () -> Unit) {
         }
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("+", fontSize = 34.sp, color = Gold, fontWeight = FontWeight.Bold)
-            Text("สร้างโฟลเดอร์ใหม่", style = MaterialTheme.typography.titleSmall, color = if (dark) Gold else GoldDeep, fontWeight = FontWeight.Bold)
+            Text(t("สร้างโฟลเดอร์ใหม่", "Create new folder"), style = MaterialTheme.typography.titleSmall, color = if (dark) Gold else GoldDeep, fontWeight = FontWeight.Bold)
         }
     }
 }
@@ -733,7 +723,7 @@ private fun FolderDialog(
                         value = name,
                         onValueChange = { name = it.replace("\n", "").take(60) },
                         singleLine = true,
-                        label = { Text("ชื่อโฟลเดอร์") },
+                        label = { Text(t("ชื่อโฟลเดอร์", "Folder name")) },
                         modifier = Modifier.fillMaxWidth().testTag("name_input")
                     )
                 }
@@ -752,7 +742,7 @@ private fun FolderDialog(
                 }
             }
         },
-        confirmButton = { TextButton(onClick = { onConfirm(name.trim(), color) }, enabled = !nameEditable || name.isNotBlank()) { Text("บันทึก") } },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("ยกเลิก") } }
+        confirmButton = { TextButton(onClick = { onConfirm(name.trim(), color) }, enabled = !nameEditable || name.isNotBlank()) { Text(t("บันทึก", "Save")) } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(t("ยกเลิก", "Cancel")) } }
     )
 }

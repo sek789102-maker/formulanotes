@@ -114,6 +114,9 @@ object RichText {
                     val lineEnd = text.indexOf('\n', m.range.last + 1).let { if (it < 0) text.length else it }
                     val align = when (arg) { "c" -> TextAlign.Center; "r" -> TextAlign.End; "j" -> TextAlign.Justify; else -> TextAlign.Start }
                     aligns += Triple(lineStart, lineEnd, align)
+                } else {
+                    // An alignment code that ended up inside a line (two lines joined) stays hidden.
+                    segs += Seg(m.range.first, m.range.last + 1, "", preferRight = false)
                 }
                 continue
             }
@@ -697,6 +700,56 @@ object RichText {
      * the smallest run of foreign characters is taken out of the tag and kept right after it.
      */
     fun repairTags(text: String): String {
+        if (text.indexOf(OPEN) < 0 && text.indexOf(CLOSE) < 0) return text
+        return removeStray(repairLoose(text))
+    }
+
+    // Pieces of codes left over when part of a code was deleted, cut or pasted, e.g. "⟦c:00AC" or "1⟧".
+    private val strayOpen = Regex("""⟦(?:/(?:sup|sub|al|u|b|i|s|c|h|z|f)|sup|sub|[ch]:[0-9A-Fa-f]{0,6}|z:[0-9.]{0,6}|f:[a-z]{0,5}|al:[lcrj]?|[a-z]{0,3}:?)?""")
+    private val strayClose = Regex("""(?:/(?:sup|sub|al|u|b|i|s|c|h|z|f)|[ch]:[0-9A-Fa-f]{1,6}|z:[0-9.]{1,6}|f:(?:sans|serif|mono|hand)|al:[lcrj]|sup|sub)?⟧""")
+
+    /** Removes every ⟦ or ⟧ that is not part of a complete, valid code (with the code piece around it). */
+    private fun removeStray(text: String): String {
+        if (text.indexOf(OPEN) < 0 && text.indexOf(CLOSE) < 0) return text
+        val sb = StringBuilder(text.length)
+        var last = 0
+        fun gap(s: String) {
+            if (s.indexOf(OPEN) < 0 && s.indexOf(CLOSE) < 0) sb.append(s)
+            else sb.append(strayClose.replace(strayOpen.replace(s, ""), ""))
+        }
+        for (m in tagRegex.findAll(text)) {
+            if (!validTag(m.value)) continue
+            gap(text.substring(last, m.range.first))
+            sb.append(m.value)
+            last = m.range.last + 1
+        }
+        gap(text.substring(last))
+        return sb.toString()
+    }
+
+    /**
+     * Cleans the editor text after any change: broken or partial codes never show as text.
+     * The cursor keeps its place relative to the text around it.
+     */
+    fun sanitize(v: TextFieldValue): TextFieldValue {
+        val t = v.text
+        if (t.indexOf(OPEN) < 0 && t.indexOf(CLOSE) < 0) return v
+        val fixed = repairTags(t)
+        if (fixed == t) return v
+        var pre = 0
+        val maxPre = minOf(t.length, fixed.length)
+        while (pre < maxPre && t[pre] == fixed[pre]) pre++
+        var suf = 0
+        while (suf < t.length - pre && suf < fixed.length - pre && t[t.length - 1 - suf] == fixed[fixed.length - 1 - suf]) suf++
+        fun map(i: Int): Int = when {
+            i <= pre -> i
+            i >= t.length - suf -> fixed.length - (t.length - i)
+            else -> fixed.length - suf
+        }.coerceIn(0, fixed.length)
+        return TextFieldValue(fixed, TextRange(map(v.selection.start), map(v.selection.end)))
+    }
+
+    private fun repairLoose(text: String): String {
         if (text.indexOf(OPEN) < 0) return text
         return looseTag.replace(text) { m ->
             val tag = m.value
@@ -715,5 +768,5 @@ object RichText {
     }
 
     /** Removes every marker, for sharing, previews in plain places and the widget. */
-    fun stripTags(text: String): String = repairTags(text).replace(tagRegex, "")
+    fun stripTags(text: String): String = repairTags(text).replace(tagRegex, "").replace(OPEN.toString(), "").replace(CLOSE.toString(), "")
 }

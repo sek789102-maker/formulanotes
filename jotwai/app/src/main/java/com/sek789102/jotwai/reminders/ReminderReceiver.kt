@@ -92,7 +92,7 @@ class ReminderReceiver : BroadcastReceiver() {
         val body = when {
             note.isLocked -> context.getString(R.string.locked_note_hidden)
             note.type == NoteType.CHECKLIST -> note.checklist.filter { !it.checked }.joinToString("\n") { "☐ ${it.text}" }
-            else -> note.content
+            else -> com.sek789102.jotwai.domain.TextEditing.toPlainText(note.content)
         }.take(600)
         val n = NotificationCompat.Builder(context, ReminderScheduler.CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_notification)

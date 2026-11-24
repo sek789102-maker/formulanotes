@@ -1,5 +1,6 @@
 package com.sek789102.jotwai.ui.design
 
+import com.sek789102.jotwai.util.t
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
@@ -53,6 +54,10 @@ import androidx.compose.ui.unit.sp
 val Gold = Color(0xFFFFC21A)
 val GoldDeep = Color(0xFFE59A00)
 val GoldBrush = Brush.linearGradient(listOf(Color(0xFFFFD84D), Gold, GoldDeep))
+
+/** Gold for text: deeper on the light theme so it stays readable. */
+@Composable
+fun goldText(): Color = if (isDarkUi()) Gold else Color(0xFFA86F00)
 
 @Composable
 fun isDarkUi(): Boolean = MaterialTheme.colorScheme.background.luminance() < 0.2f
@@ -131,11 +136,17 @@ fun GoldTile(icon: ImageVector, size: Dp = 56.dp, glass: Boolean = false) {
         Modifier.size(size)
             .shadow(8.dp, shape, ambientColor = Gold, spotColor = Gold)
             .clip(shape)
-            .background(if (glass) Brush.linearGradient(listOf(Color(0xFF5A3F08), Color(0xFF2A1D06))) else GoldBrush)
+            .background(
+                when {
+                    !glass -> GoldBrush
+                    isDarkUi() -> Brush.linearGradient(listOf(Color(0xFF5A3F08), Color(0xFF2A1D06)))
+                    else -> Brush.linearGradient(listOf(Color(0xFFFFF6DA), Color(0xFFFFE39A)))
+                }
+            )
             .border(1.dp, Gold.copy(alpha = 0.7f), shape),
         contentAlignment = Alignment.Center
     ) {
-        Icon(icon, null, tint = if (glass) Gold else Color(0xFF1A1206), modifier = Modifier.size(size * 0.55f))
+        Icon(icon, null, tint = if (glass) (if (isDarkUi()) Gold else GoldDeep) else Color(0xFF1A1206), modifier = Modifier.size(size * 0.55f))
     }
 }
 
@@ -221,7 +232,7 @@ fun GoldBottomBar(items: List<TabItem>, selected: Int, onSelect: (Int) -> Unit) 
 
 /** Round gold "+" button. */
 @Composable
-fun GoldFab(onClick: () -> Unit, modifier: Modifier = Modifier, description: String = "เพิ่ม") {
+fun GoldFab(onClick: () -> Unit, modifier: Modifier = Modifier, description: String = t("เพิ่ม", "Add")) {
     Box(
         modifier.size(68.dp)
             .shadow(14.dp, CircleShape, ambientColor = Gold, spotColor = Gold)

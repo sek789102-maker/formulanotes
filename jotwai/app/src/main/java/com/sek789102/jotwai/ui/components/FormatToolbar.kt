@@ -1,5 +1,6 @@
 package com.sek789102.jotwai.ui.components
 
+import com.sek789102.jotwai.util.t
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -147,17 +148,17 @@ fun FormatToolbar(value: TextFieldValue, apply: ((TextFieldValue) -> TextFieldVa
             Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).padding(horizontal = 6.dp, vertical = 2.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            b(Icons.Outlined.FormatBold, "ตัวหนา", "fmt_bold", Kind.BOLD in active) { apply { RichText.toggleMarker(it, "**") } }
-            b(Icons.Outlined.FormatItalic, "ตัวเอียง", "fmt_italic", Kind.ITALIC in active) { apply { RichText.toggleMarker(it, "*") } }
-            b(Icons.Outlined.FormatUnderlined, "ขีดเส้นใต้", "fmt_underline", Kind.UNDERLINE in active) { apply { RichText.applyTag(it, "u", "") } }
-            b(Icons.Outlined.FormatStrikethrough, "ขีดฆ่า", "fmt_strike", Kind.STRIKE in active) { apply { RichText.toggleMarker(it, "~~") } }
+            b(Icons.Outlined.FormatBold, t("ตัวหนา", "Bold"), "fmt_bold", Kind.BOLD in active) { apply { RichText.toggleMarker(it, "**") } }
+            b(Icons.Outlined.FormatItalic, t("ตัวเอียง", "Italic"), "fmt_italic", Kind.ITALIC in active) { apply { RichText.toggleMarker(it, "*") } }
+            b(Icons.Outlined.FormatUnderlined, t("ขีดเส้นใต้", "Underline"), "fmt_underline", Kind.UNDERLINE in active) { apply { RichText.applyTag(it, "u", "") } }
+            b(Icons.Outlined.FormatStrikethrough, t("ขีดฆ่า", "Strikethrough"), "fmt_strike", Kind.STRIKE in active) { apply { RichText.toggleMarker(it, "~~") } }
             sep()
             val tc = active[Kind.COLOR]?.let { RichText.parseColor(it) }
-            b(Icons.Outlined.FormatColorText, "สีตัวอักษร", "fmt_color", tc != null, tint = tc) { panel = if (panel == Panel.TEXT_COLOR) Panel.NONE else Panel.TEXT_COLOR }
+            b(Icons.Outlined.FormatColorText, t("สีตัวอักษร", "Text colour"), "fmt_color", tc != null, tint = tc) { panel = if (panel == Panel.TEXT_COLOR) Panel.NONE else Panel.TEXT_COLOR }
             val hc = active[Kind.BG]?.let { RichText.parseColor(it) }
-            b(Icons.Outlined.BorderColor, "สีไฮไลต์", "fmt_mark", Kind.MARK in active || hc != null, tint = hc) { panel = if (panel == Panel.HIGHLIGHT) Panel.NONE else Panel.HIGHLIGHT }
+            b(Icons.Outlined.BorderColor, t("สีไฮไลต์", "Highlight colour"), "fmt_mark", Kind.MARK in active || hc != null, tint = hc) { panel = if (panel == Panel.HIGHLIGHT) Panel.NONE else Panel.HIGHLIGHT }
             sep()
-            b(Icons.Outlined.TextDecrease, "ลดขนาด", "fmt_smaller") { apply { RichText.applyTag(it, "z", stepSize(curEm, -1)) } }
+            b(Icons.Outlined.TextDecrease, t("ลดขนาด", "Smaller"), "fmt_smaller") { apply { RichText.applyTag(it, "z", stepSize(curEm, -1)) } }
             Box(
                 Modifier
                     .padding(horizontal = 2.dp)
@@ -168,13 +169,13 @@ fun FormatToolbar(value: TextFieldValue, apply: ((TextFieldValue) -> TextFieldVa
                     .testTag("fmt_size"),
                 contentAlignment = Alignment.Center
             ) { Text("${(curEm * BASE_PT).toInt()}", fontWeight = FontWeight.Bold, color = scheme.onSurface) }
-            b(Icons.Outlined.TextIncrease, "เพิ่มขนาด", "fmt_bigger") { apply { RichText.applyTag(it, "z", stepSize(curEm, +1)) } }
-            b(Icons.Outlined.FontDownload, "ฟอนต์", "fmt_font", Kind.FONT in active) { panel = if (panel == Panel.FONT) Panel.NONE else Panel.FONT }
+            b(Icons.Outlined.TextIncrease, t("เพิ่มขนาด", "Bigger"), "fmt_bigger") { apply { RichText.applyTag(it, "z", stepSize(curEm, +1)) } }
+            b(Icons.Outlined.FontDownload, t("ฟอนต์", "Font"), "fmt_font", Kind.FONT in active) { panel = if (panel == Panel.FONT) Panel.NONE else Panel.FONT }
             sep()
             Box {
-                b(Icons.Outlined.Title, "หัวข้อ", "fmt_heading", headingLevel > 0) { headingMenu = true }
+                b(Icons.Outlined.Title, t("หัวข้อ", "Heading"), "fmt_heading", headingLevel > 0) { headingMenu = true }
                 DropdownMenu(expanded = headingMenu, onDismissRequest = { headingMenu = false }) {
-                    listOf(0 to "ข้อความปกติ", 1 to "หัวข้อใหญ่", 2 to "หัวข้อกลาง", 3 to "หัวข้อเล็ก").forEach { (lv, name) ->
+                    listOf(0 to t("ข้อความปกติ", "Normal text"), 1 to t("หัวข้อใหญ่", "Large heading"), 2 to t("หัวข้อกลาง", "Medium heading"), 3 to t("หัวข้อเล็ก", "Small heading")).forEach { (lv, name) ->
                         DropdownMenuItem(
                             text = {
                                 Text(
@@ -189,17 +190,17 @@ fun FormatToolbar(value: TextFieldValue, apply: ((TextFieldValue) -> TextFieldVa
                     }
                 }
             }
-            b(Icons.AutoMirrored.Outlined.FormatListBulleted, "รายการแบบจุด", "fmt_bullets") { apply { TextEditing.toggleLinePrefix(it, "- ") } }
-            b(Icons.Outlined.FormatListNumbered, "รายการแบบตัวเลข", "fmt_numbers") { apply { TextEditing.toggleLinePrefix(it, "1. ") } }
-            b(Icons.Outlined.CheckBoxOutlineBlank, "ช่องติ๊ก", "fmt_box") { apply { TextEditing.toggleLinePrefix(it, "[ ] ") } }
-            b(Icons.Outlined.FormatQuote, "ข้อความอ้างอิง", "fmt_quote", Kind.QUOTE in active) { apply { TextEditing.toggleLinePrefix(it, "> ") } }
+            b(Icons.AutoMirrored.Outlined.FormatListBulleted, t("รายการแบบจุด", "Bulleted list"), "fmt_bullets") { apply { TextEditing.toggleLinePrefix(it, "- ") } }
+            b(Icons.Outlined.FormatListNumbered, t("รายการแบบตัวเลข", "Numbered list"), "fmt_numbers") { apply { TextEditing.toggleLinePrefix(it, "1. ") } }
+            b(Icons.Outlined.CheckBoxOutlineBlank, t("ช่องติ๊ก", "Checkbox"), "fmt_box") { apply { TextEditing.toggleLinePrefix(it, "[ ] ") } }
+            b(Icons.Outlined.FormatQuote, t("ข้อความอ้างอิง", "Quote"), "fmt_quote", Kind.QUOTE in active) { apply { TextEditing.toggleLinePrefix(it, "> ") } }
             sep()
             Box {
-                b(alignIcon(align), "จัดแนว", "fmt_align", align != TextAlign.Start) { alignMenu = true }
+                b(alignIcon(align), t("จัดแนว", "Align"), "fmt_align", align != TextAlign.Start) { alignMenu = true }
                 DropdownMenu(expanded = alignMenu, onDismissRequest = { alignMenu = false }) {
                     listOf(
-                        TextAlign.Start to "ชิดซ้าย", TextAlign.Center to "กึ่งกลาง",
-                        TextAlign.End to "ชิดขวา", TextAlign.Justify to "เต็มบรรทัด"
+                        TextAlign.Start to t("ชิดซ้าย", "Left"), TextAlign.Center to t("กึ่งกลาง", "Center"),
+                        TextAlign.End to t("ชิดขวา", "Right"), TextAlign.Justify to t("เต็มบรรทัด", "Justify")
                     ).forEach { (a, name) ->
                         DropdownMenuItem(
                             leadingIcon = { Icon(alignIcon(a), null) },
@@ -210,28 +211,28 @@ fun FormatToolbar(value: TextFieldValue, apply: ((TextFieldValue) -> TextFieldVa
                     }
                 }
             }
-            b(Icons.AutoMirrored.Outlined.FormatIndentDecrease, "ลดย่อหน้า", "fmt_outdent") { apply { RichText.indent(it, -1) } }
-            b(Icons.AutoMirrored.Outlined.FormatIndentIncrease, "เพิ่มย่อหน้า", "fmt_indent") { apply { RichText.indent(it, 1) } }
+            b(Icons.AutoMirrored.Outlined.FormatIndentDecrease, t("ลดย่อหน้า", "Decrease indent"), "fmt_outdent") { apply { RichText.indent(it, -1) } }
+            b(Icons.AutoMirrored.Outlined.FormatIndentIncrease, t("เพิ่มย่อหน้า", "Increase indent"), "fmt_indent") { apply { RichText.indent(it, 1) } }
             sep()
-            b(Icons.Outlined.Superscript, "ตัวยก", "fmt_sup", Kind.SUP in active) { apply { RichText.applyTag(it, "sup", "") } }
-            b(Icons.Outlined.Subscript, "ตัวห้อย", "fmt_sub", Kind.SUB in active) { apply { RichText.applyTag(it, "sub", "") } }
-            b(Icons.Outlined.Code, "โค้ด", "fmt_code", Kind.CODE in active) { apply { RichText.toggleMarker(it, "`") } }
-            b(Icons.Outlined.HorizontalRule, "เส้นคั่น", "fmt_rule") { apply { RichText.insertDivider(it) } }
-            b(Icons.Outlined.DateRange, "แทรกวันเวลา", "fmt_date") { apply { insertText(it, nowText()) } }
-            b(Icons.Outlined.FormatClear, "ล้างรูปแบบ", "fmt_clear") { apply { RichText.clearFormatting(it) } }
+            b(Icons.Outlined.Superscript, t("ตัวยก", "Superscript"), "fmt_sup", Kind.SUP in active) { apply { RichText.applyTag(it, "sup", "") } }
+            b(Icons.Outlined.Subscript, t("ตัวห้อย", "Subscript"), "fmt_sub", Kind.SUB in active) { apply { RichText.applyTag(it, "sub", "") } }
+            b(Icons.Outlined.Code, t("โค้ด", "Code"), "fmt_code", Kind.CODE in active) { apply { RichText.toggleMarker(it, "`") } }
+            b(Icons.Outlined.HorizontalRule, t("เส้นคั่น", "Divider"), "fmt_rule") { apply { RichText.insertDivider(it) } }
+            b(Icons.Outlined.DateRange, t("แทรกวันเวลา", "Insert date and time"), "fmt_date") { apply { insertText(it, nowText()) } }
+            b(Icons.Outlined.FormatClear, t("ล้างรูปแบบ", "Clear formatting"), "fmt_clear") { apply { RichText.clearFormatting(it) } }
         }
         when (panel) {
             Panel.TEXT_COLOR -> ColorPanel(
                 colors = textColors,
                 current = active[Kind.COLOR],
-                defaultLabel = "สีปกติ",
+                defaultLabel = t("สีปกติ", "Default colour"),
                 onPick = { hex -> apply { RichText.applyTag(it, "c", hex) } },
                 onClose = { panel = Panel.NONE }
             )
             Panel.HIGHLIGHT -> ColorPanel(
                 colors = highlightColors,
                 current = active[Kind.BG],
-                defaultLabel = "ไม่มีไฮไลต์",
+                defaultLabel = t("ไม่มีไฮไลต์", "No highlight"),
                 onPick = { hex ->
                     apply {
                         val cleared = RichText.removeKinds(it, setOf(Kind.MARK))
@@ -296,12 +297,7 @@ private fun insertText(v: TextFieldValue, s: String): TextFieldValue {
     return TextFieldValue(text, androidx.compose.ui.text.TextRange(v.selection.min + s.length))
 }
 
-private fun nowText(): String {
-    val th = Locale.Builder().setLanguage("th").setRegion("TH").build()
-    val d = Date()
-    val y = SimpleDateFormat("yyyy", Locale.US).format(d).toInt() + 543
-    return SimpleDateFormat("d MMM", th).format(d) + " $y " + SimpleDateFormat("HH:mm", Locale.US).format(d)
-}
+private fun nowText(): String = com.sek789102.jotwai.util.Dates.full(System.currentTimeMillis())
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -341,12 +337,12 @@ private fun ColorPanel(colors: List<String>, current: String?, defaultLabel: Str
         }
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                "✕ = $defaultLabel   ·   วงสีรุ้ง = เลือกสีเอง",
+                t("✕ = $defaultLabel   ·   วงสีรุ้ง = เลือกสีเอง", "✕ = $defaultLabel   ·   rainbow = custom colour"),
                 style = MaterialTheme.typography.labelSmall,
                 color = scheme.onSurfaceVariant,
                 modifier = Modifier.weight(1f)
             )
-            TextButton(onClick = onClose) { Text("ปิด") }
+            TextButton(onClick = onClose) { Text(t("ปิด", "Close")) }
         }
     }
     if (custom) {
@@ -371,21 +367,21 @@ private fun CustomColorDialog(initial: Color, onDismiss: () -> Unit, onPick: (St
     var hexField by remember(hex) { mutableStateOf(hex) }
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("เลือกสีเอง") },
+        title = { Text(t("เลือกสีเอง", "Custom colour")) },
         text = {
             Column(Modifier.verticalScroll(rememberScrollState())) {
                 Box(Modifier.fillMaxWidth().height(56.dp).clip(RoundedCornerShape(12.dp)).background(color))
                 Spacer(Modifier.height(12.dp))
-                Text("เฉดสี", style = MaterialTheme.typography.labelMedium)
+                Text(t("เฉดสี", "Hue"), style = MaterialTheme.typography.labelMedium)
                 Box(
                     Modifier.fillMaxWidth().height(10.dp).clip(RoundedCornerShape(5.dp)).background(
                         Brush.horizontalGradient((0..6).map { Color(android.graphics.Color.HSVToColor(floatArrayOf(it * 60f, 1f, 1f))) })
                     )
                 )
                 Slider(value = h, onValueChange = { h = it }, valueRange = 0f..360f, modifier = Modifier.testTag("hue"))
-                Text("ความสด", style = MaterialTheme.typography.labelMedium)
+                Text(t("ความสด", "Saturation"), style = MaterialTheme.typography.labelMedium)
                 Slider(value = s, onValueChange = { s = it })
-                Text("ความสว่าง", style = MaterialTheme.typography.labelMedium)
+                Text(t("ความสว่าง", "Brightness"), style = MaterialTheme.typography.labelMedium)
                 Slider(value = v, onValueChange = { v = it })
                 OutlinedTextField(
                     value = hexField,
@@ -400,13 +396,13 @@ private fun CustomColorDialog(initial: Color, onDismiss: () -> Unit, onPick: (St
                     },
                     prefix = { Text("#") },
                     singleLine = true,
-                    label = { Text("รหัสสี") },
+                    label = { Text(t("รหัสสี", "Colour code")) },
                     keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Characters)
                 )
             }
         },
-        confirmButton = { TextButton(onClick = { onPick(hex) }) { Text("ใช้สีนี้") } },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("ยกเลิก") } }
+        confirmButton = { TextButton(onClick = { onPick(hex) }) { Text(t("ใช้สีนี้", "Use this colour")) } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(t("ยกเลิก", "Cancel")) } }
     )
 }
 
@@ -420,13 +416,13 @@ private fun SizePanel(currentEm: Float, onPick: (Float?) -> Unit, onClose: () ->
                 FilterChip(
                     selected = (currentEm * BASE_PT).toInt() == p,
                     onClick = { onPick(if (p == BASE_PT.toInt()) null else p / BASE_PT) },
-                    label = { Text(if (p == BASE_PT.toInt()) "$p (ปกติ)" else "$p") },
+                    label = { Text(if (p == BASE_PT.toInt()) t("$p (ปกติ)", "$p (normal)") else "$p") },
                     modifier = Modifier.testTag("size_$p")
                 )
             }
         }
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("ขนาด ${pt.toInt()}", modifier = Modifier.width(72.dp), style = MaterialTheme.typography.labelLarge)
+            Text(t("ขนาด ${pt.toInt()}", "Size ${pt.toInt()}"), modifier = Modifier.width(72.dp), style = MaterialTheme.typography.labelLarge)
             Slider(
                 value = pt,
                 onValueChange = { pt = it },
@@ -434,14 +430,14 @@ private fun SizePanel(currentEm: Float, onPick: (Float?) -> Unit, onClose: () ->
                 valueRange = 6f..160f,
                 modifier = Modifier.weight(1f).testTag("size_slider")
             )
-            TextButton(onClick = onClose) { Text("ปิด") }
+            TextButton(onClick = onClose) { Text(t("ปิด", "Close")) }
         }
     }
 }
 
 @Composable
 private fun FontPanel(current: String?, onPick: (String?) -> Unit, onClose: () -> Unit) {
-    val fonts = listOf(null to "ค่าเริ่มต้น", "sans" to "ไม่มีหัว", "serif" to "มีหัว", "mono" to "พิมพ์ดีด", "hand" to "ลายมือ")
+    val fonts = listOf(null to t("ค่าเริ่มต้น", "Default"), "sans" to t("ไม่มีหัว", "Sans serif"), "serif" to t("มีหัว", "Serif"), "mono" to t("พิมพ์ดีด", "Typewriter"), "hand" to t("ลายมือ", "Handwriting"))
     val scheme = MaterialTheme.colorScheme
     Column(Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 4.dp)) {
         Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -461,6 +457,6 @@ private fun FontPanel(current: String?, onPick: (String?) -> Unit, onClose: () -
                 }
             }
         }
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) { TextButton(onClick = onClose) { Text("ปิด") } }
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) { TextButton(onClick = onClose) { Text(t("ปิด", "Close")) } }
     }
 }

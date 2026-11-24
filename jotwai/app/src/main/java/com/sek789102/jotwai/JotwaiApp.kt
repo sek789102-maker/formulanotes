@@ -16,6 +16,10 @@ import kotlinx.coroutines.launch
 
 class JotwaiApp : Application() {
 
+    override fun attachBaseContext(base: android.content.Context) {
+        super.attachBaseContext(com.sek789102.jotwai.util.Lang.wrap(base))
+    }
+
     /** Outlives screens: used for final saves when the editor closes. */
     val appScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 

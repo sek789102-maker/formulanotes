@@ -107,27 +107,34 @@ class EditorViewModel(application: Application, val noteId: Long) : AndroidViewM
     // ---- edits ----
     fun onTitleChange(v: TextFieldValue) {
         val textChanged = v.text != title.text
-        title = v.copy(text = v.text.replace("\n", " "))
+        val clean = v.text.replace("\n", " ")
+        // Titles never hold formatting codes (e.g. pasted from a note body).
+        title = if (clean.indexOf(com.sek789102.jotwai.domain.RichText.OPEN) >= 0 || clean.indexOf(com.sek789102.jotwai.domain.RichText.CLOSE) >= 0) {
+            val t = com.sek789102.jotwai.domain.RichText.stripTags(clean)
+            TextFieldValue(t, TextRange(minOf(v.selection.end, t.length)))
+        } else v.copy(text = clean)
         if (textChanged) changed()
     }
 
     fun onBodyChange(v: TextFieldValue) {
         val afterDelete = com.sek789102.jotwai.domain.RichText.fixDeletion(body, v)
         val safe = if (afterDelete === v) com.sek789102.jotwai.domain.RichText.fixEdit(body, v) else afterDelete
-        val next = TextEditing.continueList(body, safe)
+        val next = com.sek789102.jotwai.domain.RichText.sanitize(TextEditing.continueList(body, safe))
         val textChanged = next.text != body.text
         body = next
         if (textChanged) changed()
     }
 
     fun applyBodyFormat(transform: (TextFieldValue) -> TextFieldValue) {
-        body = transform(body)
+        body = com.sek789102.jotwai.domain.RichText.sanitize(transform(body))
         changed(force = true)
     }
 
     fun setChecklistItemText(id: String, text: String) {
         // Pasting several lines into one item splits them into separate items.
-        val lines = text.split('\n')
+        val plain = if (text.indexOf(com.sek789102.jotwai.domain.RichText.OPEN) >= 0 || text.indexOf(com.sek789102.jotwai.domain.RichText.CLOSE) >= 0)
+            com.sek789102.jotwai.domain.RichText.stripTags(text) else text
+        val lines = plain.split('\n')
         checklist = checklist.flatMap { item ->
             if (item.id != id) listOf(item)
             else listOf(item.copy(text = lines.first())) + lines.drop(1).map { ChecklistItem(text = it) }

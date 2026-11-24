@@ -322,7 +322,7 @@ fun ReminderDialog(
                         Row(Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
                             Icon(Icons.Outlined.Event, null, Modifier.size(18.dp))
                             Spacer(Modifier.width(6.dp))
-                            Text(java.text.SimpleDateFormat("d MMM yyyy", java.util.Locale.forLanguageTag("th-TH")).format(java.util.Date(at)), maxLines = 1)
+                            Text(Dates.date(at), maxLines = 1)
                         }
                     }
                     Surface(onClick = { pickTime = true }, shape = RoundedCornerShape(10.dp), color = MaterialTheme.colorScheme.surfaceContainerHigh, modifier = Modifier.testTag("reminder_time")) {

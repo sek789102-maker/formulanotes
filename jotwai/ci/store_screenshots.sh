@@ -53,6 +53,19 @@ tap_tag tab_home; sleep 1
 tap_tag home_search; sleep 2; adb shell input text "tom"; sleep 1; adb shell input keyevent 111; shot 7-search 2
 adb shell input keyevent 4; sleep 1; adb shell input keyevent 4; sleep 1
 
+# Light theme and English (checks for the owner; not store images)
+tap_tag tab_settings; sleep 1; tap_tag theme_toggle; sleep 2; shot 9-settings-light 1
+tap_tag tab_home; shot 9b-home-light 2
+tap_tag tab_folders; shot 9c-folders-light 2
+tap_tag tab_reminders; shot 9d-reminders-light 2
+tap_tag tab_settings; sleep 1; tap_tag theme_toggle; sleep 1
+tap_tag set_language; sleep 1; tap_tag choice_2; sleep 4; shot 9e-settings-en 1
+tap_tag tab_home; shot 9f-home-en 2
+tap_tag tab_folders; shot 9g-folders-en 2
+tap_tag tab_reminders; shot 9h-reminders-en 2
+tap_tag tab_settings; sleep 1; tap_tag set_language; sleep 1; tap_tag choice_1; sleep 4
+tap_tag tab_home; sleep 1
+
 adb shell cmd uimode night yes; sleep 3
 adb shell am force-stop $PKG; adb shell cmd statusbar collapse; adb shell am start -n $ACT > /dev/null
 shot 8-home-dark 6

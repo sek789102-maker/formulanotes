@@ -1,5 +1,6 @@
 package com.sek789102.jotwai.ui.screens
 
+import com.sek789102.jotwai.util.t
 import android.Manifest
 import android.content.ActivityNotFoundException
 import android.content.Intent
@@ -42,6 +43,7 @@ import androidx.compose.material.icons.outlined.ChevronRight
 import androidx.compose.material.icons.outlined.Download
 import androidx.compose.material.icons.outlined.History
 import androidx.compose.material.icons.outlined.IosShare
+import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material.icons.outlined.Wallpaper
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.HorizontalDivider
@@ -103,6 +105,8 @@ fun SettingsTab(vm: AppViewModel, prefs: UserPreferences, onManageLabels: () -> 
     var themeDialog by remember { mutableStateOf(false) }
     var sizeDialog by remember { mutableStateOf(false) }
     var aboutDialog by remember { mutableStateOf(false) }
+    var langDialog by remember { mutableStateOf(false) }
+    val lang = remember { com.sek789102.jotwai.util.Lang.saved(context) }
     val dark = isDarkTheme(prefs.themeMode)
 
     fun io(block: suspend () -> Unit) {
@@ -144,12 +148,20 @@ fun SettingsTab(vm: AppViewModel, prefs: UserPreferences, onManageLabels: () -> 
     val notifLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { ok ->
         notifGranted = ok
         if (ok) vm.setRemindersEnabled(true)
+        else runCatching {
+            // Asked before and refused: the phone no longer shows the question, so open the app's notification settings.
+            context.startActivity(
+                Intent(android.provider.Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+                    .putExtra(android.provider.Settings.EXTRA_APP_PACKAGE, context.packageName)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            )
+        }
     }
 
     Column(Modifier.fillMaxSize().statusBarsPadding().verticalScroll(rememberScrollState()).padding(bottom = 24.dp)) {
         TabHeader(
-            title = "การตั้งค่า",
-            subtitle = "ปรับแต่งแอปให้เหมาะกับคุณ ✨",
+            title = t("การตั้งค่า", "Settings"),
+            subtitle = t("ปรับแต่งแอปให้เหมาะกับคุณ ✨", "Make the app yours ✨"),
             leading = { GoldTile(Icons.Filled.Settings, 68.dp, glass = true) },
             actions = { ThemeToggle(dark) { vm.setThemeMode(if (dark) ThemeMode.LIGHT else ThemeMode.DARK) } }
         )
@@ -158,22 +170,24 @@ fun SettingsTab(vm: AppViewModel, prefs: UserPreferences, onManageLabels: () -> 
                 ArtImage(R.drawable.art_app_circle, 84.dp)
                 Spacer(Modifier.width(18.dp))
                 Column(Modifier.weight(1f)) {
-                    Text("จดไว้", fontSize = 26.sp, fontWeight = FontWeight.Bold)
-                    Text("จดทุกไอเดีย ให้เป็นเรื่องง่าย", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(t("จดไว้", "Jotwai"), fontSize = 26.sp, fontWeight = FontWeight.Bold)
+                    Text(t("จดทุกไอเดีย ให้เป็นเรื่องง่าย", "Note every idea, the easy way"), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
                 Icon(Icons.Outlined.ChevronRight, null)
             }
         }
 
-        Group("การตั้งค่าทั่วไป", Icons.Filled.Settings) {
-            Item(Icons.Filled.Palette, "ธีมแอป", themeName(prefs.themeMode), tag = "set_theme", onClick = { themeDialog = true }) {
+        Group(t("การตั้งค่าทั่วไป", "General"), Icons.Filled.Settings) {
+            Item(Icons.Filled.Palette, t("ธีมแอป", "App theme"), themeName(prefs.themeMode), tag = "set_theme", onClick = { themeDialog = true }) {
                 Box(Modifier.size(30.dp).clip(CircleShape).background(Gold))
             }
             Divider()
-            Item(null, "ขนาดตัวอักษร", sizeName(prefs.textSize), tag = "set_text_size", onClick = { sizeDialog = true }, leadingText = "Aa")
+            Item(Icons.Outlined.Language, "ภาษา / Language", langName(lang), tag = "set_language", onClick = { langDialog = true })
+            Divider()
+            Item(null, t("ขนาดตัวอักษร", "Text size"), sizeName(prefs.textSize), tag = "set_text_size", onClick = { sizeDialog = true }, leadingText = "Aa")
             Divider()
             val on = prefs.remindersEnabled && notifGranted
-            Item(Icons.Filled.Notifications, "การแจ้งเตือน", if (on) "เปิดใช้งาน" else "ปิดอยู่", tag = "set_notifications", onClick = null, chevron = false) {
+            Item(Icons.Filled.Notifications, t("การแจ้งเตือน", "Reminders"), if (on) t("เปิดใช้งาน", "On") else t("ปิดอยู่", "Off"), tag = "set_notifications", onClick = null, chevron = false) {
                 Switch(
                     checked = on,
                     onCheckedChange = { want ->
@@ -186,26 +200,26 @@ fun SettingsTab(vm: AppViewModel, prefs: UserPreferences, onManageLabels: () -> 
             }
         }
 
-        Group("ข้อมูลและการสำรองข้อมูล", Icons.Filled.CloudUpload) {
+        Group(t("ข้อมูลและการสำรองข้อมูล", "Data and backup"), Icons.Filled.CloudUpload) {
             Item(
-                Icons.Filled.CloudUpload, "สำรองข้อมูลโน้ต",
-                if (prefs.lastBackupAt > 0) "ล่าสุด ${Dates.full(prefs.lastBackupAt)} · เก็บใน Google Drive ได้" else "บันทึกเป็นไฟล์ เก็บใน Google Drive หรือที่อื่นได้",
+                Icons.Filled.CloudUpload, t("สำรองข้อมูลโน้ต", "Back up notes"),
+                if (prefs.lastBackupAt > 0) t("ล่าสุด ${Dates.full(prefs.lastBackupAt)} · เก็บใน Google Drive ได้", "Last ${Dates.full(prefs.lastBackupAt)} · can be kept in Google Drive") else t("บันทึกเป็นไฟล์ เก็บใน Google Drive หรือที่อื่นได้", "Saved as a file you can keep in Google Drive or elsewhere"),
                 tag = "backup_export", enabled = !busy,
                 onClick = { backup.launch("jotwai_backup_${stamp()}.zip") }
             )
             Divider()
-            Item(Icons.Outlined.History, "กู้คืนข้อมูล", "นำข้อมูลกลับจากไฟล์สำรองข้อมูล", tag = "backup_import", enabled = !busy,
+            Item(Icons.Outlined.History, t("กู้คืนข้อมูล", "Restore data"), t("นำข้อมูลกลับจากไฟล์สำรองข้อมูล", "Bring data back from a backup file"), tag = "backup_import", enabled = !busy,
                 onClick = { restore.launch(arrayOf("application/zip", "application/json", "application/octet-stream", "text/plain")) })
             Divider()
-            Item(Icons.Outlined.IosShare, "ส่งออกข้อมูล", "ส่งออกโน้ตเป็นไฟล์ข้อความ (.txt)", tag = "export_text", enabled = !busy,
+            Item(Icons.Outlined.IosShare, t("ส่งออกข้อมูล", "Export data"), t("ส่งออกโน้ตเป็นไฟล์ข้อความ (.txt)", "Export notes as a text file (.txt)"), tag = "export_text", enabled = !busy,
                 onClick = { exportText.launch("jotwai_notes_${stamp()}.txt") })
             Divider()
-            Item(Icons.Outlined.Download, "นำเข้าข้อมูล", "นำเข้าโน้ตจากไฟล์ข้อความ (.txt)", tag = "import_text", enabled = !busy,
+            Item(Icons.Outlined.Download, t("นำเข้าข้อมูล", "Import data"), t("นำเข้าโน้ตจากไฟล์ข้อความ (.txt)", "Import notes from text files (.txt)"), tag = "import_text", enabled = !busy,
                 onClick = { importText.launch(arrayOf("text/*")) })
         }
 
-        Group("เพิ่มเติม", Icons.Outlined.CheckBox) {
-            Item(Icons.AutoMirrored.Outlined.Label, "ป้ายกำกับ", "เพิ่ม เปลี่ยนชื่อ หรือลบป้ายกำกับ", tag = "set_labels", onClick = onManageLabels)
+        Group(t("เพิ่มเติม", "More"), Icons.Outlined.CheckBox) {
+            Item(Icons.AutoMirrored.Outlined.Label, t("ป้ายกำกับ", "Labels"), t("เพิ่ม เปลี่ยนชื่อ หรือลบป้ายกำกับ", "Add, rename or delete labels"), tag = "set_labels", onClick = onManageLabels)
             Divider()
             SwitchItem(stringResource(R.string.settings_add_bottom), stringResource(R.string.settings_add_bottom_desc), prefs.checklistAddToBottom) { vm.setChecklistAddToBottom(it) }
             Divider()
@@ -216,10 +230,10 @@ fun SettingsTab(vm: AppViewModel, prefs: UserPreferences, onManageLabels: () -> 
             }
         }
 
-        Group("เกี่ยวกับแอป", Icons.Filled.Info) {
-            Item(Icons.Filled.Star, "ให้คะแนนแอป", "ขอบคุณที่ใช้แอปของเรา!", tag = "rate_app", onClick = { openStore(context) })
+        Group(t("เกี่ยวกับแอป", "About"), Icons.Filled.Info) {
+            Item(Icons.Filled.Star, t("ให้คะแนนแอป", "Rate the app"), t("ขอบคุณที่ใช้แอปของเรา!", "Thank you for using our app!"), tag = "rate_app", onClick = { openStore(context) })
             Divider()
-            Item(Icons.Filled.Info, "เวอร์ชันแอป", "เวอร์ชัน ${BuildConfig.VERSION_NAME}", tag = "set_version", onClick = { aboutDialog = true }, chevron = false) {
+            Item(Icons.Filled.Info, t("เวอร์ชันแอป", "App version"), t("เวอร์ชัน ${BuildConfig.VERSION_NAME}", "Version ${BuildConfig.VERSION_NAME}"), tag = "set_version", onClick = { aboutDialog = true }, chevron = false) {
                 Text(
                     "v${BuildConfig.VERSION_NAME}",
                     style = MaterialTheme.typography.labelLarge,
@@ -229,18 +243,26 @@ fun SettingsTab(vm: AppViewModel, prefs: UserPreferences, onManageLabels: () -> 
         }
     }
 
+    if (langDialog) {
+        ChoiceDialog(
+            "ภาษา / Language",
+            listOf(com.sek789102.jotwai.util.Lang.SYSTEM to langName(com.sek789102.jotwai.util.Lang.SYSTEM), com.sek789102.jotwai.util.Lang.THAI to "ไทย", com.sek789102.jotwai.util.Lang.ENGLISH to "English"),
+            lang,
+            onDismiss = { langDialog = false }
+        ) { v -> langDialog = false; if (v != lang) com.sek789102.jotwai.util.Lang.change(context, v) }
+    }
     if (themeDialog) {
         ChoiceDialog(
-            "ธีมแอป",
-            listOf(ThemeMode.DARK to "ธีมมืด (ค่าเริ่มต้น)", ThemeMode.LIGHT to "ธีมสว่าง", ThemeMode.SYSTEM to "ตามระบบ"),
+            t("ธีมแอป", "App theme"),
+            listOf(ThemeMode.DARK to t("ธีมมืด (ค่าเริ่มต้น)", "Dark theme (default)"), ThemeMode.LIGHT to t("ธีมสว่าง", "Light theme"), ThemeMode.SYSTEM to t("ตามระบบ", "Follow phone")),
             prefs.themeMode,
             onDismiss = { themeDialog = false }
         ) { vm.setThemeMode(it); themeDialog = false }
     }
     if (sizeDialog) {
         ChoiceDialog(
-            "ขนาดตัวอักษร",
-            listOf(TextSize.SMALL to "เล็ก", TextSize.NORMAL to "ปกติ", TextSize.LARGE to "ใหญ่", TextSize.XLARGE to "ใหญ่มาก"),
+            t("ขนาดตัวอักษร", "Text size"),
+            listOf(TextSize.SMALL to t("เล็ก", "Small"), TextSize.NORMAL to t("ปกติ", "Normal"), TextSize.LARGE to t("ใหญ่", "Large"), TextSize.XLARGE to t("ใหญ่มาก", "Extra large")),
             prefs.textSize,
             onDismiss = { sizeDialog = false }
         ) { vm.setTextSize(it); sizeDialog = false }
@@ -249,7 +271,7 @@ fun SettingsTab(vm: AppViewModel, prefs: UserPreferences, onManageLabels: () -> 
         AlertDialog(
             onDismissRequest = { aboutDialog = false },
             icon = { ArtImage(R.drawable.art_app_circle, 64.dp) },
-            title = { Text("จดไว้ ${BuildConfig.VERSION_NAME}") },
+            title = { Text(t("จดไว้ ${BuildConfig.VERSION_NAME}", "Jotwai ${BuildConfig.VERSION_NAME}")) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(stringResource(R.string.privacy_offline))
@@ -257,31 +279,37 @@ fun SettingsTab(vm: AppViewModel, prefs: UserPreferences, onManageLabels: () -> 
                     Text(stringResource(R.string.privacy_backup_note))
                 }
             },
-            confirmButton = { TextButton(onClick = { aboutDialog = false }) { Text("ปิด") } }
+            confirmButton = { TextButton(onClick = { aboutDialog = false }) { Text(t("ปิด", "Close")) } }
         )
     }
+}
+
+private fun langName(v: String) = when (v) {
+    com.sek789102.jotwai.util.Lang.THAI -> "ไทย"
+    com.sek789102.jotwai.util.Lang.ENGLISH -> "English"
+    else -> t("ตามภาษาของโทรศัพท์", "Same as phone")
 }
 
 private fun stamp(): String = SimpleDateFormat("yyyyMMdd_HHmm", Locale.US).format(Date())
 
 private fun themeName(m: ThemeMode) = when (m) {
-    ThemeMode.DARK -> "ธีมมืด (ค่าเริ่มต้น)"
-    ThemeMode.LIGHT -> "ธีมสว่าง"
-    ThemeMode.SYSTEM -> "ตามระบบ"
+    ThemeMode.DARK -> t("ธีมมืด (ค่าเริ่มต้น)", "Dark theme (default)")
+    ThemeMode.LIGHT -> t("ธีมสว่าง", "Light theme")
+    ThemeMode.SYSTEM -> t("ตามระบบ", "Follow phone")
 }
 
 private fun sizeName(t: TextSize) = when (t) {
-    TextSize.SMALL -> "เล็ก"
-    TextSize.NORMAL -> "ปกติ"
-    TextSize.LARGE -> "ใหญ่"
-    TextSize.XLARGE -> "ใหญ่มาก"
+    TextSize.SMALL -> t("เล็ก", "Small")
+    TextSize.NORMAL -> t("ปกติ", "Normal")
+    TextSize.LARGE -> t("ใหญ่", "Large")
+    TextSize.XLARGE -> t("ใหญ่มาก", "Extra large")
 }
 
 /** Reads a picked text file (max 1 MB) as (file name, text). */
 private fun readTextFile(context: android.content.Context, uri: Uri): Pair<String, String>? = runCatching {
     val name = context.contentResolver.query(uri, arrayOf(OpenableColumns.DISPLAY_NAME), null, null, null)?.use { c ->
         if (c.moveToFirst()) c.getString(0) else null
-    } ?: "โน้ต"
+    } ?: t("โน้ต", "Notes")
     val bytes = context.contentResolver.openInputStream(uri)?.use { it.readNBytesCompat(1_000_000) } ?: return null
     name to String(bytes, Charsets.UTF_8)
 }.getOrNull()
@@ -315,10 +343,10 @@ private fun ThemeToggle(dark: Boolean, onToggle: () -> Unit) {
             .clickable(onClick = onToggle).padding(horizontal = 12.dp, vertical = 8.dp).testTag("theme_toggle"),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(Icons.Filled.DarkMode, "ธีมมืด", tint = if (dark) Color.White else MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(30.dp))
+        Icon(Icons.Filled.DarkMode, t("ธีมมืด", "Dark theme"), tint = if (dark) Color.White else MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(30.dp))
         Spacer(Modifier.width(10.dp))
         if (dark) Box(Modifier.size(30.dp).clip(CircleShape).background(Gold))
-        else Icon(Icons.Filled.LightMode, "ธีมสว่าง", tint = Gold, modifier = Modifier.size(30.dp))
+        else Icon(Icons.Filled.LightMode, t("ธีมสว่าง", "Light theme"), tint = Gold, modifier = Modifier.size(30.dp))
     }
 }
 
@@ -355,7 +383,7 @@ private fun Item(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(Modifier.width(44.dp), contentAlignment = Alignment.Center) {
-            if (leadingText != null) Text(leadingText, color = Gold, fontWeight = FontWeight.Bold, fontSize = 26.sp)
+            if (leadingText != null) Text(leadingText, color = com.sek789102.jotwai.ui.design.goldText(), fontWeight = FontWeight.Bold, fontSize = 26.sp)
             else if (icon != null) Icon(icon, null, tint = Gold, modifier = Modifier.size(32.dp))
         }
         Spacer(Modifier.width(16.dp))
@@ -385,9 +413,9 @@ private fun <T> ChoiceDialog(title: String, options: List<Pair<T, String>>, curr
         title = { Text(title) },
         text = {
             Column {
-                options.forEach { (v, label) ->
+                options.forEachIndexed { i, (v, label) ->
                     Row(
-                        Modifier.fillMaxWidth().clip(RoundedCornerShape(12.dp)).clickable { onPick(v) }.padding(vertical = 6.dp),
+                        Modifier.fillMaxWidth().clip(RoundedCornerShape(12.dp)).clickable { onPick(v) }.padding(vertical = 6.dp).testTag("choice_$i"),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         RadioButton(selected = v == current, onClick = { onPick(v) })
@@ -398,6 +426,6 @@ private fun <T> ChoiceDialog(title: String, options: List<Pair<T, String>>, curr
                 Spacer(Modifier.height(4.dp))
             }
         },
-        confirmButton = { TextButton(onClick = onDismiss) { Text("ปิด") } }
+        confirmButton = { TextButton(onClick = onDismiss) { Text(t("ปิด", "Close")) } }
     )
 }

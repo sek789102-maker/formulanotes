@@ -239,4 +239,39 @@ class RichTextTest {
         assertEquals(v, RichText.applyTag(v, "z", null))
         assertEquals(v, RichText.applyTag(v, "f", null))
     }
+
+    // ---- 1.2.1: pieces of codes never show as text ----
+
+    @Test fun pieceOfACodeFromAPartialPasteIsRemoved() {
+        val v = RichText.sanitize(TextFieldValue("ปกติ ⟦c:00ACแดง", TextRange(15)))
+        assertEquals("ปกติ แดง", v.text)
+        assertEquals(TextRange(8), v.selection)
+        assertEquals("abc1def", RichText.sanitize(TextFieldValue("abc1⟧def", TextRange(0))).text)
+        assertEquals("ab", RichText.sanitize(TextFieldValue("a⟦/z⟧b⟦u", TextRange(0))).text.let { RichText.parse(it).display })
+    }
+
+    @Test fun cleanTextIsReturnedUnchanged() {
+        val v = TextFieldValue("⟦c:E53935⟧แดง⟦/c⟧ ปกติ", TextRange(5))
+        assertTrue(RichText.sanitize(v) === v)
+        val plain = TextFieldValue("hello", TextRange(2))
+        assertTrue(RichText.sanitize(plain) === plain)
+    }
+
+    @Test fun alignmentCodeInsideALineIsHidden() {
+        val p = RichText.parse("ab⟦al:c⟧cd")
+        assertEquals("abcd", p.display)
+        assertFalse(p.display.contains("⟦"))
+    }
+
+    @Test fun displayNeverContainsCodeCharactersAfterRepair() {
+        val broken = listOf(
+            "⟦z:1.2ต5⟧⟦/z⟧", "⟦c:00ACCofkr1⟧⟦/c⟧", "⟦f:seriนยf⟧x⟦/f⟧", "⟦c:00A", "แดง⟦/c", "c:E53935⟧แดง",
+            "⟦⟧", "⟦⟦u⟧⟧", "⟦al:c⟧⟦al:r⟧x", "**⟦u⟧ab**⟦/u⟧", "⟦q:1⟧y"
+        )
+        for (t in broken) {
+            val d = RichText.parse(RichText.repairTags(t)).display
+            assertFalse("$t -> $d", d.contains("⟦") || d.contains("⟧"))
+            assertFalse(t, RichText.stripTags(t).contains("⟦") || RichText.stripTags(t).contains("⟧"))
+        }
+    }
 }

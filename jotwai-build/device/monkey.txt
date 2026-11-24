@@ -26,4 +26,4 @@ data="7"
 Got IOException performing flipjava.io.FileNotFoundException: /dev/input/event0: open failed: EACCES (Permission denied)
     // Injection Failed
 Events injected: 400
-## Network stats: elapsed time=18070ms (0ms mobile, 0ms wifi, 18070ms not connected)
+## Network stats: elapsed time=18635ms (0ms mobile, 0ms wifi, 18635ms not connected)

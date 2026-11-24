@@ -1,4 +1,4 @@
-# Google Play Console Checklist — จดไว้ (Jotwai) 1.0.0
+# Google Play Console Checklist — จดไว้ (Jotwai) 1.2.1
 
 สถานะ: ✅ = เตรียมไว้แล้ว/ตรวจแล้ว · ✍️ = **เจ้าของแอปต้องทำ/กรอกเอง** · ⚠️ = ต้องระวัง
 
@@ -38,11 +38,11 @@
 ## D. Release
 | รายการ | สถานะ | หมายเหตุ |
 |---|---|---|
-| Android App Bundle | ✅ | `signed/Jotwai-1.0.2-3-release.aab` เซ็นด้วย Upload key ของจดไว้ |
+| Android App Bundle | ✅ | `signed/Jotwai-1.2.1-7-release.aab` เซ็นด้วย Upload key ของจดไว้ |
 | Play App Signing | ✍️ | เลือก **"Use Google-generated key"** (ค่าเริ่มต้น) |
 | Upload key | ✅ | ส่งให้เจ้าของแยกต่างหาก (ไม่อยู่ใน GitHub) · SHA-256 ใน `signed/upload-certificate-sha256.txt` · **คนละกุญแจกับ LIFEKEEP** |
 | targetSdk | ✅ | 36 |
-| versionCode / versionName | ✅ | 3 / 1.0.2 — ครั้งถัดไปต้องเพิ่ม `versionCode` ใน `jotwai/app/build.gradle.kts` |
+| versionCode / versionName | ✅ | 7 / 1.2.1 — ครั้งถัดไปต้องเพิ่ม `versionCode` ใน `jotwai/app/build.gradle.kts` |
 | Release notes | ✅ | RELEASE_NOTES.md |
 | Countries / pricing | ✍️ | เช่น ไทย · ฟรี |
 

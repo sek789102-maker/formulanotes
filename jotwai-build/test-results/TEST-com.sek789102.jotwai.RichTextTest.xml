@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.sek789102.jotwai.RichTextTest" tests="32" skipped="0" failures="0" errors="0" timestamp="2026-11-24T03:21:50.002Z" hostname="runnervm0hi8g" time="0.037">
+<testsuite name="com.sek789102.jotwai.RichTextTest" tests="32" skipped="0" failures="0" errors="0" timestamp="2026-11-24T03:40:38.849Z" hostname="runnervm0hi8g" time="0.032">
   <properties/>
-  <testcase name="styleInsideARunChangesTheRun" classname="com.sek789102.jotwai.RichTextTest" time="0.012"/>
+  <testcase name="styleInsideARunChangesTheRun" classname="com.sek789102.jotwai.RichTextTest" time="0.01"/>
   <testcase name="pieceOfACodeFromAPartialPasteIsRemoved" classname="com.sek789102.jotwai.RichTextTest" time="0.0"/>
-  <testcase name="backspaceAtHeadingStartRemovesHeading" classname="com.sek789102.jotwai.RichTextTest" time="0.001"/>
+  <testcase name="backspaceAtHeadingStartRemovesHeading" classname="com.sek789102.jotwai.RichTextTest" time="0.0"/>
   <testcase name="headingCursorStartsAfterHiddenPrefix" classname="com.sek789102.jotwai.RichTextTest" time="0.0"/>
   <testcase name="normalTypingIsUntouched" classname="com.sek789102.jotwai.RichTextTest" time="0.0"/>
-  <testcase name="plainTextStripsEverything" classname="com.sek789102.jotwai.RichTextTest" time="0.0"/>
-  <testcase name="sizeButtonsAtABareCursorChangeTheNextTextAndDoNotNest" classname="com.sek789102.jotwai.RichTextTest" time="0.001"/>
-  <testcase name="typingInsideASizeTagGoesAfterIt" classname="com.sek789102.jotwai.RichTextTest" time="0.0"/>
-  <testcase name="deletionThatCutsIntoATagKeepsTheTag" classname="com.sek789102.jotwai.RichTextTest" time="0.001"/>
+  <testcase name="plainTextStripsEverything" classname="com.sek789102.jotwai.RichTextTest" time="0.001"/>
+  <testcase name="sizeButtonsAtABareCursorChangeTheNextTextAndDoNotNest" classname="com.sek789102.jotwai.RichTextTest" time="0.0"/>
+  <testcase name="typingInsideASizeTagGoesAfterIt" classname="com.sek789102.jotwai.RichTextTest" time="0.001"/>
+  <testcase name="deletionThatCutsIntoATagKeepsTheTag" classname="com.sek789102.jotwai.RichTextTest" time="0.0"/>
   <testcase name="styleInsideAWordAppliesToTheWord" classname="com.sek789102.jotwai.RichTextTest" time="0.0"/>
   <testcase name="colourTagAppliesReplacesAndRemoves" classname="com.sek789102.jotwai.RichTextTest" time="0.0"/>
   <testcase name="normalDeletionIsUntouched" classname="com.sek789102.jotwai.RichTextTest" time="0.0"/>
   <testcase name="defaultAtAPlainCursorDoesNothing" classname="com.sek789102.jotwai.RichTextTest" time="0.0"/>
   <testcase name="keyboardWordReplacementInsideColourTagIsMovedOut" classname="com.sek789102.jotwai.RichTextTest" time="0.0"/>
-  <testcase name="alignmentAndListsCombine" classname="com.sek789102.jotwai.RichTextTest" time="0.001"/>
+  <testcase name="alignmentAndListsCombine" classname="com.sek789102.jotwai.RichTextTest" time="0.0"/>
   <testcase name="cleanTextIsReturnedUnchanged" classname="com.sek789102.jotwai.RichTextTest" time="0.0"/>
   <testcase name="clearFormattingRemovesAllMarkersAroundSelection" classname="com.sek789102.jotwai.RichTextTest" time="0.0"/>
   <testcase name="mapsAreMonotonicAndInRange" classname="com.sek789102.jotwai.RichTextTest" time="0.0"/>
   <testcase name="brokenTagsFromOlderVersionAreRepaired" classname="com.sek789102.jotwai.RichTextTest" time="0.001"/>
-  <testcase name="allMarkdownAndTagsAreHidden" classname="com.sek789102.jotwai.RichTextTest" time="0.016"/>
+  <testcase name="allMarkdownAndTagsAreHidden" classname="com.sek789102.jotwai.RichTextTest" time="0.015"/>
   <testcase name="alignmentCodeInsideALineIsHidden" classname="com.sek789102.jotwai.RichTextTest" time="0.0"/>
   <testcase name="indentAndDivider" classname="com.sek789102.jotwai.RichTextTest" time="0.001"/>
   <testcase name="backspaceOnHiddenMarkerDeletesVisibleText" classname="com.sek789102.jotwai.RichTextTest" time="0.0"/>
-  <testcase name="displayNeverContainsCodeCharactersAfterRepair" classname="com.sek789102.jotwai.RichTextTest" time="0.002"/>
-  <testcase name="newStyleAtTheEndOfARunStartsAfterIt" classname="com.sek789102.jotwai.RichTextTest" time="0.0"/>
+  <testcase name="displayNeverContainsCodeCharactersAfterRepair" classname="com.sek789102.jotwai.RichTextTest" time="0.001"/>
+  <testcase name="newStyleAtTheEndOfARunStartsAfterIt" classname="com.sek789102.jotwai.RichTextTest" time="0.001"/>
   <testcase name="backspaceAfterBoxRemovesBox" classname="com.sek789102.jotwai.RichTextTest" time="0.0"/>
   <testcase name="activeKindsAtCursor" classname="com.sek789102.jotwai.RichTextTest" time="0.0"/>
-  <testcase name="boldToggleWorksWhenSelectionIncludesHiddenMarkers" classname="com.sek789102.jotwai.RichTextTest" time="0.001"/>
+  <testcase name="boldToggleWorksWhenSelectionIncludesHiddenMarkers" classname="com.sek789102.jotwai.RichTextTest" time="0.0"/>
   <testcase name="typingInsideClosingTagOrBoldMarkerIsMovedOut" classname="com.sek789102.jotwai.RichTextTest" time="0.0"/>
   <testcase name="markersAreHiddenAndCursorMapsInsideClosingMarker" classname="com.sek789102.jotwai.RichTextTest" time="0.0"/>
   <testcase name="boldButtonLeavesTheRunAtItsEnd" classname="com.sek789102.jotwai.RichTextTest" time="0.0"/>

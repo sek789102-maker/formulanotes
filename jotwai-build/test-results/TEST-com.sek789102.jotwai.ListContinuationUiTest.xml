@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.sek789102.jotwai.ListContinuationUiTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-11-24T03:21:33.947Z" hostname="runnervm0hi8g" time="3.45">
+<testsuite name="com.sek789102.jotwai.ListContinuationUiTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-11-24T03:40:26.127Z" hostname="runnervm0hi8g" time="2.462">
   <properties/>
-  <testcase name="hardware enter key continues the list" classname="com.sek789102.jotwai.ListContinuationUiTest" time="3.211"/>
-  <testcase name="newline typed by the keyboard continues the list" classname="com.sek789102.jotwai.ListContinuationUiTest" time="0.23"/>
+  <testcase name="hardware enter key continues the list" classname="com.sek789102.jotwai.ListContinuationUiTest" time="2.28"/>
+  <testcase name="newline typed by the keyboard continues the list" classname="com.sek789102.jotwai.ListContinuationUiTest" time="0.175"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

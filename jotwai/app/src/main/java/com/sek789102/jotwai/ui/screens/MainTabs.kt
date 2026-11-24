@@ -144,6 +144,7 @@ fun MainTabs(
     )
     Scaffold(
         containerColor = Color.Transparent,
+        contentColor = MaterialTheme.colorScheme.onBackground,
         snackbarHost = { SnackbarHost(snackbar) },
         bottomBar = { GoldBottomBar(tabs, tab) { tab = it } }
     ) { pad ->
@@ -250,9 +251,9 @@ private fun DashboardTab(
 @Composable
 private fun StatCard(icon: androidx.compose.ui.graphics.vector.ImageVector, title: String, value: String, modifier: Modifier, onClick: () -> Unit) {
     GlassCard(modifier.height(108.dp), onClick = onClick) {
-        Row(Modifier.fillMaxSize().padding(horizontal = 18.dp), verticalAlignment = Alignment.CenterVertically) {
-            Icon(icon, null, tint = Gold, modifier = Modifier.size(52.dp))
-            Spacer(Modifier.width(14.dp))
+        Row(Modifier.fillMaxSize().padding(horizontal = 14.dp), verticalAlignment = Alignment.CenterVertically) {
+            Icon(icon, null, tint = Gold, modifier = Modifier.size(42.dp))
+            Spacer(Modifier.width(10.dp))
             Column(Modifier.weight(1f)) {
                 Text(title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 Text(value, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
@@ -674,15 +675,15 @@ private fun FolderCard(art: Int, name: String, count: String, modifier: Modifier
     GlassCard(modifier.height(118.dp), onClick = onClick) {
         Row(Modifier.fillMaxSize()) {
             Box(Modifier.width(5.dp).fillMaxHeight().background(Gold))
-            Row(Modifier.weight(1f).fillMaxSize().padding(start = 10.dp), verticalAlignment = Alignment.CenterVertically) {
-                ArtImage(art, 68.dp)
-                Spacer(Modifier.width(10.dp))
+            Row(Modifier.weight(1f).fillMaxSize().padding(start = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+                ArtImage(art, 54.dp)
+                Spacer(Modifier.width(8.dp))
                 Column(Modifier.weight(1f)) {
-                    Text(name, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                    Text(count, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(name, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                    Text(count, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
                 Box {
-                    IconButton(onClick = { menu = true }) { Icon(Icons.Outlined.MoreVert, "เพิ่มเติม") }
+                    IconButton(onClick = { menu = true }, modifier = Modifier.width(30.dp)) { Icon(Icons.Outlined.MoreVert, "เพิ่มเติม") }
                     DropdownMenu(expanded = menu, onDismissRequest = { menu = false }) { menuItems { menu = false } }
                 }
             }

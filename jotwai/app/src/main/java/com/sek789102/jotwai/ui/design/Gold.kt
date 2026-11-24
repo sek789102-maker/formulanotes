@@ -63,6 +63,9 @@ fun GoldBackdrop(modifier: Modifier = Modifier, content: @Composable BoxScope.()
     val dark = isDarkUi()
     val bg = MaterialTheme.colorScheme.background
     Box(modifier.fillMaxSize().background(bg)) {
+      androidx.compose.runtime.CompositionLocalProvider(
+          androidx.compose.material3.LocalContentColor provides MaterialTheme.colorScheme.onBackground
+      ) {
         Canvas(Modifier.fillMaxSize()) {
             val w = size.width
             val h = size.height
@@ -84,6 +87,7 @@ fun GoldBackdrop(modifier: Modifier = Modifier, content: @Composable BoxScope.()
             drawPath(wave(0.90f, 0.04f, false), color = Gold.copy(alpha = 0.45f * a), style = Stroke(width = 2f))
         }
         content()
+      }
     }
 }
 
@@ -107,9 +111,12 @@ fun GlassCard(
             .background(fill)
             .border(1.dp, Brush.linearGradient(listOf(Gold.copy(alpha = if (dark) 0.55f else 0.7f), Gold.copy(alpha = 0.12f))), shape)
             .then(if (accentLeft) Modifier.drawLeftAccent() else Modifier)
-            .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier),
-        content = content
-    )
+            .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
+    ) {
+        androidx.compose.runtime.CompositionLocalProvider(
+            androidx.compose.material3.LocalContentColor provides MaterialTheme.colorScheme.onSurface
+        ) { content() }
+    }
 }
 
 private fun Modifier.drawLeftAccent(): Modifier = this.then(

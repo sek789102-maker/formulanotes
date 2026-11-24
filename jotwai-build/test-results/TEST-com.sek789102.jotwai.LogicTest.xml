@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.sek789102.jotwai.LogicTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2026-11-24T02:02:55.374Z" hostname="runnervm0hi8g" time="0.031">
+<testsuite name="com.sek789102.jotwai.LogicTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2026-11-24T02:17:15.217Z" hostname="runnervm0hi8g" time="0.028">
   <properties/>
-  <testcase name="line prefix toggles on selected lines and replaces other list markers" classname="com.sek789102.jotwai.LogicTest" time="0.012"/>
+  <testcase name="line prefix toggles on selected lines and replaces other list markers" classname="com.sek789102.jotwai.LogicTest" time="0.013"/>
   <testcase name="search looks in body, checklist items and labels, all words must match" classname="com.sek789102.jotwai.LogicTest" time="0.003"/>
   <testcase name="bold wraps and unwraps the selection" classname="com.sek789102.jotwai.LogicTest" time="0.002"/>
-  <testcase name="locked notes are found by title only" classname="com.sek789102.jotwai.LogicTest" time="0.0"/>
-  <testcase name="repeating reminders move to the next future time" classname="com.sek789102.jotwai.LogicTest" time="0.001"/>
-  <testcase name="sections and pinned-first sorting" classname="com.sek789102.jotwai.LogicTest" time="0.003"/>
-  <testcase name="undo groups fast typing and redo restores" classname="com.sek789102.jotwai.LogicTest" time="0.0"/>
-  <testcase name="checkbox line toggles and plain text strips markers" classname="com.sek789102.jotwai.LogicTest" time="0.006"/>
-  <testcase name="enter continues bullet, number and checkbox lists" classname="com.sek789102.jotwai.LogicTest" time="0.001"/>
-  <testcase name="enter on an empty list item ends the list" classname="com.sek789102.jotwai.LogicTest" time="0.001"/>
+  <testcase name="locked notes are found by title only" classname="com.sek789102.jotwai.LogicTest" time="0.001"/>
+  <testcase name="repeating reminders move to the next future time" classname="com.sek789102.jotwai.LogicTest" time="0.0"/>
+  <testcase name="sections and pinned-first sorting" classname="com.sek789102.jotwai.LogicTest" time="0.002"/>
+  <testcase name="undo groups fast typing and redo restores" classname="com.sek789102.jotwai.LogicTest" time="0.001"/>
+  <testcase name="checkbox line toggles and plain text strips markers" classname="com.sek789102.jotwai.LogicTest" time="0.005"/>
+  <testcase name="enter continues bullet, number and checkbox lists" classname="com.sek789102.jotwai.LogicTest" time="0.0"/>
+  <testcase name="enter on an empty list item ends the list" classname="com.sek789102.jotwai.LogicTest" time="0.0"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

@@ -9,18 +9,18 @@ Starting a Gradle Daemon (subsequent builds will be faster)
 > Task :app:javaPreCompileDebug FROM-CACHE
 > Task :app:generateDebugRFile
 > Task :app:mapDebugSourceSetPaths
-> Task :app:checkDebugAarMetadata
 > Task :app:compileDebugNavigationResources FROM-CACHE
+> Task :app:checkDebugAarMetadata
 > Task :app:createDebugCompatibleScreenManifests
 > Task :app:extractDeepLinksDebug
-> Task :app:mergeDebugResources
 > Task :app:processDebugMainManifest
+> Task :app:mergeDebugResources
 > Task :app:processDebugManifest
 > Task :app:preDebugUnitTestBuild UP-TO-DATE
-> Task :app:generateDebugAssets UP-TO-DATE
 > Task :app:javaPreCompileDebugUnitTest
-> Task :app:mergeDebugAssets
 > Task :app:processDebugManifestForPackage
+> Task :app:generateDebugAssets UP-TO-DATE
+> Task :app:mergeDebugAssets
 > Task :app:processDebugResources
 > Task :app:processDebugUnitTestManifest
 > Task :app:packageDebugUnitTestForUnitTest
@@ -33,15 +33,15 @@ w: file:///home/runner/work/formulanotes/formulanotes/jotwai/app/src/main/java/c
 w: file:///home/runner/work/formulanotes/formulanotes/jotwai/app/src/main/java/com/sek789102/jotwai/ui/screens/EditorScreen.kt:500:95 'val Icons.Outlined.Notes: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Outlined.Notes.
 
 > Task :app:compileDebugJavaWithJavac
-> Task :app:bundleDebugClassesToRuntimeJar
 > Task :app:bundleDebugClassesToCompileJar
 > Task :app:processDebugJavaRes
+> Task :app:bundleDebugClassesToRuntimeJar
 > Task :app:kspDebugUnitTestKotlin
 > Task :app:compileDebugUnitTestKotlin
 > Task :app:compileDebugUnitTestJavaWithJavac NO-SOURCE
 > Task :app:processDebugUnitTestJavaRes
 > Task :app:testDebugUnitTest
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run-1795485655726.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run-1795486518671.json
 
-BUILD SUCCESSFUL in 2m 12s
+BUILD SUCCESSFUL in 2m 9s
 32 actionable tasks: 30 executed, 2 from cache

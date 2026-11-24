@@ -12,5 +12,5 @@ application-label:'จดไว้'
 
 21385874 /home/runner/work/formulanotes/formulanotes/jotwai-build/Jotwai-debug.apk
 3745634 /home/runner/work/formulanotes/formulanotes/jotwai-build/Jotwai-release-testsigned.apk
-7007768 /home/runner/work/formulanotes/formulanotes/jotwai-build/Jotwai-release-unsigned.aab
+7008407 /home/runner/work/formulanotes/formulanotes/jotwai-build/Jotwai-release-unsigned.aab
 3287786 /home/runner/work/formulanotes/formulanotes/jotwai-build/Jotwai-release-unsigned.apk

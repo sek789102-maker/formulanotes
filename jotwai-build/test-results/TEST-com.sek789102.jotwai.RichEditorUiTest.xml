@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.sek789102.jotwai.RichEditorUiTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-11-24T02:02:56.441Z" hostname="runnervm0hi8g" time="6.183">
+<testsuite name="com.sek789102.jotwai.RichEditorUiTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-11-24T02:17:16.305Z" hostname="runnervm0hi8g" time="5.854">
   <properties/>
-  <testcase name="typingWithToolbarProducesHiddenMarkers" classname="com.sek789102.jotwai.RichEditorUiTest" time="4.826"/>
-  <testcase name="showcase" classname="com.sek789102.jotwai.RichEditorUiTest" time="0.614"/>
-  <testcase name="showcaseLightAndFontPanel" classname="com.sek789102.jotwai.RichEditorUiTest" time="0.371"/>
-  <testcase name="sizeAndFontButtonsWorkWithoutASelection" classname="com.sek789102.jotwai.RichEditorUiTest" time="0.317"/>
+  <testcase name="typingWithToolbarProducesHiddenMarkers" classname="com.sek789102.jotwai.RichEditorUiTest" time="4.602"/>
+  <testcase name="showcase" classname="com.sek789102.jotwai.RichEditorUiTest" time="0.568"/>
+  <testcase name="showcaseLightAndFontPanel" classname="com.sek789102.jotwai.RichEditorUiTest" time="0.318"/>
+  <testcase name="sizeAndFontButtonsWorkWithoutASelection" classname="com.sek789102.jotwai.RichEditorUiTest" time="0.313"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

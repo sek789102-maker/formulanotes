@@ -69,6 +69,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -290,6 +292,10 @@ private fun langName(v: String) = when (v) {
     else -> t("ตามภาษาของโทรศัพท์", "Same as phone")
 }
 
+@OptIn(androidx.compose.ui.ExperimentalComposeUiApi::class)
+private fun Modifier.tagsVisible(): Modifier =
+    this.then(Modifier.semantics { testTagsAsResourceId = true })
+
 private fun stamp(): String = SimpleDateFormat("yyyyMMdd_HHmm", Locale.US).format(Date())
 
 private fun themeName(m: ThemeMode) = when (m) {
@@ -412,7 +418,8 @@ private fun <T> ChoiceDialog(title: String, options: List<Pair<T, String>>, curr
         onDismissRequest = onDismiss,
         title = { Text(title) },
         text = {
-            Column {
+            // Dialogs are separate windows: expose the tags to UI checks here too.
+            Column(Modifier.tagsVisible()) {
                 options.forEachIndexed { i, (v, label) ->
                     Row(
                         Modifier.fillMaxWidth().clip(RoundedCornerShape(12.dp)).clickable { onPick(v) }.padding(vertical = 6.dp).testTag("choice_$i"),

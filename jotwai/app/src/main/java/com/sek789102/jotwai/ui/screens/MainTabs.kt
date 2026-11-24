@@ -210,11 +210,11 @@ private fun DashboardTab(
             item {
                 Column(Modifier.padding(horizontal = 20.dp, vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
                     Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
-                        StatCard(Icons.AutoMirrored.Outlined.StickyNote2, t("โน้ตทั้งหมด", "All notes"), t("${notes.size} รายการ", "${notes.size} notes"), Modifier.weight(1f).testTag("stat_all")) { onOpenList(Section.Notes, false) }
-                        StatCard(Icons.Filled.Star, t("รายการโปรด", "Favourites"), t("$favorites รายการ", "$favorites notes"), Modifier.weight(1f).testTag("stat_fav")) { onOpenList(Section.Favorites, false) }
+                        StatCard(Icons.AutoMirrored.Outlined.StickyNote2, t("โน้ตทั้งหมด", "All notes"), nNotes(notes.size, "รายการ"), Modifier.weight(1f).testTag("stat_all")) { onOpenList(Section.Notes, false) }
+                        StatCard(Icons.Filled.Star, t("รายการโปรด", "Favourites"), nNotes(favorites, "รายการ"), Modifier.weight(1f).testTag("stat_fav")) { onOpenList(Section.Favorites, false) }
                     }
                     Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
-                        StatCard(Icons.Filled.Folder, t("หมวดหมู่", "Folders"), t("${folders.size} โฟลเดอร์", "${folders.size} folders"), Modifier.weight(1f).testTag("stat_folders"), onClick = onFolders)
+                        StatCard(Icons.Filled.Folder, t("หมวดหมู่", "Folders"), t("${folders.size} โฟลเดอร์", if (folders.size == 1) "1 folder" else "${folders.size} folders"), Modifier.weight(1f).testTag("stat_folders"), onClick = onFolders)
                         StatCard(Icons.Outlined.AccessTime, t("ล่าสุด", "Latest"), latest?.let { relativeDay(it) } ?: "-", Modifier.weight(1f).testTag("stat_recent")) {
                             recent.firstOrNull()?.let { onOpenNote(it.note.id) } ?: onOpenList(Section.Notes, false)
                         }
@@ -332,6 +332,8 @@ private fun NewNoteFab(modifier: Modifier, onNew: (NoteType) -> Unit) {
         }
     }
 }
+
+private fun nNotes(n: Int, thUnit: String = "โน้ต"): String = t("$n $thUnit", if (n == 1) "1 note" else "$n notes")
 
 // ------------------------------------------------------------------ reminders
 
@@ -536,13 +538,13 @@ private fun FoldersTab(
 
     val cells = buildList {
         if (showFav) add(Cell("fav") { m ->
-            FolderCard(R.drawable.art_folder_fav, t("รายการโปรด", "Favourites"), t("$favCount โน้ต", "$favCount notes"), m.testTag("folder_fav"), onClick = { onOpenList(Section.Favorites, false) }) { close ->
+            FolderCard(R.drawable.art_folder_fav, t("รายการโปรด", "Favourites"), nNotes(favCount), m.testTag("folder_fav"), onClick = { onOpenList(Section.Favorites, false) }) { close ->
                 DropdownMenuItem(text = { Text(t("เปิดดู", "Open")) }, onClick = { close(); onOpenList(Section.Favorites, false) })
             }
         })
         list.forEach { f ->
             add(Cell("f${f.id}") { m ->
-                FolderCard(folderArt[f.color.coerceIn(0, 3)], f.name, t("${countIn(f.id)} โน้ต", "${countIn(f.id)} notes"), m.testTag("folder_${f.id}"), onClick = { onOpenList(Section.Folder(f.id), false) }) { close ->
+                FolderCard(folderArt[f.color.coerceIn(0, 3)], f.name, nNotes(countIn(f.id)), m.testTag("folder_${f.id}"), onClick = { onOpenList(Section.Folder(f.id), false) }) { close ->
                     DropdownMenuItem(text = { Text(t("เปลี่ยนชื่อ", "Rename")) }, leadingIcon = { Icon(Icons.Outlined.Edit, null) }, onClick = { close(); renameTarget = f })
                     DropdownMenuItem(text = { Text(t("เปลี่ยนสี", "Change colour")) }, leadingIcon = { Icon(Icons.Outlined.Palette, null) }, onClick = { close(); colorTarget = f })
                     DropdownMenuItem(text = { Text(t("ลบโฟลเดอร์", "Delete folder")) }, leadingIcon = { Icon(Icons.Outlined.Delete, null) }, onClick = { close(); deleteTarget = f })
@@ -550,7 +552,7 @@ private fun FoldersTab(
             })
         }
         if (showTrash) add(Cell("trash") { m ->
-            FolderCard(R.drawable.art_folder_trash, t("ถังขยะ", "Trash"), t("$trashCount โน้ต", "$trashCount notes"), m.testTag("folder_trash"), onClick = { onOpenList(Section.Trash, false) }) { close ->
+            FolderCard(R.drawable.art_folder_trash, t("ถังขยะ", "Trash"), nNotes(trashCount), m.testTag("folder_trash"), onClick = { onOpenList(Section.Trash, false) }) { close ->
                 DropdownMenuItem(text = { Text(t("เปิดดู", "Open")) }, onClick = { close(); onOpenList(Section.Trash, false) })
                 if (trashCount > 0) DropdownMenuItem(text = { Text(t("ล้างถังขยะ", "Empty trash")) }, leadingIcon = { Icon(Icons.Outlined.Delete, null) }, onClick = { close(); confirmEmptyTrash = true })
             }
@@ -621,7 +623,7 @@ private fun FoldersTab(
                         Spacer(Modifier.width(16.dp))
                         Column(Modifier.weight(1f)) {
                             Text(t("ดูโน้ตทั้งหมด", "See all notes"), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                            Text(t("มีทั้งหมด ${live.count { !it.note.isArchived }} โน้ต", "${live.count { !it.note.isArchived }} notes in total"), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(t("มีทั้งหมด ${live.count { !it.note.isArchived }} โน้ต", "${nNotes(live.count { !it.note.isArchived })} in total"), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                         Icon(Icons.Outlined.ChevronRight, null)
                     }

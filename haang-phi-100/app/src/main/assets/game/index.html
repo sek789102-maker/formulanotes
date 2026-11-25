@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>ห้างผี 100 คืน</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;touch-action:none}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000;color:#eee;font-family:"Noto Sans Thai","Sarabun",Tahoma,sans-serif}
+#c{position:fixed;inset:0;width:100%;height:100%;display:block}
+.hide{display:none!important}
+#hud{position:fixed;inset:0;pointer-events:none}
+#topl{position:absolute;left:max(10px,env(safe-area-inset-left));top:8px;width:min(34vw,260px)}
+#dayLbl{font-size:clamp(14px,3.4vh,22px);font-weight:700;text-shadow:0 0 6px #000,0 1px 2px #000}
+#phaseLbl{font-size:clamp(11px,2.6vh,15px);opacity:.9;text-shadow:0 1px 2px #000;margin-bottom:4px}
+.bar{position:relative;height:clamp(9px,2.4vh,14px);background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.18);border-radius:8px;margin:3px 0;overflow:hidden}
+.bar i{position:absolute;left:0;top:0;bottom:0;border-radius:8px;transition:width .2s}
+.bar b{position:absolute;left:6px;top:50%;transform:translateY(-50%);font-size:clamp(8px,1.9vh,11px);font-weight:600;text-shadow:0 1px 2px #000;white-space:nowrap}
+#bHp i{background:linear-gradient(90deg,#8b0000,#e53935)}
+#bHun i{background:linear-gradient(90deg,#7a4a00,#f0a020)}
+#bSan i{background:linear-gradient(90deg,#2d1a6b,#8e7cff)}
+#bStd i{background:linear-gradient(90deg,#4a3010,#b08040)}
+#bBat i{background:linear-gradient(90deg,#335500,#c8e650)}
+#inv{position:absolute;top:8px;left:50%;transform:translateX(-50%);display:flex;gap:6px;font-size:clamp(11px,2.7vh,16px);background:rgba(0,0,0,.4);padding:4px 10px;border-radius:14px;text-shadow:0 1px 2px #000;white-space:nowrap}
+#inv span{display:inline-flex;align-items:center;gap:2px}
+#topr{position:absolute;right:max(10px,env(safe-area-inset-right));top:8px;display:flex;gap:8px;pointer-events:auto}
+.ibtn{width:clamp(36px,9vh,48px);height:clamp(36px,9vh,48px);border-radius:50%;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:clamp(16px,4vh,22px);display:flex;align-items:center;justify-content:center}
+#home{position:absolute;top:clamp(48px,12vh,70px);left:50%;transform:translateX(-50%);font-size:clamp(11px,2.6vh,15px);text-shadow:0 1px 3px #000;display:flex;align-items:center;gap:6px;background:rgba(0,0,0,.35);padding:2px 10px;border-radius:10px}
+#homeArrow{display:inline-block;font-size:1.3em;color:#ffd27a}
+#cross{position:absolute;left:50%;top:50%;width:22px;height:22px;margin:-11px 0 0 -11px}
+#cross:before,#cross:after{content:"";position:absolute;background:rgba(255,255,255,.85);box-shadow:0 0 2px #000}
+#cross:before{left:10px;top:0;width:2px;height:22px;clip-path:polygon(0 0,100% 0,100% 35%,0 35%,0 65%,100% 65%,100% 100%,0 100%)}
+#cross:after{top:10px;left:0;height:2px;width:22px;clip-path:polygon(0 0,35% 0,35% 100%,0 100%,0 0,65% 0,100% 0,100% 100%,65% 100%)}
+#cross.hit:before,#cross.hit:after{background:#ff4040}
+#toast{position:absolute;left:50%;top:62%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:3px}
+#toast div{background:rgba(0,0,0,.55);padding:3px 12px;border-radius:10px;font-size:clamp(12px,2.9vh,16px);animation:tf 2.6s forwards;text-shadow:0 1px 2px #000}
+@keyframes tf{0%{opacity:0;transform:translateY(8px)}10%{opacity:1;transform:none}75%{opacity:1}100%{opacity:0}}
+#big{position:absolute;left:0;right:0;top:28%;text-align:center;font-size:clamp(22px,7vh,46px);font-weight:800;text-shadow:0 0 18px #000,0 2px 4px #000;opacity:0;transition:opacity .6s;letter-spacing:1px}
+#big small{display:block;font-size:.45em;font-weight:500;opacity:.9;margin-top:4px}
+#vig{position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,rgba(0,0,0,0) 55%,rgba(0,0,0,.65) 100%)}
+#dmg{position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,rgba(160,0,0,0) 40%,rgba(170,0,0,.75) 100%);opacity:0}
+#insane{position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,rgba(40,0,60,0) 30%,rgba(50,0,70,.8) 100%);opacity:0;mix-blend-mode:multiply}
+#fade{position:fixed;inset:0;background:#000;pointer-events:none;opacity:0;transition:opacity 1.2s}
+/* controls */
+#ctl{position:fixed;inset:0;pointer-events:none}
+#joy{position:absolute;width:130px;height:130px;margin:-65px 0 0 -65px;border-radius:50%;background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.25);display:none}
+#joyK{position:absolute;left:50%;top:50%;width:56px;height:56px;margin:-28px 0 0 -28px;border-radius:50%;background:rgba(255,255,255,.35)}
+#joyHint{position:absolute;left:max(40px,env(safe-area-inset-left));bottom:40px;width:110px;height:110px;border-radius:50%;border:2px dashed rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-size:12px;opacity:.6}
+.cb{position:absolute;pointer-events:auto;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;background:rgba(20,20,20,.5);border:2px solid rgba(255,255,255,.35);font-size:clamp(10px,2.4vh,13px);font-weight:700;text-shadow:0 1px 2px #000;line-height:1.05}
+.cb .e{font-size:clamp(18px,4.8vh,28px)}
+.cb:active,.cb.on{background:rgba(255,200,80,.35)}
+.cb .n{position:absolute;right:-2px;top:-2px;background:#c62828;border-radius:9px;padding:0 5px;font-size:11px}
+#bFire{right:max(28px,env(safe-area-inset-right));bottom:12vh;width:clamp(72px,21vh,110px);height:clamp(72px,21vh,110px);background:rgba(160,30,30,.45);border-color:rgba(255,160,160,.6)}
+#bRun{right:calc(max(28px,env(safe-area-inset-right)) + clamp(78px,23vh,120px));bottom:6vh;width:clamp(48px,13vh,66px);height:clamp(48px,13vh,66px)}
+#bAct{right:calc(max(28px,env(safe-area-inset-right)) + clamp(14px,4vh,24px));bottom:calc(12vh + clamp(78px,23vh,120px));width:clamp(56px,15vh,76px);height:clamp(56px,15vh,76px);background:rgba(40,120,60,.55)}
+#bRice{right:calc(max(28px,env(safe-area-inset-right)) + clamp(80px,24vh,124px));bottom:calc(12vh + clamp(50px,14vh,80px));width:clamp(50px,13vh,66px);height:clamp(50px,13vh,66px)}
+#bLight{right:calc(max(28px,env(safe-area-inset-right)) + clamp(86px,26vh,132px));bottom:4vh;width:clamp(50px,13vh,66px);height:clamp(50px,13vh,66px)}
+#bAmu{right:calc(max(28px,env(safe-area-inset-right)) + clamp(6px,2vh,12px));bottom:calc(12vh + clamp(80px,24vh,124px));width:clamp(50px,13vh,66px);height:clamp(50px,13vh,66px)}
+#bBag{left:50%;transform:translateX(-50%);bottom:10px;width:auto;height:auto;border-radius:16px;padding:5px 14px;flex-direction:row;gap:6px;font-size:clamp(11px,2.6vh,14px)}
+#bBag .e{font-size:clamp(16px,3.6vh,20px)}
+#bRepair{left:max(14px,env(safe-area-inset-left));bottom:46vh;width:clamp(56px,15vh,76px);height:clamp(56px,15vh,76px)}
+#bEatN{left:calc(max(14px,env(safe-area-inset-left)) + clamp(64px,17vh,88px));bottom:46vh;width:clamp(56px,15vh,76px);height:clamp(56px,15vh,76px)}
+/* panels */
+.panel{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.62);pointer-events:auto;z-index:20}
+.card *{touch-action:pan-y}
+.card{width:min(92vw,640px);background:linear-gradient(180deg,rgba(28,30,24,.96),rgba(12,14,10,.97));border:1px solid rgba(255,220,150,.25);border-radius:16px;padding:16px 20px;max-width:min(92vw,640px);max-height:90vh;overflow:auto;box-shadow:0 10px 40px #000;touch-action:pan-y}
+.card h2{margin:0 0 8px;font-size:clamp(18px,4.6vh,26px);color:#ffd27a}
+.card p{margin:4px 0;font-size:clamp(12px,2.9vh,15px);line-height:1.45;opacity:.92}
+.btn{display:inline-block;margin:5px 4px;padding:9px 18px;border-radius:12px;background:linear-gradient(180deg,#8a5a22,#5a3610);border:1px solid #c89a50;color:#fff;font-size:clamp(13px,3.2vh,17px);font-weight:700;font-family:inherit;cursor:pointer}
+.btn.g{background:linear-gradient(180deg,#3a4a32,#1e2a18);border-color:#7a9a60}
+.btn:disabled{opacity:.4}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin:8px 0}
+.item{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:8px;font-size:clamp(11px,2.6vh,14px)}
+.item .btn{padding:5px 10px;font-size:clamp(11px,2.6vh,14px);margin:4px 0 0}
+#title{position:fixed;inset:0;z-index:30;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(ellipse at center,rgba(0,0,0,.15),rgba(0,0,0,.8));pointer-events:auto}
+#title h1{margin:0;font-size:clamp(34px,13vh,84px);color:#e8d6a8;text-shadow:0 0 30px #a00,0 0 8px #000,0 4px 6px #000;letter-spacing:3px;font-weight:900}
+#title .sub{font-size:clamp(12px,3.4vh,18px);color:#d8c8a0;margin-bottom:14px;text-shadow:0 1px 3px #000}
+#title .row{display:flex;flex-wrap:wrap;justify-content:center}
+#qual{margin-top:6px;font-size:clamp(11px,2.6vh,14px);opacity:.85}
+#qual b{cursor:pointer;padding:2px 8px;border-radius:8px;border:1px solid rgba(255,255,255,.2);margin:0 2px;font-weight:500}
+#qual b.on{background:#8a5a22}
+#loading{position:fixed;inset:0;z-index:40;background:#000;display:flex;align-items:center;justify-content:center;font-size:18px;color:#c8b890}
+#bossBar{position:absolute;left:50%;top:clamp(48px,12vh,70px);transform:translateX(-50%);width:min(50vw,420px)}
+#bossBar .bar{height:12px}
+#bossBar i{background:linear-gradient(90deg,#300,#c00)}
+#bossName{text-align:center;font-size:clamp(11px,2.6vh,15px);color:#ff9a9a;text-shadow:0 1px 3px #000}
+#fps{position:absolute;right:10px;bottom:4px;font-size:10px;opacity:.5}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="vig"></div><div id="insane"></div><div id="dmg"></div><div id="fade" style="z-index:15"></div>
+<div id="hud" class="hide">
+  <div id="topl">
+    <div id="dayLbl">วันที่ 1 / 100</div>
+    <div id="phaseLbl">☀️ กลางวัน</div>
+    <div class="bar" id="bHp"><i></i><b>❤️ ชีวิต</b></div>
+    <div class="bar" id="bHun"><i></i><b>🍖 ความหิว</b></div>
+    <div class="bar" id="bSan"><i></i><b>🧠 สติ</b></div>
+    <div class="bar" id="bStd"><i></i><b>🛖 ห้าง</b></div>
+    <div class="bar" id="bBat"><i></i><b>🔦 ถ่านไฟฉาย</b></div>
+  </div>
+  <div id="inv"></div>
+  <div id="home"><span id="homeArrow">⬆</span><span id="homeTxt">ห้าง 0 ม.</span></div>
+  <div id="bossBar" class="hide"><div id="bossName"></div><div class="bar"><i></i></div></div>
+  <div id="topr"><div class="ibtn" id="bPause">⏸</div></div>
+  <div id="cross"></div>
+  <div id="toast"></div>
+  <div id="big"></div>
+  <div id="fps"></div>
+</div>
+<div id="ctl" class="hide">
+  <div id="joyHint">เดิน</div>
+  <div id="joy"><div id="joyK"></div></div>
+  <div class="cb" id="bFire"><span class="e">🏹</span>ยิง</div>
+  <div class="cb" id="bRun"><span class="e">🏃</span>วิ่ง</div>
+  <div class="cb hide" id="bAct"><span class="e">✋</span><span id="actTxt">เก็บ</span></div>
+  <div class="cb" id="bRice"><span class="e">🍚</span>ข้าวสาร<span class="n" id="nRice">0</span></div>
+  <div class="cb" id="bLight"><span class="e">🔦</span>ไฟฉาย</div>
+  <div class="cb" id="bAmu"><span class="e">📿</span>พระ<span class="n" id="nAmu">0</span></div>
+  <div class="cb" id="bRepair"><span class="e">🔨</span>ซ่อมห้าง</div>
+  <div class="cb" id="bEatN"><span class="e">🍖</span>กิน</div>
+  <div class="cb" id="bBag"><span class="e">🎒</span>ย่าม</div>
+</div>
+<div id="panel" class="panel hide"><div class="card" id="card"></div></div>
+<div id="title" class="hide">
+  <h1>ห้างผี ๑๐๐ คืน</h1>
+  <div class="sub">นั่งห้างกลางพงไพร · เอาชีวิตรอดจากผีป่าให้ครบ 100 วัน</div>
+  <div class="row">
+    <button class="btn" id="tNew">เริ่มเกมใหม่</button>
+    <button class="btn" id="tCont">เล่นต่อ</button>
+    <button class="btn g" id="tHelp">วิธีเล่น</button>
+    <button class="btn g" id="tGhosts">ตำนานผี</button>
+  </div>
+  <div id="qual">กราฟิก: <b data-q="0">ต่ำ</b><b data-q="1">กลาง</b><b data-q="2">สูง</b></div>
+</div>
+<div id="loading">กำลังสร้างผืนป่า...</div>
+<script src="three.min.js"></script>
+<script src="core.js"></script>
+<script src="world.js"></script>
+<script src="entities.js"></script>
+<script src="main.js"></script>
+</body>
+</html>
